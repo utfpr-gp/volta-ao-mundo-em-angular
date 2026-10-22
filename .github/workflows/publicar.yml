@@ -32,14 +32,14 @@ jobs:
         run: npm run check
       - name: Build das etapas do Passaporte
         run: node scripts/build-stages.mjs
-      - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v4
         with:
           path: site/dist/site/browser
 
   publicar:
     name: Publicar no GitHub Pages
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: verificar
     runs-on: ubuntu-latest
     permissions:
