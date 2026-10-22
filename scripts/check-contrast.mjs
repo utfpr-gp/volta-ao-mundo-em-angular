@@ -19,6 +19,8 @@ export const PAIRS = [
   ['--color-on-primary-muted', '--color-primary'],
   ['--color-on-primary-muted', '--color-primary-soft'],
   ['--color-primary', '--color-highlight'],
+  ['--color-terminal-ink', '--color-terminal'],
+  ['--color-terminal-prompt', '--color-terminal'],
   ...VIEW_COLORS.map((view) => [`--color-${view}`, '--color-surface']),
 ];
 

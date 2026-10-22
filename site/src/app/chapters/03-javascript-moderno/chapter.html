@@ -1,0 +1,237 @@
+<vm-chapter-page slug="03-javascript-moderno">
+  <vm-view kind="mission" title="Ler esta linha sem tropeçar">
+    <p class="lead">
+      Daqui a alguns capítulos, você vai escrever no Passaporte uma linha parecida com esta. Hoje, ela talvez pareça uma
+      sopa de símbolos:
+    </p>
+    <vm-code snippet="03/angular-preview" caption="um trecho do Passaporte, mais adiante" />
+    <p>
+      Repare que quase nada nela é Angular. É <strong>JavaScript moderno</strong>: uma arrow function, um
+      <code>filter</code>, um <code>map</code> e uma template string. Ao final deste capítulo, você vai ler cada pedaço
+      dessa linha e saber o que ele faz. O <code>computed</code> e os parênteses em <code>countries()</code> ficam para o
+      <vm-see-chapter [number]="9" />.
+    </p>
+    <p>
+      Se você aprendeu JavaScript há pouco tempo, muito do que vem a seguir pode ser novidade. Se já conhece tudo, faça o
+      desafio no fim: ele confirma em cinco minutos.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="Peneira e máquina de etiquetas">
+    <vm-analogy emoji="🏭" title="A esteira da fábrica">
+      <p>
+        Imagine uma esteira levando caixas. No meio dela tem uma <strong>peneira</strong>: só passam as caixas que você
+        escolher, como "só as que vão para a Europa". Mais adiante, uma <strong>máquina de etiquetas</strong> transforma cada
+        caixa que chegou, colando nela uma etiqueta com o nome do destino.
+      </p>
+      <p>
+        No JavaScript, a peneira se chama <code>filter</code> e a máquina de etiquetas se chama <code>map</code>. A esteira
+        inteira é um array. Você vai usar os dois o tempo todo no Angular.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O JavaScript que o Angular usa em toda linha">
+    <p>
+      Cada trecho abaixo roda de verdade no Node.js, que você instalou no <vm-see-chapter [number]="2" />. A saída de cada
+      um está logo depois.
+    </p>
+
+    <h3><code>const</code> e <code>let</code></h3>
+    <vm-code snippet="03/let-const" caption="let-const.js" />
+    <p>
+      Saída: <code>Brasil 1</code>. Use <code>const</code> para o que não muda de valor e <code>let</code> para o que muda.
+      Na dúvida, comece com <code>const</code>: se precisar mudar, o próprio JavaScript avisa (veja as armadilhas). O
+      antigo <code>var</code> não aparece em código Angular atual.
+    </p>
+
+    <h3>Template strings</h3>
+    <vm-code snippet="03/template-literal" caption="template-literal.js" />
+    <p>
+      Saída: <code>A capital de Japão é Tóquio.</code> Com a crase, você monta textos encaixando valores no meio, sem
+      somar pedaços com <code>+</code>. Atenção: é crase, e não aspas.
+    </p>
+
+    <h3>Arrow functions</h3>
+    <vm-code snippet="03/arrow" caption="arrow.js" />
+    <p>
+      Saída: <code>42 42</code>. As duas funções fazem a mesma coisa. A arrow function é um jeito curto de escrever uma
+      função: os parâmetros, a seta <code>=&gt;</code> e o resultado. Quando o corpo é uma linha só, o
+      <code>return</code> fica implícito. Elas aparecem em todo lugar no Angular, principalmente dentro de
+      <code>filter</code>, <code>map</code> e <code>computed</code>.
+    </p>
+
+    <h3>Desestruturação</h3>
+    <vm-code snippet="03/destructuring" caption="destructuring.js" />
+    <p>
+      Saída: <code>Portugal Lisboa</code> e <code>Brasil Japão</code>. A desestruturação tira valores de dentro de um
+      objeto ou de um array e cria variáveis com eles, numa linha só. O <code>10_600_000</code> é só um número com
+      separadores, para ler melhor.
+    </p>
+
+    <h3>Espalhamento (<code>...</code>)</h3>
+    <vm-code snippet="03/spread" caption="spread.js" />
+    <p>
+      Saída: <code>2 3</code> e <code>false true</code>. Os três pontos copiam o conteúdo de um array ou de um objeto para um
+      novo, onde você acrescenta ou troca o que quiser. Repare: o original <strong>não muda</strong>. Criar uma cópia em vez
+      de alterar o original vai ser essencial com os signals do Angular.
+    </p>
+
+    <h3>Módulos: <code>import</code> e <code>export</code></h3>
+    <p>Um arquivo pode emprestar coisas para outro. Quem empresta usa <code>export</code>:</p>
+    <vm-code snippet="03/countries" caption="countries.js" />
+    <p>E quem usa pede com <code>import</code>, dizendo de qual arquivo:</p>
+    <vm-code snippet="03/main" caption="main.js" />
+    <p>
+      Saída: <code>1</code>. Todo arquivo de um projeto Angular começa com <code>import</code>s, como o
+      <code>import</code> de <code>Component</code> e <code>signal</code> que você viu no capítulo 1.
+    </p>
+
+    <h3><code>filter</code>, <code>map</code> e <code>find</code></h3>
+    <vm-code snippet="03/map-filter" caption="map-filter.js" />
+    <p>
+      Saída: <code>[ 'Brasil', 'Portugal' ]</code> e <code>Ásia</code>. O <code>filter</code> devolve um array só com quem
+      passou no teste; o <code>map</code> devolve um array do mesmo tamanho, com cada item transformado; o
+      <code>find</code> devolve o primeiro item que passa no teste (ou <code>undefined</code>, se nenhum passar). Os três
+      não mudam o array original. Brinque com a esteira:
+    </p>
+
+    <vm-array-conveyor />
+
+    <h3><code>?.</code> e <code>??</code></h3>
+    <vm-code snippet="03/optional" caption="optional.js" />
+    <p>
+      Saída: <code>undefined</code> e <code>capital desconhecida</code>. O <code>?.</code> só continua se o valor existir;
+      se não existir, devolve <code>undefined</code> em vez de dar erro. O <code>??</code> escolhe um valor reserva quando o
+      da esquerda é <code>null</code> ou <code>undefined</code>. Os dois evitam o erro mais comum do JavaScript, que está
+      nas armadilhas.
+    </p>
+
+    <h3>Promise, <code>async</code> e <code>await</code></h3>
+    <p>
+      Buscar dados num servidor leva tempo. O JavaScript não fica parado esperando: ele entrega uma
+      <vm-term name="promise">Promise</vm-term>, a promessa de um valor que vai chegar.
+    </p>
+    <vm-analogy emoji="🧾" title="A senha da lanchonete">
+      <p>
+        Você faz o pedido no balcão e recebe uma senha. A senha não é o lanche: é a promessa de que ele vai sair. Você espera
+        chamarem o seu número e, aí sim, pega o lanche. A Promise é a senha; o <code>await</code> é esperar ser chamado.
+      </p>
+    </vm-analogy>
+    <vm-code snippet="03/async-await" caption="async-await.js" />
+    <p>
+      Saída: <code>Buscando...</code> e, meio segundo depois, <code>Brasil: Brasília</code>. O <code>await</code> só pode
+      ser usado dentro de uma função marcada com <code>async</code>. No Angular, você vai buscar dados de outro jeito, com
+      ferramentas próprias, a partir do <vm-see-chapter [number]="29" />; mas a ideia de "um valor que chega depois" é a
+      mesma.
+    </p>
+
+    <vm-deep-dive title="Por que o array não muda com filter e map?">
+      <p>
+        <code>filter</code>, <code>map</code>, <code>find</code> e o espalhamento sempre criam um array ou objeto
+        <strong>novo</strong>. Já métodos como <code>push</code>, <code>sort</code> e <code>splice</code> alteram o próprio
+        array.
+      </p>
+      <p>
+        Essa diferença importa porque, para o Angular perceber que um dado mudou, o jeito mais seguro é trocar o valor
+        inteiro por um novo, em vez de mexer dentro dele. Por isso você vai ver muito <code>[...lista, novo]</code> e pouco
+        <code>push</code> no Passaporte.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="Rode no seu computador">
+    <vm-steps label="Primeiro script com JavaScript moderno">
+      <ng-template vmStep="Criar a pasta">
+        <p>No terminal, crie uma pasta para os testes deste capítulo e entre nela:</p>
+        <vm-code snippet="03/run-countries" caption="terminal" />
+        <p>
+          O último comando, <code>node paises.js</code>, ainda vai dar erro, porque o arquivo não existe. Crie o arquivo no
+          próximo passo e rode de novo.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Criar o arquivo">
+        <p>
+          No VS Code, abra a pasta <code>js-moderno</code> (menu Arquivo › Abrir pasta) e crie o arquivo
+          <code>paises.js</code> com o conteúdo do trecho <code>map-filter.js</code> que você viu acima. Salve.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Rodar">
+        <p>No terminal, dentro da pasta <code>js-moderno</code>, rode <code>node paises.js</code>.</p>
+        <p>
+          <strong>O que muda na tela:</strong> aparecem <code>[ 'Brasil', 'Portugal' ]</code> e <code>Ásia</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Seu desafio">
+        <p>Agora mude o código, sem olhar a resposta:</p>
+        <ol>
+          <li>Faça o <code>filter</code> deixar passar só os países <strong>não</strong> visitados (dica: <code>!</code>).</li>
+          <li>Faça o <code>map</code> devolver frases como <code>Quero conhecer o Japão</code>, com uma template string.</li>
+        </ol>
+        <p>Rode de novo. Se aparecer <code>[ 'Quero conhecer o Japão' ]</code>, você dominou a esteira.</p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Os tropeços clássicos">
+    <vm-pitfall
+      title="Mudar o valor de uma const"
+      where="O que o Node.js mostra"
+      message="TypeError: Assignment to constant variable."
+    >
+      <vm-code snippet="03/pitfall-const" caption="pitfall-const.js" />
+      <p>
+        "Atribuição a uma variável constante": você declarou com <code>const</code> e tentou trocar o valor.
+        <strong>Como sair:</strong> se o valor precisa mudar, declare com <code>let</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Ler uma propriedade de algo que não existe"
+      where="O que o Node.js mostra"
+      message="TypeError: Cannot read properties of undefined (reading 'name')"
+    >
+      <vm-code snippet="03/pitfall-undefined" caption="pitfall-undefined.js" />
+      <p>
+        O <code>find</code> não achou o Peru e devolveu <code>undefined</code>. Pedir o <code>name</code> de
+        <code>undefined</code> é erro. Este é, provavelmente, o erro mais comum do JavaScript; o texto entre parênteses diz
+        qual propriedade você tentou ler. <strong>Como sair:</strong> use <code>found?.name</code>, ou confira se achou
+        antes de usar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Esquecer o await"
+      where="O que o Node.js mostra"
+      message="Promise { <pending> }"
+    >
+      <vm-code snippet="03/pitfall-await" caption="pitfall-await.js" />
+      <p>
+        Não é um erro: é a senha da lanchonete, e não o lanche. A Promise ainda está pendente (<code>pending</code>).
+        <strong>Como sair:</strong> use <code>await</code> dentro de uma função <code>async</code>, como no exemplo da seção
+        anterior.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="A arrow function que devolve undefined" where="O que o Node.js mostra" message="undefined">
+      <vm-code snippet="03/pitfall-arrow-object" caption="pitfall-arrow-object.js" />
+      <p>
+        Você queria devolver um objeto, mas as chaves foram entendidas como o corpo da função, e não há
+        <code>return</code>. <strong>Como sair:</strong> envolva o objeto em parênteses:
+        <code>(name) =&gt; (&#123; title: name &#125;)</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="03-javascript-moderno" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O próximo passo é o TypeScript, o JavaScript com tipos que o Angular usa em todo arquivo:
+      o <vm-see-chapter [number]="4" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

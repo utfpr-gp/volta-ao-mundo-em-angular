@@ -52,17 +52,41 @@ export const GLOSSARY = {
       'Uma estrutura pronta que organiza a aplicação e chama o seu código na hora certa. Você escreve as peças; o framework monta e faz funcionar.',
     chapter: 1,
   },
+  lts: {
+    term: 'LTS (suporte de longo prazo)',
+    definition:
+      'Uma versão estável de um software que recebe correções por bastante tempo. No Node.js, são as versões indicadas para estudar e trabalhar.',
+    chapter: 2,
+  },
   json: {
     term: 'JSON',
     definition:
       'Um formato de texto para trocar dados, com chaves e valores, como {"nome": "Brasil"}. É o que o servidor costuma devolver para uma SPA.',
     chapter: 1,
   },
+  nodejs: {
+    term: 'Node.js',
+    definition:
+      'Um programa que roda JavaScript direto no computador, sem navegador. As ferramentas do Angular, como o Angular CLI, rodam nele.',
+    chapter: 2,
+  },
+  npm: {
+    term: 'npm',
+    definition:
+      'O gerenciador de pacotes que vem com o Node.js. Baixa e instala códigos prontos, como as partes do Angular, a partir do package.json.',
+    chapter: 2,
+  },
   opinativo: {
     term: 'Opinativo',
     definition:
       'Diz-se de um framework que já decide muita coisa por você: estrutura de pastas, linguagem, forma de testar. Menos liberdade, mais projetos parecidos entre si.',
     chapter: 1,
+  },
+  promise: {
+    term: 'Promise',
+    definition:
+      'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
+    chapter: 3,
   },
   servidor: {
     term: 'Servidor',
@@ -87,6 +111,12 @@ export const GLOSSARY = {
     definition:
       'O HTML de um componente, com marcações do Angular como {{ }} para mostrar valores. É a parte do componente que vira tela.',
     chapter: 1,
+  },
+  terminal: {
+    term: 'Terminal',
+    definition:
+      'Um programa em que você conversa com o computador por comandos de texto, como pwd, cd e npm, em vez de clicar em ícones.',
+    chapter: 2,
   },
   typescript: {
     term: 'TypeScript',

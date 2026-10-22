@@ -129,7 +129,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Preparando o ambiente',
     description:
       'Instale o Node.js, conheça o terminal e configure o VS Code com as extensões certas para programar em Angular sem tropeços.',
-    minutes: 25,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '03-javascript-moderno',
@@ -138,7 +140,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'JavaScript moderno',
     description:
       'Arrow functions, desestruturação, espalhamento, módulos, Promise e async/await: o JavaScript que o Angular usa em toda linha.',
-    minutes: 35,
+    minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '04-typescript-para-angular',

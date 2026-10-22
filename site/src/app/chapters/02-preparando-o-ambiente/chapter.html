@@ -1,0 +1,225 @@
+<vm-chapter-page slug="02-preparando-o-ambiente">
+  <vm-view kind="mission" title="Montar a bancada antes de começar">
+    <p class="lead">
+      No capítulo anterior você entendeu o que o Angular faz. Agora vem a parte prática: deixar o seu computador pronto
+      para criar o Passaporte. Ao final deste capítulo, você terá três ferramentas funcionando e vai saber para que serve
+      cada uma.
+    </p>
+    <ul>
+      <li>o <strong>terminal</strong>, para conversar com o computador por comandos;</li>
+      <li>o <strong>Node.js</strong> e o <strong>npm</strong>, que rodam e instalam as ferramentas do Angular;</li>
+      <li>o <strong>VS Code</strong>, com a extensão oficial do Angular.</li>
+    </ul>
+    <p>A prova de que deu certo é esta tela, no seu próprio computador:</p>
+    <div class="not-prose my-6 overflow-hidden rounded-2xl bg-terminal font-mono text-sm text-terminal-ink shadow-lg">
+      <p class="border-b border-terminal-ink/15 px-4 py-2 text-xs text-terminal-ink/70">Terminal</p>
+      <div class="px-4 py-3 leading-relaxed">
+        <p><span class="text-terminal-prompt">voce&#64;computador:~</span>$ node -v</p>
+        <p>v24.20.0</p>
+        <p><span class="text-terminal-prompt">voce&#64;computador:~</span>$ npm -v</p>
+        <p>11.19.0</p>
+      </div>
+    </div>
+    <p>
+      Os números podem ser um pouco diferentes no seu computador; o que importa é aparecer uma versão, e não uma mensagem
+      de erro.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="Cozinha arrumada, receita tranquila">
+    <vm-analogy emoji="🍳" title="A bancada do cozinheiro">
+      <p>
+        Antes de começar uma receita, quem cozinha bem separa os ingredientes, liga o forno e deixa as panelas à mão. Assim,
+        na hora de cozinhar, não precisa parar no meio para procurar a forma. Preparar o ambiente é isso: arrumar a bancada
+        uma vez, para os próximos capítulos serem só código.
+      </p>
+    </vm-analogy>
+    <p>
+      E o terminal? Pense nele como trocar mensagens com o computador. Em vez de clicar em ícones, você escreve um pedido
+      curto (<code>mkdir angular</code>: "crie a pasta angular"), aperta Enter e o computador responde em texto. Parece
+      estranho no começo, mas é mais rápido e mais preciso do que procurar o botão certo, e todas as ferramentas do Angular
+      funcionam assim.
+    </p>
+  </vm-view>
+
+  <vm-view kind="inside" title="As três ferramentas por dentro">
+    <h3>O terminal</h3>
+    <p>
+      O <vm-term name="terminal">terminal</vm-term> é um programa em que você digita comandos. Ele sempre está "dentro" de
+      uma pasta, a <strong>pasta atual</strong>, e cada comando age sobre ela. Um comando tem um nome e, às vezes,
+      <strong>argumentos</strong>: em <code>cd angular</code>, <code>cd</code> é o comando ("mude de pasta") e
+      <code>angular</code> é o argumento ("para qual pasta"). Os cinco comandos que você mais vai usar:
+    </p>
+    <vm-code snippet="02/navigate" caption="terminal" />
+    <p>
+      O <code>#</code> começa um comentário: tudo depois dele é só para você ler, o terminal ignora. Experimente sem medo:
+    </p>
+
+    <vm-terminal-trainer />
+
+    <p>
+      No Windows, o terminal mais comum é o PowerShell, e no macOS e no Linux, o Terminal com bash ou zsh. Os comandos deste
+      livro (<code>cd</code>, <code>mkdir</code>, <code>node</code>, <code>npm</code>, <code>ng</code>) funcionam nos
+      três. No PowerShell, <code>pwd</code> e <code>ls</code> também existem, com uma saída um pouco diferente.
+    </p>
+
+    <h3>O Node.js: JavaScript fora do navegador</h3>
+    <p>
+      Até aqui, o JavaScript que você conhece roda dentro do navegador, numa página. O
+      <vm-term name="nodejs">Node.js</vm-term> é um programa que roda JavaScript <strong>direto no computador</strong>,
+      sem navegador. Veja um arquivo JavaScript comum:
+    </p>
+    <vm-code snippet="02/hello" caption="hello.js" />
+    <p>E rodando com o Node.js, no terminal:</p>
+    <vm-code snippet="02/run-hello" caption="terminal" />
+    <p>
+      O terminal responde <code>Olá, Brasil! O JavaScript também roda fora do navegador.</code> Mas por que o Angular
+      precisa disso, se o app roda no navegador? Porque as <strong>ferramentas</strong> do Angular são programas escritos
+      em JavaScript: a que cria o projeto, a que junta e otimiza os arquivos, a que roda os testes. Elas rodam no seu
+      computador, com o Node.js. O app que você cria continua rodando no navegador de quem usa.
+    </p>
+
+    <h3>O npm: a loja de pacotes</h3>
+    <p>
+      Junto com o Node.js vem o <vm-term name="npm">npm</vm-term>, o gerenciador de pacotes. Um <strong>pacote</strong> é
+      um código pronto que alguém publicou para todo mundo usar. O Angular inteiro é distribuído assim: cada parte dele é um
+      pacote no npm. Pense numa loja de aplicativos do celular, só que para código: você pede pelo nome, e o npm baixa e
+      instala.
+    </p>
+
+    <vm-deep-dive title="package.json e node_modules">
+      <p>
+        Todo projeto Angular tem um arquivo <code>package.json</code>, a lista de compras do projeto: ele diz de quais
+        pacotes o projeto precisa e em que versão. Quando você roda <code>npm install</code>, o npm lê essa lista e baixa
+        tudo para a pasta <code>node_modules</code>.
+      </p>
+      <p>
+        Essa pasta costuma ser enorme, com milhares de arquivos, e nunca vai para o Git: qualquer pessoa recria a pasta
+        rodando <code>npm install</code> de novo. Você vai ver os dois de perto no <vm-see-chapter [number]="5" />.
+      </p>
+    </vm-deep-dive>
+
+    <h3>Qual versão do Node.js?</h3>
+    <p>
+      O Node.js lança versões o tempo todo, mas só algumas são <vm-term name="lts">LTS</vm-term>, de "suporte de longo
+      prazo": versões estáveis que recebem correções por anos. Para estudar e para trabalhar, use sempre uma versão LTS.
+      O Angular 22 aceita o Node.js 22.22.3 ou mais novo da linha 22, o 24.15 ou mais novo da linha 24, e a linha 26.
+    </p>
+
+    <h3>O editor: VS Code com a extensão do Angular</h3>
+    <p>
+      Você pode escrever código em qualquer editor, mas o <strong>Visual Studio Code</strong> (VS Code) é gratuito, roda em
+      Windows, macOS e Linux e tem a extensão oficial do time do Angular, a <strong>Angular Language Service</strong>. Com
+      ela, o editor entende os templates: completa nomes enquanto você digita, aponta erros antes de rodar e leva você da
+      tela para o código com um clique. O VS Code também tem um terminal embutido, que abre com <kbd>Ctrl</kbd> +
+      <kbd>'</kbd> no teclado brasileiro (a tecla à esquerda do 1) ou pelo menu Terminal › Novo terminal.
+    </p>
+
+    <h3>E o Git?</h3>
+    <p>
+      O <strong>Git</strong> guarda o histórico do seu código, como pontos de salvamento num jogo, e é como o código chega ao
+      GitHub. Ele vai ser necessário no fim do livro, para publicar o Passaporte. Git é um assunto à parte, que este livro
+      não ensina; se ainda não usa, o livro gratuito <a href="https://git-scm.com/book/pt-br/v2" rel="noopener">Pro Git,
+      em português</a>, é um ótimo começo.
+    </p>
+  </vm-view>
+
+  <vm-view kind="code" title="Instale e confira">
+    <p>
+      Escolha o seu sistema e siga os passos. Em todos, o caminho é o mesmo: instalar o Node.js (o npm vem junto), fechar e
+      abrir o terminal de novo e conferir as versões.
+    </p>
+
+    <vm-steps label="Instalação do Node.js por sistema">
+      <ng-template vmStep="Windows">
+        <p>
+          O jeito mais simples é baixar o instalador marcado como <strong>LTS</strong> em
+          <a href="https://nodejs.org/pt/download" rel="noopener">nodejs.org</a> e clicar em "Avançar" até o fim. Se
+          preferir o terminal, no PowerShell:
+        </p>
+        <vm-code snippet="02/install-windows" caption="PowerShell" />
+      </ng-template>
+      <ng-template vmStep="macOS">
+        <p>
+          Baixe o instalador <strong>LTS</strong> em <a href="https://nodejs.org/pt/download" rel="noopener">nodejs.org</a>.
+          Se você já usa o Homebrew, um comando resolve:
+        </p>
+        <vm-code snippet="02/install-mac" caption="Terminal" />
+      </ng-template>
+      <ng-template vmStep="Linux">
+        <p>
+          No Linux, o caminho mais tranquilo é o <strong>nvm</strong>, um instalador de versões do Node.js que não precisa
+          de senha de administrador. Instale o nvm e, depois, a versão LTS:
+        </p>
+        <vm-code snippet="02/install-linux" caption="Terminal" />
+        <p>Feche e abra o terminal entre os dois comandos, para ele encontrar o <code>nvm</code>.</p>
+      </ng-template>
+      <ng-template vmStep="Conferir">
+        <p><strong>Feche o terminal e abra de novo</strong> (o motivo está nas armadilhas). Depois, rode:</p>
+        <vm-code snippet="02/versions" caption="terminal" />
+        <p>
+          <strong>O que muda na tela:</strong> aparecem dois números de versão, como <code>v24.20.0</code> e
+          <code>11.19.0</code>. Apareceu? O Node.js e o npm estão prontos.
+        </p>
+      </ng-template>
+      <ng-template vmStep="VS Code">
+        <p>
+          Instale o VS Code pelo site <a href="https://code.visualstudio.com" rel="noopener">code.visualstudio.com</a>.
+          Depois, abra a aba de extensões (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd>), procure por
+          <strong>Angular Language Service</strong> e clique em "Instalar". Ou, pelo terminal:
+        </p>
+        <vm-code snippet="02/vscode-extension" caption="terminal" />
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Quando o terminal reclama">
+    <vm-pitfall
+      title="O terminal não encontra o node"
+      where="O que aparece no terminal (Linux, em português)"
+      message="bash: node: comando não encontrado"
+    >
+      <p>
+        Em inglês, a mesma mensagem diz <code>command not found</code>; no Windows, ela diz que o nome não é reconhecido
+        como um comando. Em todos os casos, o terminal procurou um programa chamado <code>node</code> e não achou.
+      </p>
+      <p><strong>Como sair</strong>, do mais comum ao menos comum:</p>
+      <ol>
+        <li>
+          <strong>O terminal foi aberto antes da instalação.</strong> Cada terminal lê a lista de lugares onde procurar
+          programas só quando abre. Feche todas as janelas do terminal (e do VS Code) e abra de novo.
+        </li>
+        <li><strong>O Node.js não foi instalado.</strong> Refaça os passos da instalação.</li>
+        <li><strong>Erro de digitação.</strong> <code>nodejs</code> ou <code>Node</code>, com maiúscula, não funcionam: é <code>node</code>.</li>
+      </ol>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Node.js antigo demais para o Angular"
+      where="O que o Angular CLI mostra no terminal"
+      message="Node.js version v20.18.0 detected.
+The Angular CLI requires a minimum Node.js version of v22.22.3 or v24.15.0 or v26.0.0."
+    >
+      <p>
+        Você tem um Node.js instalado, mas de uma versão anterior à que o Angular 22 aceita. É comum em computadores de
+        laboratório ou em quem instalou o Node.js há alguns anos.
+      </p>
+      <p>
+        <strong>Como sair:</strong> instale a versão LTS atual, como nos passos acima, e confira com <code>node -v</code>.
+        Se você usa o nvm, basta <code>nvm install --lts</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="02-preparando-o-ambiente" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Com a bancada pronta, a próxima parada revisa o JavaScript moderno que aparece em todo código
+      Angular: o <vm-see-chapter [number]="3" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

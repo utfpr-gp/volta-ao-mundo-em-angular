@@ -1,16 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Term } from '../../glossary/term';
 import { PassportMockup } from '../../shared/passport-mockup';
-import { Analogy } from '../../views/analogy';
-import { ChapterPage } from '../../views/chapter-page';
-import { Challenge } from '../../views/challenge';
-import { Code } from '../../views/code';
-import { DeepDive } from '../../views/deep-dive';
-import { FurtherLinks } from '../../views/further-links';
-import { Pitfall } from '../../views/pitfall';
-import { SeeChapter } from '../../views/see-chapter';
-import { StepDirective, Steps } from '../../views/steps';
-import { View } from '../../views/view';
+import { CHAPTER_KIT } from '../chapter-kit';
 import { CHAPTER_01 } from './content';
 import { SpaSimulator } from './spa-simulator';
 
@@ -39,22 +29,7 @@ const TIMELINE = [
 @Component({
   selector: 'vm-chapter-01',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ChapterPage,
-    View,
-    Analogy,
-    Code,
-    Steps,
-    StepDirective,
-    Pitfall,
-    DeepDive,
-    SeeChapter,
-    Challenge,
-    FurtherLinks,
-    Term,
-    PassportMockup,
-    SpaSimulator,
-  ],
+  imports: [CHAPTER_KIT, PassportMockup, SpaSimulator],
   templateUrl: './chapter.html',
 })
 export class Chapter01 {
