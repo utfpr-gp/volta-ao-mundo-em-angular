@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
+import { ProgressService } from './progress/progress';
 
 describe('App', () => {
   beforeEach(() => {
@@ -17,5 +18,14 @@ describe('App', () => {
     expect(element.querySelectorAll('nav[aria-label="Trilhas"] a').length).toBe(9);
     expect(element.querySelector('main#conteudo')).toBeTruthy();
     expect(element.querySelector('vm-footer')).toBeTruthy();
+  });
+
+  it('shows the stamp count in the top bar, linking to the passport', async () => {
+    const fixture = TestBed.createComponent(App);
+    TestBed.inject(ProgressService).stamp('09-signals');
+    await fixture.whenStable();
+    const link = (fixture.nativeElement as HTMLElement).querySelector('vm-top-bar a[href="/passaporte"]');
+    expect(link?.textContent?.replace(/\s+/g, ' ')).toContain('1/50');
+    expect(link?.getAttribute('aria-label')).toBe('Meu passaporte: 1 de 50 carimbos');
   });
 });
