@@ -429,9 +429,9 @@
       está cheia de exemplos de outras épocas.
     </p>
     <p>
-      As mensagens abaixo estão em inglês e cheias de termos que você ainda vai aprender. <strong>Não precisa entendê-las
-      agora.</strong> Guarde só a regra: viu <code>$scope</code> ou <code>ng-repeat</code>, troque de tutorial. As
-      mensagens ficam aqui para você reconhecê-las quando aparecerem.
+      A mensagem abaixo está em inglês e usa termos que você ainda vai aprender. <strong>Não precisa entendê-la
+      agora.</strong> Guarde só a regra: viu <code>$scope</code> ou <code>ng-repeat</code>, troque de tutorial. A
+      mensagem fica aqui para você reconhecê-la quando aparecer.
     </p>
 
     <vm-pitfall
@@ -460,23 +460,6 @@
       </p>
     </vm-pitfall>
 
-    <vm-pitfall
-      title="Um *ngFor que não mostra nada"
-      where="O aviso que aparece no terminal, ao compilar"
-      message="▲ [WARNING] NG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component."
-    >
-      <p>
-        Este é mais traiçoeiro, porque é só um <strong>aviso</strong>: o app compila, mas a lista não aparece na tela. (O
-        código <code>NG8103</code> aparece mesmo duas vezes na mensagem; é assim que o compilador escreve.) O
-        exemplo veio de um Angular mais antigo, que repetia elementos com <code>*ngFor</code>, com asterisco:
-      </p>
-      <vm-code snippet="01/old-ngfor" caption="countries.ts (Angular antigo)" />
-      <p>
-        <strong>Como sair:</strong> a própria mensagem dá a pista, "Use Angular's built-in control flow &#64;for". Desde a
-        versão 17, o jeito atual é o bloco <code>&#64;for</code>, que já vem embutido e não precisa de import:
-      </p>
-      <vm-code snippet="01/today-for" caption="countries.ts (Angular de hoje)" />
-    </vm-pitfall>
 
     <p>Uma cola para reconhecer de que época é um exemplo:</p>
     <div class="overflow-x-auto">
@@ -495,18 +478,18 @@
             <td>Fechar e procurar outro</td>
           </tr>
           <tr>
-            <td>Angular antigo</td>
-            <td><code>NgModule</code>, <code>*ngIf</code>, <code>*ngFor</code></td>
-            <td>Obsoleto, e só funciona importando <code>NgFor</code> ou <code>CommonModule</code>: traduza para o jeito atual</td>
-          </tr>
-          <tr>
             <td>Angular de hoje</td>
-            <td><code>&#64;Component</code> sem módulo, <code>signal()</code>, <code>&#64;if</code>, <code>&#64;for</code></td>
+            <td><code>&#64;Component</code>, <code>signal()</code>, <code>&#64;if</code>, <code>&#64;for</code></td>
             <td>Pode seguir</td>
           </tr>
         </tbody>
       </table>
     </div>
+    <p>
+      Entre as duas épocas existe um Angular intermediário, com um jeito antigo de escrever algumas coisas. Você vai
+      aprender a reconhecê-lo aos poucos, nos capítulos em que cada assunto aparece. Na dúvida, prefira os exemplos do
+      <a href="https://angular.dev" rel="noopener">angular.dev</a>, que estão sempre na versão atual.
+    </p>
   </vm-view>
 
   <vm-view kind="challenge" title="Vale um carimbo">
