@@ -1,0 +1,10 @@
+<div ng-controller="GreetingCtrl">
+  <p ng-if="visible">Olá, {{ name }}</p>
+</div>
+
+<script>
+  app.controller('GreetingCtrl', function ($scope) {
+    $scope.name = 'Ana';
+    $scope.visible = true;
+  });
+</script>

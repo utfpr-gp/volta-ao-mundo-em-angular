@@ -1,0 +1,484 @@
+<vm-chapter-page slug="01-o-que-e-o-angular">
+  <vm-view kind="mission" title="Antes de decolar: para onde vamos">
+    <p class="lead">
+      Seja bem-vindo à primeira parada da viagem. Neste capítulo você ainda não instala nada nem escreve um projeto: você vai
+      entender <strong>por que o Angular existe</strong>, o que ele resolve e como ele se compara aos outros nomes que você
+      já ouviu por aí, como React, Vue e Svelte.
+    </p>
+    <p>Ao final, você vai conseguir, com as suas palavras:</p>
+    <ul>
+      <li>explicar por que as aplicações web modernas usam frameworks;</li>
+      <li>diferenciar uma biblioteca de um framework;</li>
+      <li>dizer o que é o Angular e o que ele traz de fábrica;</li>
+      <li>comparar o Angular com React, Vue e Svelte, e reconhecer código antigo quando pesquisar.</li>
+    </ul>
+
+    <div class="not-prose my-8 grid items-center gap-8 rounded-[22px] border border-line bg-surface-raised p-6 md:grid-cols-[1fr_1.1fr]">
+      <vm-passport-mockup />
+      <div>
+        <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-mission">O destino final</p>
+        <p class="mt-1 text-2xl font-extrabold text-ink">O Passaporte que você vai construir</p>
+        <p class="mt-3 text-ink-muted">
+          Ao longo do livro, você constrói este app: uma lista de países visitados e desejados, com nota para cada viagem,
+          página de cada país, busca, login e tudo salvo na nuvem. No fim, ele estará publicado na internet, instalável no
+          celular e pronto para as lojas de aplicativos.
+        </p>
+        <p class="mt-3 text-ink-muted">
+          Hoje ele é só um destino no mapa. Para chegar lá, primeiro você precisa entender o problema que o Angular resolve.
+        </p>
+      </div>
+    </div>
+
+    <p>
+      <strong>O que você precisa para começar:</strong> HTML, CSS e o básico de JavaScript. Neste capítulo não é preciso
+      instalar nada; o ambiente fica para o <vm-see-chapter [number]="2" />.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O garçom que só traz a batata">
+    <vm-analogy emoji="🍟" title="Pedir mais batata frita">
+      <p>
+        Você está num restaurante e pede mais batata frita. Imagine que, para atender ao pedido, o garçom recolhe a mesa
+        inteira (pratos, talheres, copos, toalha) e volta com tudo de novo, só que agora com a batata. Funciona, mas é lento,
+        e a mesa some por alguns segundos toda vez que você pede alguma coisa.
+      </p>
+      <p>
+        Agora imagine um garçom que traz <strong>só a batata</strong> e a coloca no lugar dela. A mesa continua posta. É
+        exatamente essa a diferença entre um site tradicional e uma aplicação web moderna.
+      </p>
+    </vm-analogy>
+
+    <p>
+      Guarde essa imagem: ela volta daqui a pouco, no simulador. E já que estamos em analogias, aqui vai a segunda, que
+      explica a palavra que mais aparece neste livro:
+    </p>
+
+    <vm-analogy emoji="🧰" title="Caixa de ferramentas ou linha de montagem?">
+      <p>
+        Com uma <strong>caixa de ferramentas</strong>, quem decide é você: pega o martelo quando quer pregar algo. Numa
+        <strong>linha de montagem</strong>, é o contrário: você fabrica a peça, e a linha decide quando ela entra. Uma
+        biblioteca é a caixa de ferramentas. Um framework é a linha de montagem. O Angular é um framework.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Por que existem frameworks">
+    <h3>Antes: cada clique pedia uma página inteira</h3>
+    <p>
+      Pense no site de uma universidade há uns quinze anos. Você clicava num link, o navegador mandava um pedido ao
+      <strong>servidor</strong> (o computador, em algum lugar da internet, que guarda o site) e ficava esperando. O servidor
+      respondia com uma página HTML completa: cabeçalho, menu, conteúdo e rodapé. O navegador apagava tudo e desenhava de
+      novo, até o que não tinha mudado. A tela piscava, e o cabeçalho viajava pela rede a cada clique.
+    </p>
+
+    <h3>Hoje: a página carrega uma vez, e o clique pede só os dados</h3>
+    <p>
+      Numa aplicação moderna, a página inteira chega uma vez só, no primeiro acesso. Depois, cada clique pede ao servidor
+      apenas os dados que faltam. Esse tipo de aplicação se chama
+      <vm-term name="spa">SPA, aplicação de página única</vm-term>. O Gmail, o Google Maps e o próprio site que você está
+      lendo funcionam assim.
+    </p>
+    <p>
+      O que volta do servidor não é mais uma página, e sim só os dados, num formato de texto chamado
+      <vm-term name="json">JSON</vm-term>:
+    </p>
+    <vm-code snippet="01/countries" caption="resposta do servidor" />
+    <p>
+      O código que roda no navegador pega esses dados e atualiza apenas a parte da tela que mudou. Nada pisca. Veja a
+      diferença acontecendo:
+    </p>
+
+    <vm-spa-simulator />
+
+    <p>
+      Repare num detalhe honesto do simulador: no primeiro acesso, a SPA baixa <em>mais</em> do que o site tradicional,
+      porque traz junto o código do app. Ela paga na primeira visita e economiza em todos os cliques seguintes.
+    </p>
+
+    <h3>O preço da SPA: alguém precisa manter a tela em dia</h3>
+    <p>
+      Toda essa agilidade tem um custo. Se só o miolo da tela muda, alguém precisa escrever o código que descobre o que mudou e
+      atualiza cada lugar certo. Sem framework, você faz isso à mão:
+    </p>
+    <vm-code snippet="01/counter-vanilla" caption="sem-framework.js" />
+    <p>
+      Três lugares mostram o mesmo número, então são três linhas para manter. Esqueceu uma? A tela mostra um número errado, e
+      ninguém percebe. Com o Angular, a tela apenas <strong>declara</strong> o que mostra, e o framework cuida do resto:
+    </p>
+    <vm-code snippet="01/counter-template" caption="template do componente" />
+    <p>
+      Cada <code ngNonBindable>{{ total() }}</code> se atualiza sozinho quando o valor muda. É como numa planilha: você
+      escreve <code>=SOMA(A1:A3)</code> uma vez, e o total se recalcula sempre que um número muda.
+      <strong>O framework é a fórmula da tela.</strong>
+    </p>
+
+    <h3>Biblioteca ou framework: quem chama quem?</h3>
+    <div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-line bg-surface-raised p-5">
+        <p class="text-lg font-extrabold text-ink">🧰 <vm-term name="biblioteca">Biblioteca</vm-term></p>
+        <p class="mt-2 font-mono text-sm text-ink-muted">seu código → biblioteca</p>
+        <p class="mt-2 text-ink">
+          Você chama a biblioteca quando precisa. Exemplo: o <code class="font-mono">date-fns</code>, que só formata datas.
+        </p>
+      </div>
+      <div class="rounded-2xl border border-line bg-surface-raised p-5">
+        <p class="text-lg font-extrabold text-ink">🏭 <vm-term name="framework">Framework</vm-term></p>
+        <p class="mt-2 font-mono text-sm text-ink-muted">framework → seu código</p>
+        <p class="mt-2 text-ink">O framework é a estrutura e chama o seu código na hora certa. Você escreve as peças; ele monta.</p>
+      </div>
+    </div>
+    <p>
+      O React se apresenta como uma <strong>biblioteca</strong> de interface. O Angular é um <strong>framework</strong>
+      completo. Essa diferença explica quase tudo o que vem a seguir.
+    </p>
+
+    <h3>Angular, em uma frase</h3>
+    <blockquote>
+      <p>
+        O Angular é um framework de <vm-term name="codigo-aberto">código aberto</vm-term>, mantido pelo Google, para
+        construir aplicações web de página única em <vm-term name="typescript">TypeScript</vm-term>.
+      </p>
+    </blockquote>
+    <p>
+      Cada pedaço dessa frase você já conhece agora, menos um: o TypeScript é o JavaScript com tipos. Os tipos fazem o editor
+      apontar erros enquanto você escreve, antes de o código rodar. Ele tem um capítulo só dele, o
+      <vm-see-chapter [number]="4" />.
+    </p>
+
+    <h3>O que vem de fábrica</h3>
+    <p>
+      A grande característica do Angular é trazer tudo o que uma aplicação precisa, feito pelo mesmo time e atualizado ao
+      mesmo tempo:
+    </p>
+    <ul class="not-prose my-6 grid gap-3 sm:grid-cols-2">
+      @for (feature of features; track feature.name) {
+        <li class="flex gap-3 rounded-2xl border border-line bg-surface-raised p-4">
+          <span aria-hidden="true" class="text-2xl">{{ feature.icon }}</span>
+          <span>
+            <span class="block font-extrabold text-ink">{{ feature.name }}</span>
+            <span class="block text-ink-muted">{{ feature.what }}</span>
+          </span>
+        </li>
+      }
+    </ul>
+    <p>
+      É como comprar um carro que sai da fábrica completo, em vez de montar um com motor, rodas e bancos de fornecedores
+      diferentes. No React você escolhe as peças; no Angular elas já vêm instaladas.
+    </p>
+
+    <h3>Toda tela é uma árvore de componentes</h3>
+    <p>
+      Olhe para a tela do Passaporte e tente dividi-la em pedaços: um cabeçalho, uma lista de países e um rodapé. Dentro da
+      lista, um cartão para cada país. Cada pedaço desses é um <vm-term name="componente">componente</vm-term>: um pedaço da
+      tela com aparência (HTML), estilo (CSS) e comportamento (TypeScript) próprios.
+    </p>
+    <div class="not-prose my-6 grid items-center gap-6 rounded-[22px] border border-line bg-surface-raised p-5 md:grid-cols-2">
+      <div aria-hidden="true" class="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3 text-sm font-bold">
+        <div class="rounded-lg border-2 border-inside bg-inside/10 px-3 py-2 text-inside">Header · 🛂 Passaporte</div>
+        <div class="flex flex-col gap-2 rounded-lg border-2 border-dashed border-challenge px-3 py-2">
+          <span class="text-challenge">CountryList</span>
+          <span class="rounded-md border-2 border-mission bg-mission/10 px-2 py-1 text-mission">CountryCard · 🇧🇷 Brasil</span>
+          <span class="rounded-md border-2 border-mission bg-mission/10 px-2 py-1 text-mission">CountryCard · 🇯🇵 Japão</span>
+          <span class="rounded-md border-2 border-mission bg-mission/10 px-2 py-1 text-mission">CountryCard · 🇵🇹 Portugal</span>
+        </div>
+        <div class="rounded-lg border-2 border-inside bg-inside/10 px-3 py-2 text-inside">Footer</div>
+      </div>
+      <div>
+        <p class="font-extrabold text-ink">A mesma tela, como árvore</p>
+        <pre class="mt-2 overflow-x-auto rounded-xl bg-surface p-4 font-mono text-sm leading-relaxed text-ink">App
+├── Header
+├── CountryList
+│   ├── CountryCard
+│   ├── CountryCard
+│   └── CountryCard
+└── Footer</pre>
+        <p class="mt-3 text-sm text-ink-muted">
+          O mesmo componente, <code class="font-mono">CountryCard</code>, aparece três vezes, como uma peça de Lego repetida.
+          Os nomes estão em inglês porque, no código, são nomes de classes.
+        </p>
+      </div>
+    </div>
+    <p>
+      Essa ideia é igual no Angular, no React, no Vue e no Svelte: quem entende componentes em um deles já entende boa parte
+      dos outros. Você vai desmontar telas em componentes de verdade no <vm-see-chapter [number]="6" />.
+    </p>
+
+    <h3>Angular, React, Vue e Svelte lado a lado</h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Angular</th>
+            <th>React</th>
+            <th>Vue</th>
+            <th>Svelte</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">O que é</th>
+            <td>Framework completo</td>
+            <td>Biblioteca de interface</td>
+            <td>Framework progressivo</td>
+            <td>Compilador de componentes</td>
+          </tr>
+          <tr>
+            <th scope="row">Linguagem</th>
+            <td>TypeScript</td>
+            <td>JavaScript ou TypeScript, com JSX</td>
+            <td>JavaScript ou TypeScript</td>
+            <td>JavaScript ou TypeScript</td>
+          </tr>
+          <tr>
+            <th scope="row">Rotas e formulários</th>
+            <td>Oficiais, de fábrica</td>
+            <td>Bibliotecas da comunidade</td>
+            <td>Oficiais, em pacotes à parte</td>
+            <td>Pelo SvelteKit</td>
+          </tr>
+          <tr>
+            <th scope="row">Estado reativo</th>
+            <td>Signals</td>
+            <td>Hooks, como <code>useState</code></td>
+            <td><code>ref</code> e <code>reactive</code></td>
+            <td>Runes, como <code>$state</code></td>
+          </tr>
+          <tr>
+            <th scope="row">Mantido por</th>
+            <td>Google</td>
+            <td>Meta</td>
+            <td>Evan You e comunidade</td>
+            <td>Comunidade, com apoio da Vercel</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      O Vue se chama de "progressivo" porque você começa pequeno e acrescenta peças. O Svelte é um compilador: transforma os
+      componentes em JavaScript enxuto antes de rodar. <strong>Nenhum é melhor em tudo.</strong> Os quatro são de código
+      aberto e muito usados; a escolha depende do projeto e da equipe. Repare na linha das rotas e formulários: é ali que
+      aparece a diferença de vir tudo de fábrica.
+    </p>
+
+    <h3>Opinativo: o Angular decide muita coisa por você</h3>
+    <p>
+      Por trazer tudo de fábrica, o Angular é chamado de <vm-term name="opinativo">opinativo</vm-term>: ele tem opinião sobre
+      onde fica cada arquivo, como se criam rotas e formulários, como se testa e qual é a linguagem.
+    </p>
+    <div class="not-prose my-6 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-code/30 bg-code/6 p-5">
+        <p class="font-extrabold text-code">O que você ganha</p>
+        <ul class="mt-2 flex flex-col gap-1 text-ink">
+          <li>✓ Projetos parecidos entre si</li>
+          <li>✓ Menos escolhas para pesquisar</li>
+          <li>✓ Quem entra na equipe se acha rápido</li>
+        </ul>
+      </div>
+      <div class="rounded-2xl border border-pitfall/30 bg-pitfall/6 p-5">
+        <p class="font-extrabold text-pitfall">O que custa</p>
+        <ul class="mt-2 flex flex-col gap-1 text-ink">
+          <li>✗ Mais conceitos logo no começo</li>
+          <li>✗ Menos liberdade para fugir do padrão</li>
+        </ul>
+      </div>
+    </div>
+    <p>
+      É como uma receita que diz a medida exata de cada ingrediente: menos liberdade do que cozinhar "a gosto", mas o bolo sai
+      igual na cozinha de qualquer pessoa da equipe. O React é mais parecido com cozinhar a gosto.
+    </p>
+
+    <h3>Por que aprender Angular</h3>
+    <ul>
+      <li>
+        <strong>TypeScript desde a primeira linha.</strong> Os tipos apontam erros enquanto você escreve, antes de o código
+        rodar.
+      </li>
+      <li>
+        <strong>Tudo oficial.</strong> Rotas, formulários, HTTP e testes vêm do mesmo time e são atualizados juntos: nada de
+        bibliotecas que deixam de conversar entre si.
+      </li>
+      <li>
+        <strong>Feito para equipes.</strong> Todo projeto tem a mesma estrutura, então a equipe fala a mesma língua, e você
+        se acha rápido em projetos de outras pessoas.
+      </li>
+      <li>
+        <strong>Ritmo previsível.</strong> A partir da versão 22, sai uma versão nova por ano, e cada uma tem 24 meses de
+        suporte: 12 de suporte ativo e 12 de suporte de longo prazo, só com correções críticas e de segurança.
+      </li>
+    </ul>
+
+    <h3>Do AngularJS ao Angular de hoje</h3>
+    <p>Um pouco de história, porque ela explica muita confusão nos tutoriais que você vai encontrar.</p>
+    <ol class="not-prose my-6 border-l-4 border-line pl-6">
+      @for (milestone of timeline; track milestone.year + milestone.text) {
+        <li class="relative pb-5 last:pb-0">
+          <span
+            aria-hidden="true"
+            class="absolute -left-[2.15rem] top-1 size-4 rounded-full border-4 border-surface"
+            [class]="milestone.modern ? 'bg-challenge' : 'bg-ink-muted'"
+          ></span>
+          <span class="text-sm font-extrabold" [class]="milestone.modern ? 'text-challenge' : 'text-ink-muted'">{{ milestone.year }}</span>
+          <span class="block font-semibold text-ink">{{ milestone.text }}</span>
+        </li>
+      }
+    </ol>
+    <p>
+      Tudo o que você vai estudar neste livro é do Angular moderno: a parte roxa da linha do tempo.
+    </p>
+
+    <vm-deep-dive title="O motor Ivy e a saída do Zone.js">
+      <p>
+        O Angular transforma os templates dos componentes em instruções JavaScript que criam e atualizam a tela. Quem faz
+        isso é o <strong>compilador</strong>, e o motor que executa essas instruções se chama <strong>Ivy</strong>, padrão
+        desde a versão 9. Com ele, os apps ficaram menores e mais rápidos de compilar.
+      </p>
+      <p>
+        Por muitos anos, o Angular descobria "quando" atualizar a tela com uma biblioteca chamada <strong>Zone.js</strong>:
+        ela observava todo clique, temporizador e requisição e, depois de cada um, mandava o Angular conferir a árvore inteira
+        de componentes. Funcionava, mas conferia muito mais do que precisava.
+      </p>
+      <p>
+        Com os <vm-term name="signal">signals</vm-term>, o Angular passou a saber exatamente <em>qual</em> valor mudou e
+        <em>onde</em> ele aparece. Por isso, a partir da versão 21, projetos novos são criados sem o Zone.js, ou seja,
+        <strong>zoneless</strong>. Você vai ver signals de perto no <vm-see-chapter [number]="9" />.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O mesmo contador em quatro sabores">
+    <p>
+      Neste capítulo, a mão no código é de leitura: o mesmo componente, um botão que conta cliques, escrito nos quatro.
+      Não se preocupe em entender cada linha agora. Repare no <strong>estilo</strong> de cada um, e na linha destacada, que é
+      onde cada um guarda o estado (o número de cliques).
+    </p>
+
+    <vm-steps label="O contador em quatro frameworks">
+      <ng-template vmStep="Angular">
+        <vm-code snippet="01/counter-angular" caption="counter.ts" />
+        <p>
+          O Angular separa a <strong>classe</strong>, em TypeScript, do <strong>template</strong>, que é o HTML. O
+          <code>@Component</code> liga os dois. O estado é um <code>signal</code>, e o template lê o valor chamando
+          <code>total()</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="React">
+        <vm-code snippet="01/counter-react" caption="Counter.jsx" />
+        <p>
+          O React escreve o HTML dentro do JavaScript, numa sintaxe chamada <strong>JSX</strong>. O componente é uma função,
+          e o estado vem do hook <code>useState</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Vue">
+        <vm-code snippet="01/counter-vue" caption="Counter.vue" />
+        <p>
+          O Vue põe script e template no mesmo arquivo <code>.vue</code>. O estado é um <code>ref</code>, e no template você
+          usa o valor direto.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Svelte">
+        <vm-code snippet="01/counter-svelte" caption="Counter.svelte" />
+        <p>
+          O Svelte também junta script e HTML, e marca o estado com a rune <code>$state</code>. Antes de rodar, o compilador
+          transforma tudo em JavaScript enxuto.
+        </p>
+      </ng-template>
+    </vm-steps>
+
+    <h3>Agora é a sua vez: mexa num Angular de verdade</h3>
+    <p>Sem instalar nada, você pode ver o Angular atualizando a tela sozinho:</p>
+    <ol>
+      <li>Abra o <a href="https://angular.dev/playground" rel="noopener">playground do Angular</a>.</li>
+      <li>No código, procure um texto que aparece na tela (o título, por exemplo) e troque por outro.</li>
+      <li>Olhe para a área de visualização: a tela muda sozinha, sem você recarregar a página.</li>
+    </ol>
+    <p>
+      <strong>O que muda na tela:</strong> só o texto que você trocou. Isso que você acabou de ver, a tela acompanhando o
+      código, é o framework trabalhando para você.
+    </p>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Tutoriais do passado">
+    <p>
+      O erro mais comum de quem começa não aparece no código: aparece na pesquisa. Como o Angular mudou muito, a internet
+      está cheia de exemplos de outras épocas.
+    </p>
+
+    <vm-pitfall
+      title="Código de AngularJS colado num componente Angular"
+      where="O que aparece no terminal, ao compilar"
+      message="✘ [ERROR] TS2339: Property 'name' does not exist on type 'Greeting'."
+    >
+      <p>
+        Você achou um tutorial com <code>ng-controller</code> e <code>$scope</code> e colou o HTML num componente. O
+        <vm-term name="angularjs">AngularJS</vm-term> é outro produto, da versão de 2010, sem suporte desde o fim de 2021.
+        Nele, os dados viviam no <code>$scope</code>; no Angular, vivem na classe do componente. Por isso o compilador não
+        acha <code>name</code>:
+      </p>
+      <vm-code snippet="01/angularjs" caption="AngularJS (2010 a 2021)" />
+      <p>O mesmo exemplo, como se escreve hoje:</p>
+      <vm-code snippet="01/angular-today" caption="greeting.ts (Angular de hoje)" />
+      <p>
+        <strong>Como sair:</strong> se o tutorial tem <code>$scope</code>, <code>ng-controller</code>, <code>ng-if</code> ou
+        <code>ng-repeat</code>, feche e procure outro. AngularJS e Angular são como Java e JavaScript: nomes parecidos,
+        coisas diferentes.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Um *ngFor que não mostra nada"
+      where="O aviso que aparece no terminal, ao compilar"
+      message="▲ [WARNING] NG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component."
+    >
+      <p>
+        Este é mais traiçoeiro, porque é só um <strong>aviso</strong>: o app compila, mas a lista não aparece na tela. O
+        exemplo veio de um Angular mais antigo, que repetia elementos com <code>*ngFor</code>, com asterisco:
+      </p>
+      <vm-code snippet="01/old-ngfor" caption="countries.ts (Angular antigo)" />
+      <p>
+        <strong>Como sair:</strong> a própria mensagem dá a pista, "Use Angular's built-in control flow &#64;for". Desde a
+        versão 17, o jeito atual é o bloco <code>&#64;for</code>, que já vem embutido e não precisa de import:
+      </p>
+      <vm-code snippet="01/today-for" caption="countries.ts (Angular de hoje)" />
+    </vm-pitfall>
+
+    <p>Uma cola para reconhecer de que época é um exemplo:</p>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Época</th>
+            <th>Pistas no código</th>
+            <th>O que fazer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>AngularJS (2010 a 2021)</td>
+            <td><code>$scope</code>, <code>ng-controller</code>, <code>ng-if</code>, <code>ng-repeat</code></td>
+            <td>Fechar e procurar outro</td>
+          </tr>
+          <tr>
+            <td>Angular antigo</td>
+            <td><code>NgModule</code>, <code>*ngIf</code>, <code>*ngFor</code></td>
+            <td>Funciona, mas traduza para o jeito atual</td>
+          </tr>
+          <tr>
+            <td>Angular de hoje</td>
+            <td><code>&#64;Component</code> sem módulo, <code>signal()</code>, <code>&#64;if</code>, <code>&#64;for</code></td>
+            <td>Pode seguir</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="01-o-que-e-o-angular" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <p>A documentação oficial é a sua melhor companheira de viagem. Comece por estes:</p>
+    <vm-further-links [links]="content.links" />
+  </vm-view>
+</vm-chapter-page>

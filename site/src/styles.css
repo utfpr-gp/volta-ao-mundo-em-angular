@@ -184,3 +184,17 @@
 .prose :where(code):not(:where(pre *, .not-prose *))::after {
   content: none;
 }
+
+@theme {
+  --animate-redraw: redraw 0.8s ease-out;
+
+  @keyframes redraw {
+    0% {
+      background-color: color-mix(in srgb, var(--color-highlight) 55%, transparent);
+      transform: scale(0.985);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
