@@ -106,3 +106,51 @@
     }
   }
 }
+
+/* Trechos de código destacados pelo Shiki no build: as cores trocam com o tema. */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+}
+
+[data-theme="dark"] .shiki,
+[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark);
+}
+
+.code-body .shiki {
+  margin: 0;
+  padding: 1rem 0;
+  background: transparent !important;
+  counter-reset: line;
+  outline-offset: -3px;
+}
+
+.code-body .shiki code {
+  display: block;
+  min-width: max-content;
+}
+
+.code-body .shiki .line {
+  display: inline-block;
+  width: 100%;
+  padding: 0 1.25rem 0 0;
+}
+
+.code-body .shiki .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 3rem;
+  margin-right: 1rem;
+  padding-right: 0.75rem;
+  text-align: right;
+  color: var(--color-ink-muted);
+  opacity: 0.6;
+  user-select: none;
+}
+
+.code-body .shiki .line.highlighted {
+  background: color-mix(in srgb, var(--color-highlight) 16%, transparent);
+  box-shadow: inset 4px 0 var(--color-highlight);
+}
