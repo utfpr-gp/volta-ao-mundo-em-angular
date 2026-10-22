@@ -32,6 +32,11 @@ export const GLOSSARY = {
     definition: 'Um jeito de pensar telas em cinco níveis, inspirado na química: átomos, moléculas, organismos, templates e páginas. Criado pelo designer Brad Frost.',
     chapter: 6,
   },
+  binding: {
+    term: 'Binding',
+    definition: 'A ligação entre um dado da classe e um lugar do template. Quando o dado muda, a tela acompanha; no event binding, o caminho é da tela para a classe.',
+    chapter: 7,
+  },
   biblioteca: {
     term: 'Biblioteca',
     definition:
@@ -100,6 +105,11 @@ export const GLOSSARY = {
     definition: 'Quando o TypeScript deduz o tipo sozinho, pelo valor inicial: em let capital = \'Brasília\', ele já sabe que capital é uma string.',
     chapter: 4,
   },
+  interpolacao: {
+    term: 'Interpolação',
+    definition: 'As chaves duplas {{ }} no template: avaliam uma expressão da classe e mostram o resultado como texto.',
+    chapter: 7,
+  },
   interface: {
     term: 'Interface',
     definition:
@@ -139,6 +149,11 @@ export const GLOSSARY = {
     term: 'Porta',
     definition: 'Um número que identifica um programa que atende pedidos num computador, como o 4200 de http://localhost:4200. É como o número do apartamento num prédio.',
     chapter: 5,
+  },
+  'property-binding': {
+    term: 'Property binding',
+    definition: 'Os colchetes [ ] no template, como [src]="url": dão a uma propriedade do elemento o valor de uma expressão da classe.',
+    chapter: 7,
   },
   promise: {
     term: 'Promise',

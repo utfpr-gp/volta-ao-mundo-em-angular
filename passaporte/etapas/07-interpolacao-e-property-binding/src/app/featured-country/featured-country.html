@@ -1,0 +1,9 @@
+<article class="featured">
+  <img [src]="country.flagUrl" [alt]="'Bandeira do ' + country.name" width="80" />
+  <div>
+    <p class="label">País em destaque</p>
+    <h2>{{ country.name }}</h2>
+    <p>Capital: {{ country.capital }} · {{ country.population }} habitantes</p>
+    <button type="button" [disabled]="country.visited">Marcar como visitado</button>
+  </div>
+</article>

@@ -185,7 +185,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Interpolação e binding',
     description:
       'Leve os dados da classe para a tela com interpolação e property binding, e entenda quando usar cada um nos templates do Angular.',
-    minutes: 25,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '08-event-binding',

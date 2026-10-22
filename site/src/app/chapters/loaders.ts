@@ -8,4 +8,6 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '04-typescript-para-angular': () => import('./04-typescript-para-angular/chapter').then((m) => m.Chapter04),
   '05-angular-cli': () => import('./05-angular-cli/chapter').then((m) => m.Chapter05),
   '06-componentes': () => import('./06-componentes/chapter').then((m) => m.Chapter06),
+  '07-interpolacao-e-property-binding': () =>
+    import('./07-interpolacao-e-property-binding/chapter').then((m) => m.Chapter07),
 };
