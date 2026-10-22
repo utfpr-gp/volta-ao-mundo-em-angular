@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CHAPTERS, EXTRA_TOPICS, TRACKS, chaptersOfTrack } from '../catalog/catalog';
 import { ProgressService } from '../progress/progress';
 import { InlineCode } from '../shared/inline-code';
+import { PassportMockup } from '../shared/passport-mockup';
 import { VIEWS } from '../views/view';
 import { RouteMap } from './route-map';
 
@@ -32,7 +33,7 @@ const PASSPORT_GROWTH = [
 @Component({
   selector: 'vm-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, RouteMap, InlineCode],
+  imports: [RouterLink, RouteMap, InlineCode, PassportMockup],
   template: `
     <section class="relative overflow-hidden bg-primary text-on-primary">
       <div class="mx-auto grid max-w-[1400px] items-center gap-10 px-4 pb-16 pt-12 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:pb-20 lg:pt-16">
@@ -107,28 +108,7 @@ const PASSPORT_GROWTH = [
       </section>
 
       <section class="mt-24 grid items-center gap-12 lg:grid-cols-[1fr_1.1fr]" aria-labelledby="o-app">
-        <div aria-hidden="true" class="mx-auto w-full max-w-sm rounded-[2.2rem] border-[10px] border-primary bg-surface p-4 shadow-2xl shadow-primary/25">
-          <div class="flex items-center justify-between rounded-2xl bg-primary px-4 py-3 text-on-primary">
-            <span class="font-extrabold">🛂 Passaporte</span>
-            <span class="rounded-full bg-highlight px-2.5 py-0.5 text-xs font-extrabold text-primary">12% do mundo</span>
-          </div>
-          <div class="mt-3 flex gap-2 text-xs font-bold">
-            <span class="rounded-full bg-primary px-3 py-1 text-on-primary">Visitados · 3</span>
-            <span class="rounded-full border border-line px-3 py-1 text-ink-muted">Desejados · 5</span>
-          </div>
-          <ul class="mt-3 flex flex-col gap-2">
-            @for (country of sampleCountries; track country.name) {
-              <li class="flex items-center gap-3 rounded-xl border border-line bg-surface-raised px-3 py-2.5">
-                <span class="text-2xl">{{ country.flag }}</span>
-                <span class="flex-1">
-                  <span class="block font-bold leading-tight">{{ country.name }}</span>
-                  <span class="text-xs text-ink-muted">{{ country.detail }}</span>
-                </span>
-                <span class="text-sm text-highlight">{{ country.stars }}</span>
-              </li>
-            }
-          </ul>
-        </div>
+        <vm-passport-mockup />
         <div>
           <p class="text-sm font-extrabold uppercase tracking-[0.2em] text-mission">O app da viagem</p>
           <h2 id="o-app" class="mt-2 text-3xl font-extrabold sm:text-4xl">Você constrói o Passaporte, um capítulo de cada vez</h2>
@@ -229,12 +209,6 @@ export class Home {
   protected readonly growth = PASSPORT_GROWTH;
   protected readonly extras = EXTRA_TOPICS;
   protected readonly firstQuestion = CHAPTERS[0].question;
-  protected readonly sampleCountries = [
-    { flag: '🇧🇷', name: 'Brasil', detail: 'Visitado · Brasília', stars: '★★★★★' },
-    { flag: '🇵🇹', name: 'Portugal', detail: 'Visitado · Lisboa', stars: '★★★★☆' },
-    { flag: '🇯🇵', name: 'Japão', detail: 'Desejado · Tóquio', stars: '' },
-    { flag: '🇦🇷', name: 'Argentina', detail: 'Visitado · Buenos Aires', stars: '★★★★☆' },
-  ];
 
   /** O primeiro capítulo sem carimbo, para quem já começou a viagem. */
   protected readonly nextChapter = computed(() => {

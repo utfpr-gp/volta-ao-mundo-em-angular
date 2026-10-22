@@ -1,0 +1,4 @@
+[
+  { "name": "Brasil", "capital": "Brasília", "visited": true },
+  { "name": "Japão", "capital": "Tóquio", "visited": false }
+]

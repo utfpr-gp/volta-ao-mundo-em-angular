@@ -118,7 +118,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'O que é o Angular',
     description:
       'Entenda por que as aplicações web usam frameworks, o que o Angular traz de fábrica e como ele se compara ao React, ao Vue e ao Svelte.',
-    minutes: 25,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '02-preparando-o-ambiente',
