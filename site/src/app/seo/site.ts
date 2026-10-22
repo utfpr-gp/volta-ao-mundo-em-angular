@@ -12,3 +12,9 @@ export interface PageData {
   description: string;
   slug?: string;
 }
+
+/** O endereço canônico de uma página. No GitHub Pages cada página é uma pasta, por isso a barra final. */
+export function canonicalUrl(path: string): string {
+  const clean = path.replace(/^\/+|\/+$/g, '');
+  return clean ? `${SITE_URL}/${clean}/` : `${SITE_URL}/`;
+}
