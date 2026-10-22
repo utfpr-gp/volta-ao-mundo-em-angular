@@ -1,7 +1,7 @@
 <vm-chapter-page slug="01-o-que-e-o-angular">
   <vm-view kind="mission" title="Antes de decolar: para onde vamos">
     <p class="lead">
-      Seja bem-vindo à primeira parada da viagem. Neste capítulo você ainda não instala nada nem escreve um projeto: você vai
+      Boas-vindas à primeira parada da viagem. Neste capítulo você ainda não instala nada nem escreve um projeto: você vai
       entender <strong>por que o Angular existe</strong>, o que ele resolve e como ele se compara aos outros nomes que você
       já ouviu por aí, como React, Vue e Svelte.
     </p>
@@ -66,7 +66,7 @@
     <h3>Antes: cada clique pedia uma página inteira</h3>
     <p>
       Pense no site de uma universidade há uns quinze anos. Você clicava num link, o navegador mandava um pedido ao
-      <strong>servidor</strong> (o computador, em algum lugar da internet, que guarda o site) e ficava esperando. O servidor
+      <vm-term name="servidor">servidor</vm-term> (o computador, em algum lugar da internet, que guarda o site) e ficava esperando. O servidor
       respondia com uma página HTML completa: cabeçalho, menu, conteúdo e rodapé. O navegador apagava tudo e desenhava de
       novo, até o que não tinha mudado. A tela piscava, e o cabeçalho viajava pela rede a cada clique.
     </p>
@@ -85,14 +85,25 @@
     <vm-code snippet="01/countries" caption="resposta do servidor" />
     <p>
       O código que roda no navegador pega esses dados e atualiza apenas a parte da tela que mudou. Nada pisca. Veja a
-      diferença acontecendo:
+      diferença acontecendo. <strong>Clique quatro ou cinco vezes no menu de cada lado</strong> e acompanhe o que pisca e
+      o "Total baixado":
     </p>
 
     <vm-spa-simulator />
 
     <p>
-      Repare num detalhe honesto do simulador: no primeiro acesso, a SPA baixa <em>mais</em> do que o site tradicional,
-      porque traz junto o código do app. Ela paga na primeira visita e economiza em todos os cliques seguintes.
+      Repare num detalhe importante: no primeiro acesso, a SPA baixa <em>mais</em> do que o site tradicional, porque traz
+      junto o código do app. Ela paga na primeira visita e economiza em todos os cliques seguintes, até passar à frente.
+    </p>
+    <p>
+      Duas leituras do registro de pedidos: <code>GET</code> quer dizer "pedir", e o endereço que começa com
+      <code>/api</code> é onde o servidor entrega só os dados. E se a página é única, por que o endereço muda na SPA?
+      Porque o app troca o endereço sozinho, sem recarregar, para você poder favoritar e compartilhar cada tela. Isso tem
+      nome, rotas, e um capítulo inteiro: o <vm-see-chapter [number]="23" />.
+    </p>
+    <p class="not-prose my-6 rounded-2xl border-2 border-dashed border-highlight/60 px-5 py-4 font-semibold text-ink">
+      ☕ Boa hora para uma pausa. Você já entendeu a ideia central do capítulo: a SPA troca só o miolo da tela. O resto
+      explica por que, para isso, usamos um framework.
     </p>
 
     <h3>O preço da SPA: alguém precisa manter a tela em dia</h3>
@@ -107,9 +118,16 @@
     </p>
     <vm-code snippet="01/counter-template" caption="template do componente" />
     <p>
-      Cada <code ngNonBindable>{{ total() }}</code> se atualiza sozinho quando o valor muda. É como numa planilha: você
-      escreve <code>=SOMA(A1:A3)</code> uma vez, e o total se recalcula sempre que um número muda.
+      As chaves duplas, <code ngNonBindable>{{ }}</code>, mostram um valor na tela, e os parênteses em
+      <code>total()</code> leem esse valor (você entende os parênteses no <vm-see-chapter [number]="9" />). Esse número
+      é um <vm-term name="estado">estado</vm-term>: um valor que muda enquanto o app roda. Cada
+      <code ngNonBindable>{{ total() }}</code> se atualiza sozinho quando o estado muda. É como numa planilha: você escreve
+      <code>=SOMA(A1:A3)</code> uma vez, e o total se recalcula sempre que um número muda.
       <strong>O framework é a fórmula da tela.</strong>
+    </p>
+    <p>
+      Repare em quem decide a hora de atualizar: não é mais você, é o framework. Essa inversão tem nome, e é o próximo
+      assunto.
     </p>
 
     <h3>Biblioteca ou framework: quem chama quem?</h3>
@@ -128,6 +146,11 @@
       </div>
     </div>
     <p>
+      Você já viu isso acontecer em pequeno. Quando escreve <code>botao.addEventListener('click', somar)</code>, quem chama a
+      função <code>somar</code> é o navegador, na hora do clique, e não você. O framework faz o mesmo com o app inteiro:
+      ele chama o seu código quando a tela precisa ser montada ou atualizada.
+    </p>
+    <p>
       O React se apresenta como uma <strong>biblioteca</strong> de interface. O Angular é um <strong>framework</strong>
       completo. Essa diferença explica quase tudo o que vem a seguir.
     </p>
@@ -140,9 +163,9 @@
       </p>
     </blockquote>
     <p>
-      Cada pedaço dessa frase você já conhece agora, menos um: o TypeScript é o JavaScript com tipos. Os tipos fazem o editor
-      apontar erros enquanto você escreve, antes de o código rodar. Ele tem um capítulo só dele, o
-      <vm-see-chapter [number]="4" />.
+      Dois pedaços dessa frase são novos. Código aberto quer dizer que o código é público: qualquer pessoa pode ler, usar e
+      contribuir. E o TypeScript é o JavaScript com tipos: os tipos fazem o editor apontar erros enquanto você escreve,
+      antes de o código rodar. Ele tem um capítulo só dele, o <vm-see-chapter [number]="4" />.
     </p>
 
     <h3>O que vem de fábrica</h3>
@@ -161,10 +184,7 @@
         </li>
       }
     </ul>
-    <p>
-      É como comprar um carro que sai da fábrica completo, em vez de montar um com motor, rodas e bancos de fornecedores
-      diferentes. No React você escolhe as peças; no Angular elas já vêm instaladas.
-    </p>
+    <p>No React, você escolhe e junta essas peças por conta própria; no Angular, elas já vêm instaladas.</p>
 
     <h3>Toda tela é uma árvore de componentes</h3>
     <p>
@@ -233,12 +253,12 @@
           <tr>
             <th scope="row">Rotas e formulários</th>
             <td>Oficiais, de fábrica</td>
-            <td>Bibliotecas da comunidade</td>
-            <td>Oficiais, em pacotes à parte</td>
+            <td>Rotas da comunidade; formulários com as Actions do React 19</td>
+            <td>Rotas oficiais (Vue Router), à parte; validação de formulários da comunidade</td>
             <td>Pelo SvelteKit</td>
           </tr>
           <tr>
-            <th scope="row">Estado reativo</th>
+            <th scope="row">Onde guarda o estado</th>
             <td>Signals</td>
             <td>Hooks, como <code>useState</code></td>
             <td><code>ref</code> e <code>reactive</code></td>
@@ -247,7 +267,7 @@
           <tr>
             <th scope="row">Mantido por</th>
             <td>Google</td>
-            <td>Meta</td>
+            <td>React Foundation (criada pela Meta)</td>
             <td>Evan You e comunidade</td>
             <td>Comunidade, com apoio da Vercel</td>
           </tr>
@@ -283,33 +303,27 @@
         </ul>
       </div>
     </div>
-    <p>
-      É como uma receita que diz a medida exata de cada ingrediente: menos liberdade do que cozinhar "a gosto", mas o bolo sai
-      igual na cozinha de qualquer pessoa da equipe. O React é mais parecido com cozinhar a gosto.
-    </p>
+    <p>O React fica no outro extremo: deixa mais escolhas para você e para a sua equipe.</p>
 
     <h3>Por que aprender Angular</h3>
-    <ul>
-      <li>
-        <strong>TypeScript desde a primeira linha.</strong> Os tipos apontam erros enquanto você escreve, antes de o código
-        rodar.
-      </li>
-      <li>
-        <strong>Tudo oficial.</strong> Rotas, formulários, HTTP e testes vêm do mesmo time e são atualizados juntos: nada de
-        bibliotecas que deixam de conversar entre si.
-      </li>
-      <li>
-        <strong>Feito para equipes.</strong> Todo projeto tem a mesma estrutura, então a equipe fala a mesma língua, e você
-        se acha rápido em projetos de outras pessoas.
-      </li>
-      <li>
-        <strong>Ritmo previsível.</strong> A partir da versão 22, sai uma versão nova por ano, e cada uma tem 24 meses de
-        suporte: 12 de suporte ativo e 12 de suporte de longo prazo, só com correções críticas e de segurança.
-      </li>
-    </ul>
+    <p>
+      Juntando tudo: TypeScript desde a primeira linha, ferramentas oficiais que evoluem juntas e projetos com a mesma
+      estrutura, o que ajuda muito quem trabalha em equipe e quem chega num projeto que já existe.
+    </p>
+
+    <vm-deep-dive title="Versões e suporte">
+      <p>
+        O Angular tem um ritmo previsível. A partir da versão 22, sai uma versão nova por ano, e cada uma tem 24 meses de
+        suporte: 12 de suporte ativo, com melhorias e correções, e 12 de suporte de longo prazo, só com correções críticas
+        e de segurança. Até a versão 21, saía uma versão a cada seis meses.
+      </p>
+    </vm-deep-dive>
 
     <h3>Do AngularJS ao Angular de hoje</h3>
-    <p>Um pouco de história, porque ela explica muita confusão nos tutoriais que você vai encontrar.</p>
+    <p>
+      Um pouco de história, porque ela explica muita confusão nos tutoriais que você vai encontrar. Não precisa decorar
+      nada: o que importa é saber que existe um "antes" e um "agora".
+    </p>
     <ol class="not-prose my-6 border-l-4 border-line pl-6">
       @for (milestone of timeline; track milestone.year + milestone.text) {
         <li class="relative pb-5 last:pb-0">
@@ -323,9 +337,7 @@
         </li>
       }
     </ol>
-    <p>
-      Tudo o que você vai estudar neste livro é do Angular moderno: a parte roxa da linha do tempo.
-    </p>
+    <p>Tudo o que você vai estudar neste livro é do Angular moderno: os marcos destacados, de 2022 em diante.</p>
 
     <vm-deep-dive title="O motor Ivy e a saída do Zone.js">
       <p>
@@ -341,7 +353,8 @@
       <p>
         Com os <vm-term name="signal">signals</vm-term>, o Angular passou a saber exatamente <em>qual</em> valor mudou e
         <em>onde</em> ele aparece. Por isso, a partir da versão 21, projetos novos são criados sem o Zone.js, ou seja,
-        <strong>zoneless</strong>. Você vai ver signals de perto no <vm-see-chapter [number]="9" />.
+        <strong>zoneless</strong>. E, desde a versão 22, cada componente só é conferido quando algo dele muda: a estratégia
+        chamada <strong>OnPush</strong> virou o padrão. Você vai ver signals de perto no <vm-see-chapter [number]="9" />.
       </p>
     </vm-deep-dive>
   </vm-view>
@@ -357,9 +370,11 @@
       <ng-template vmStep="Angular">
         <vm-code snippet="01/counter-angular" caption="counter.ts" />
         <p>
-          O Angular separa a <strong>classe</strong>, em TypeScript, do <strong>template</strong>, que é o HTML. O
-          <code>@Component</code> liga os dois. O estado é um <code>signal</code>, e o template lê o valor chamando
-          <code>total()</code>.
+          O Angular separa a <vm-term name="classe">classe</vm-term>, em TypeScript, do
+          <vm-term name="template">template</vm-term>, que é o HTML. Aqui o template está dentro do arquivo
+          <code>.ts</code>, entre crases, só para caber num exemplo curto; em projetos de verdade ele costuma ficar num
+          arquivo <code>.html</code> separado, ao lado. O <code>&#64;Component</code> liga os dois. O estado é um
+          <code>signal</code>, e o template lê o valor chamando <code>total()</code>.
         </p>
       </ng-template>
       <ng-template vmStep="React">
@@ -389,12 +404,18 @@
     <p>Sem instalar nada, você pode ver o Angular atualizando a tela sozinho:</p>
     <ol>
       <li>Abra o <a href="https://angular.dev/playground" rel="noopener">playground do Angular</a>.</li>
-      <li>No código, procure um texto que aparece na tela (o título, por exemplo) e troque por outro.</li>
-      <li>Olhe para a área de visualização: a tela muda sozinha, sem você recarregar a página.</li>
+      <li>
+        O editor mostra o código de um componente. Procure o trecho entre crases, depois de <code>template:</code>: é o
+        HTML. Ache ali um texto que aparece na área de visualização, como um título, e troque por outro.
+      </li>
+      <li>Olhe para a área de visualização: o texto novo aparece em poucos segundos, sem você recarregar a página.</li>
     </ol>
     <p>
-      <strong>O que muda na tela:</strong> só o texto que você trocou. Isso que você acabou de ver, a tela acompanhando o
-      código, é o framework trabalhando para você.
+      <strong>O que muda na tela:</strong> só o texto que você trocou. Quem refez a visualização foi o playground, que
+      recompila o app a cada mudança no código; no seu computador, o <code>ng serve</code> fará o mesmo
+      (<vm-see-chapter [number]="5" />). O trabalho do framework é outro: manter a tela em dia quando um
+      <em>estado</em> muda com o app rodando, como no contador. Você faz isso com as próprias mãos no
+      <vm-see-chapter [number]="9" />.
     </p>
   </vm-view>
 
@@ -402,6 +423,11 @@
     <p>
       O erro mais comum de quem começa não aparece no código: aparece na pesquisa. Como o Angular mudou muito, a internet
       está cheia de exemplos de outras épocas.
+    </p>
+    <p>
+      As mensagens abaixo estão em inglês e cheias de termos que você ainda vai aprender. <strong>Não precisa entendê-las
+      agora.</strong> Guarde só a regra: viu <code>$scope</code> ou <code>ng-repeat</code>, troque de tutorial. As
+      mensagens ficam aqui para você reconhecê-las quando aparecerem.
     </p>
 
     <vm-pitfall
@@ -411,7 +437,7 @@
     >
       <p>
         Você achou um tutorial com <code>ng-controller</code> e <code>$scope</code> e colou o HTML num componente. O
-        <vm-term name="angularjs">AngularJS</vm-term> é outro produto, da versão de 2010, sem suporte desde o fim de 2021.
+        <vm-term name="angularjs">AngularJS</vm-term> é outro produto, lançado em 2010, sem suporte desde o fim de 2021.
         Nele, os dados viviam no <code>$scope</code>; no Angular, vivem na classe do componente. Por isso o compilador não
         acha <code>name</code>:
       </p>
@@ -420,8 +446,13 @@
       <vm-code snippet="01/angular-today" caption="greeting.ts (Angular de hoje)" />
       <p>
         <strong>Como sair:</strong> se o tutorial tem <code>$scope</code>, <code>ng-controller</code>, <code>ng-if</code> ou
-        <code>ng-repeat</code>, feche e procure outro. AngularJS e Angular são como Java e JavaScript: nomes parecidos,
-        coisas diferentes.
+        <code>ng-repeat</code>, feche e procure outro. AngularJS e Angular são como um carro antigo e o modelo novo da mesma
+        marca: o nome lembra, mas as peças de um não servem no outro.
+      </p>
+      <p>
+        Cuidado com uma pegadinha: <code>&lt;ng-content&gt;</code>, <code>&lt;ng-template&gt;</code> e
+        <code>&lt;ng-container&gt;</code> também têm hífen, mas são do Angular de hoje. A pista de AngularJS são
+        <em>atributos</em> como <code>ng-if</code>, <code>ng-repeat</code>, <code>ng-model</code> e <code>ng-click</code>.
       </p>
     </vm-pitfall>
 
@@ -431,7 +462,8 @@
       message="▲ [WARNING] NG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component."
     >
       <p>
-        Este é mais traiçoeiro, porque é só um <strong>aviso</strong>: o app compila, mas a lista não aparece na tela. O
+        Este é mais traiçoeiro, porque é só um <strong>aviso</strong>: o app compila, mas a lista não aparece na tela. (O
+        código <code>NG8103</code> aparece mesmo duas vezes na mensagem; é assim que o compilador escreve.) O
         exemplo veio de um Angular mais antigo, que repetia elementos com <code>*ngFor</code>, com asterisco:
       </p>
       <vm-code snippet="01/old-ngfor" caption="countries.ts (Angular antigo)" />
@@ -461,7 +493,7 @@
           <tr>
             <td>Angular antigo</td>
             <td><code>NgModule</code>, <code>*ngIf</code>, <code>*ngFor</code></td>
-            <td>Funciona, mas traduza para o jeito atual</td>
+            <td>Obsoleto, e só funciona importando <code>NgFor</code> ou <code>CommonModule</code>: traduza para o jeito atual</td>
           </tr>
           <tr>
             <td>Angular de hoje</td>
@@ -480,5 +512,9 @@
   <vm-view kind="further" title="Para ir além">
     <p>A documentação oficial é a sua melhor companheira de viagem. Comece por estes:</p>
     <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Próxima parada: o <vm-see-chapter [number]="2" />, onde você prepara o terminal, o Node.js e
+      o editor para rodar o seu primeiro Angular no seu computador.
+    </p>
   </vm-view>
 </vm-chapter-page>

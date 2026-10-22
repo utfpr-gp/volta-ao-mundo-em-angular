@@ -27,14 +27,13 @@ const FEATURES = [
 
 const TIMELINE = [
   { year: '2010', text: 'AngularJS: a primeira versão, em JavaScript.', modern: false },
-  { year: '2016', text: 'Angular 2: reescrito do zero, em TypeScript, e passa a se chamar só Angular.', modern: false },
-  { year: '2020', text: 'Versão 9: o motor Ivy, mais leve e rápido.', modern: false },
+  { year: '2016', text: 'Angular 2: reescrito do zero, em TypeScript; logo depois, passa a se chamar só Angular.', modern: false },
+  { year: '2020', text: 'Versão 9: um motor novo, o Ivy, deixa os apps menores e mais rápidos.', modern: false },
   { year: '2021', text: 'Fim do suporte ao AngularJS, em 31 de dezembro.', modern: false },
-  { year: '2022', text: 'Versão 15: componentes standalone, sem NgModule.', modern: true },
-  { year: '2023', text: 'Versão 16: chegam os signals.', modern: true },
-  { year: '2023', text: 'Versão 17: @if, @for, @defer e o novo site angular.dev.', modern: true },
-  { year: '2025', text: 'Versões 20 e 21: zoneless por padrão nos projetos novos e testes com Vitest.', modern: true },
-  { year: '2026', text: 'Versão 22: Signal Forms e Angular Aria estáveis, e uma versão nova por ano.', modern: true },
+  { year: '2022', text: 'Versão 15: componentes independentes (standalone), sem a caixa extra chamada NgModule.', modern: true },
+  { year: '2023', text: 'Versões 16 e 17: chegam os signals, os blocos @if e @for e o novo site angular.dev.', modern: true },
+  { year: '2025', text: 'Versão 21: projetos novos sem a biblioteca Zone.js e testes com o Vitest.', modern: true },
+  { year: '2026', text: 'Versão 22: formulários com signals, componentes acessíveis e uma versão nova por ano.', modern: true },
 ];
 
 @Component({
