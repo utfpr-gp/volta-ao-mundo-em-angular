@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { chapterBySlug, neighbors, trackById } from '../catalog/catalog';
-import { InlineCode } from '../shared/inline-code';
+import { chapterBySlug, trackById } from '../catalog/catalog';
+import { ChapterNav } from '../views/chapter-nav';
 import { ChapterHeader } from '../views/chapter-header';
 
 /** A página de um capítulo que ainda não foi escrito. */
 @Component({
   selector: 'vm-coming-soon',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ChapterHeader, InlineCode],
+  imports: [RouterLink, ChapterHeader, ChapterNav],
   template: `
     @if (chapter(); as chapter) {
       <div data-coming-soon class="mx-auto max-w-5xl px-4 py-10 sm:px-8">
@@ -30,22 +30,7 @@ import { ChapterHeader } from '../views/chapter-header';
           </p>
         </section>
 
-        <nav aria-label="Capítulos vizinhos" class="mt-10 grid gap-4 sm:grid-cols-2">
-          @if (around().previous; as previous) {
-            <a [routerLink]="['/capitulos', previous.slug]" class="rounded-card border border-line bg-surface-raised p-5 no-underline hover:border-link">
-              <span class="text-sm font-bold text-ink-muted">← Capítulo {{ previous.number }}</span>
-              <span class="mt-1 block font-bold text-ink"><vm-inline-code [text]="previous.question" /></span>
-            </a>
-          } @else {
-            <span></span>
-          }
-          @if (around().next; as next) {
-            <a [routerLink]="['/capitulos', next.slug]" class="rounded-card border border-line bg-surface-raised p-5 text-right no-underline hover:border-link">
-              <span class="text-sm font-bold text-ink-muted">Capítulo {{ next.number }} →</span>
-              <span class="mt-1 block font-bold text-ink"><vm-inline-code [text]="next.question" /></span>
-            </a>
-          }
-        </nav>
+        <vm-chapter-nav class="mt-10" [slug]="chapter.slug" />
       </div>
     }
   `,
@@ -55,5 +40,4 @@ export class ComingSoon {
 
   protected readonly chapter = computed(() => chapterBySlug(this.slug));
   protected readonly track = computed(() => trackById(this.chapter()?.track ?? ''));
-  protected readonly around = computed(() => neighbors(this.slug));
 }

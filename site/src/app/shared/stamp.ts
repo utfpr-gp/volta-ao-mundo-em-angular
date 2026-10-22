@@ -51,7 +51,9 @@ export class Stamp {
   readonly chapter = input.required<Chapter>();
   readonly date = input<string | null>(null);
   readonly state = input<'open' | 'coming-soon'>('open');
-  readonly size = input<'sm' | 'md' | 'lg'>('sm');
+  readonly size = input<'xs' | 'sm' | 'md' | 'lg'>('sm');
+  /** 'dark' quando o carimbo fica sobre o azul-marinho, como no cabeçalho do capítulo. */
+  readonly tone = input<'light' | 'dark'>('light');
   /** Anima a "batida" do carimbo; usado só no momento em que ele é conquistado. */
   readonly animate = input(false);
 
@@ -65,9 +67,14 @@ export class Stamp {
     () => this.formattedDate() ?? (this.state() === 'coming-soon' ? 'EM BREVE' : '★ ★ ★'),
   );
   protected readonly classes = computed(() => {
-    const size = { sm: 'size-24', md: 'size-32', lg: 'size-40' }[this.size()];
-    if (this.date()) return `${size} text-stamp -rotate-[8deg] ${this.animate() ? 'motion-safe:animate-stamp' : ''}`;
-    return `${size} text-ink-muted ${this.state() === 'coming-soon' ? 'opacity-60' : ''}`;
+    const size = { xs: 'size-14', sm: 'size-24', md: 'size-32', lg: 'size-40' }[this.size()];
+    const dark = this.tone() === 'dark';
+    if (this.date()) {
+      const paper = dark ? 'rounded-full bg-surface-raised shadow-xl shadow-black/30' : '';
+      return `${size} ${paper} text-stamp -rotate-[8deg] ${this.animate() ? 'motion-safe:animate-stamp' : ''}`;
+    }
+    const muted = dark ? 'text-on-primary-muted' : 'text-ink-muted';
+    return `${size} ${muted} ${this.state() === 'coming-soon' ? 'opacity-60' : ''}`;
   });
   protected readonly label = computed(() => {
     const { number, shortTitle } = this.chapter();

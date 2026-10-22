@@ -154,3 +154,33 @@
   background: color-mix(in srgb, var(--color-highlight) 16%, transparent);
   box-shadow: inset 4px 0 var(--color-highlight);
 }
+
+/* O texto longo dos capítulos usa o plugin de tipografia com as cores dos tokens. */
+.prose {
+  --tw-prose-body: var(--color-ink);
+  --tw-prose-headings: var(--color-ink);
+  --tw-prose-lead: var(--color-ink-muted);
+  --tw-prose-links: var(--color-link);
+  --tw-prose-bold: var(--color-ink);
+  --tw-prose-counters: var(--color-ink-muted);
+  --tw-prose-bullets: var(--color-ink-muted);
+  --tw-prose-hr: var(--color-line);
+  --tw-prose-quotes: var(--color-ink);
+  --tw-prose-quote-borders: var(--color-highlight);
+  --tw-prose-captions: var(--color-ink-muted);
+  --tw-prose-code: var(--color-ink);
+  --tw-prose-th-borders: var(--color-line);
+  --tw-prose-td-borders: var(--color-line);
+}
+
+.prose :where(code):not(:where(pre *, .not-prose *)) {
+  padding: 0.12em 0.4em;
+  border-radius: 0.4em;
+  background: color-mix(in srgb, var(--color-inside) 10%, transparent);
+  font-weight: 600;
+}
+
+.prose :where(code):not(:where(pre *, .not-prose *))::before,
+.prose :where(code):not(:where(pre *, .not-prose *))::after {
+  content: none;
+}
