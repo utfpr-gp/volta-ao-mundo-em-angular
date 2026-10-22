@@ -2,3 +2,185 @@
 @plugin "@tailwindcss/typography";
 @import "@fontsource-variable/nunito-sans";
 @import "@fontsource-variable/jetbrains-mono";
+
+/* O modo escuro do Tailwind segue o atributo data-theme do <html>, escrito antes do Angular. */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/*
+ * Design tokens. Os nomes dizem o papel da cor, nunca a aparência.
+ * Os valores do modo escuro ficam em um único bloco, mais abaixo.
+ * O contraste de cada par é conferido por scripts/check-contrast.mjs.
+ */
+@theme {
+  --font-sans: "Nunito Sans Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --radius-card: 18px;
+
+  --color-primary: #12263A;
+  --color-primary-soft: #1C3550;
+  --color-on-primary: #FFFFFF;
+  --color-on-primary-muted: #C9D6E3;
+  --color-surface: #FBF8F1;
+  --color-surface-raised: #FFFFFF;
+  --color-ink: #1E2430;
+  --color-ink-muted: #5B6474;
+  --color-line: #E7E1D3;
+  --color-link: #1F6FB2;
+  --color-stamp: #C8102E;
+  --color-highlight: #D99A1E;
+  --color-passport: #8E0B21;
+
+  --color-mission: #C8102E;
+  --color-idea: #8A5A0B;
+  --color-inside: #1F6FB2;
+  --color-code: #17705A;
+  --color-pitfall: #B0102A;
+  --color-challenge: #6B4FD8;
+}
+
+@layer base {
+  [data-theme="dark"] {
+    --color-primary: #17324D;
+    --color-primary-soft: #24476B;
+    --color-on-primary: #FFFFFF;
+    --color-on-primary-muted: #C9D6E3;
+    --color-surface: #0F1C2B;
+    --color-surface-raised: #16283B;
+    --color-ink: #E8EEF5;
+    --color-ink-muted: #A7B6C6;
+    --color-line: #2A3F55;
+    --color-link: #7DB8EE;
+    --color-stamp: #FF5A6E;
+    --color-highlight: #F2B544;
+
+    --color-mission: #FF6B7F;
+    --color-idea: #F2C062;
+    --color-inside: #7DB8EE;
+    --color-code: #5CCFA9;
+    --color-pitfall: #FF8A7A;
+    --color-challenge: #B3A1FF;
+
+    color-scheme: dark;
+  }
+
+  html {
+    color-scheme: light;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-surface text-ink font-sans antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  a {
+    @apply text-link;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-highlight);
+    outline-offset: 2px;
+  }
+
+  code,
+  kbd,
+  pre {
+    @apply font-mono;
+  }
+}
+
+@theme {
+  --animate-stamp: stamp 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+
+  @keyframes stamp {
+    0% {
+      transform: scale(1.9) rotate(-24deg);
+      opacity: 0;
+    }
+    60% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1) rotate(-8deg);
+    }
+  }
+}
+
+/* Trechos de código destacados pelo Shiki no build: as cores trocam com o tema. */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+}
+
+[data-theme="dark"] .shiki,
+[data-theme="dark"] .shiki span {
+  color: var(--shiki-dark);
+}
+
+.code-body .shiki {
+  margin: 0;
+  padding: 1rem 0;
+  background: transparent !important;
+  counter-reset: line;
+  outline-offset: -3px;
+}
+
+.code-body .shiki code {
+  display: block;
+  min-width: max-content;
+}
+
+.code-body .shiki .line {
+  display: inline-block;
+  width: 100%;
+  padding: 0 1.25rem 0 0;
+}
+
+.code-body .shiki .line::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 3rem;
+  margin-right: 1rem;
+  padding-right: 0.75rem;
+  text-align: right;
+  color: var(--color-ink-muted);
+  opacity: 0.6;
+  user-select: none;
+}
+
+.code-body .shiki .line.highlighted {
+  background: color-mix(in srgb, var(--color-highlight) 16%, transparent);
+  box-shadow: inset 4px 0 var(--color-highlight);
+}
+
+/* O texto longo dos capítulos usa o plugin de tipografia com as cores dos tokens. */
+.prose {
+  --tw-prose-body: var(--color-ink);
+  --tw-prose-headings: var(--color-ink);
+  --tw-prose-lead: var(--color-ink-muted);
+  --tw-prose-links: var(--color-link);
+  --tw-prose-bold: var(--color-ink);
+  --tw-prose-counters: var(--color-ink-muted);
+  --tw-prose-bullets: var(--color-ink-muted);
+  --tw-prose-hr: var(--color-line);
+  --tw-prose-quotes: var(--color-ink);
+  --tw-prose-quote-borders: var(--color-highlight);
+  --tw-prose-captions: var(--color-ink-muted);
+  --tw-prose-code: var(--color-ink);
+  --tw-prose-th-borders: var(--color-line);
+  --tw-prose-td-borders: var(--color-line);
+}
+
+.prose :where(code):not(:where(pre *, .not-prose *)) {
+  padding: 0.12em 0.4em;
+  border-radius: 0.4em;
+  background: color-mix(in srgb, var(--color-inside) 10%, transparent);
+  font-weight: 600;
+}
+
+.prose :where(code):not(:where(pre *, .not-prose *))::before,
+.prose :where(code):not(:where(pre *, .not-prose *))::after {
+  content: none;
+}

@@ -16,5 +16,11 @@
     "build": "npm run snippets && npm run build -w site && node scripts/post-build.mjs",
     "test": "npm run snippets && npm test -w site -- --watch=false && node --test 'scripts/**/*.test.mjs'",
     "check": "node scripts/check-contrast.mjs && node scripts/check-output.mjs && node scripts/check-links.mjs"
+  },
+  "devDependencies": {
+    "@shikijs/transformers": "^4.5.0",
+    "linkinator": "^8.1.0",
+    "pagefind": "^1.5.2",
+    "shiki": "^4.5.0"
   }
 }
