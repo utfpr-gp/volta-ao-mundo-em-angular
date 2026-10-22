@@ -5,9 +5,11 @@
     @for (option of filters; track option.value) {
       <button
         type="button"
-        class="rounded-full border border-primary px-4 py-1.5 font-bold text-ink"
-        [class.bg-primary]="filter() === option.value"
-        [class.text-on-primary]="filter() === option.value"
+        class="rounded-full border border-ink-muted px-4 py-1.5 font-bold"
+        [class.text-ink]="filter() !== option.value"
+        [class.bg-highlight]="filter() === option.value"
+        [class.border-highlight]="filter() === option.value"
+        [class.text-primary]="filter() === option.value"
         (click)="filter.set(option.value)"
       >
         {{ option.label }}

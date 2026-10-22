@@ -77,6 +77,11 @@ export const GLOSSARY = {
       'Uma marcação com @ em cima de uma classe, como @Component, que acrescenta informações e transforma a classe em algo especial para o Angular.',
     chapter: 4,
   },
+  'design-token': {
+    term: 'Design token',
+    definition: 'Um valor visual com nome de papel, como --color-primary ou --radius-card. Mudar o valor do token muda todo lugar que o usa, inclusive no modo escuro.',
+    chapter: 14,
+  },
   desestruturacao: {
     term: 'Desestruturação',
     definition: 'Um atalho do JavaScript para tirar valores de dentro de um objeto ou array e criar variáveis com eles numa linha, como const { name } = country.',

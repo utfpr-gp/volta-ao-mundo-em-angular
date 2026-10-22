@@ -16,4 +16,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '11-for-e-track': () => import('./11-for-e-track/chapter').then((m) => m.Chapter11),
   '12-pipes': () => import('./12-pipes/chapter').then((m) => m.Chapter12),
   '13-estilos-e-tailwind': () => import('./13-estilos-e-tailwind/chapter').then((m) => m.Chapter13),
+  '14-design-tokens': () => import('./14-design-tokens/chapter').then((m) => m.Chapter14),
 };

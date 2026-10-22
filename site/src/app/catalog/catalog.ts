@@ -262,7 +262,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Design tokens',
     description:
       'Declare cores, fontes e arredondamentos como design tokens no Tailwind e troque o visual inteiro do app, até o modo escuro, de uma vez.',
-    minutes: 30,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Componentes
   {
