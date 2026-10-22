@@ -1,0 +1,210 @@
+<vm-chapter-page slug="04-typescript-para-angular">
+  <vm-view kind="mission" title="Ler qualquer arquivo .ts do Angular">
+    <p class="lead">
+      Todo componente Angular é um arquivo TypeScript. Este é um componente de verdade, do tamanho de um dos primeiros que
+      você vai criar:
+    </p>
+    <vm-code snippet="04/decorator" caption="passport.ts" />
+    <p>
+      Nele aparecem quatro ideias do TypeScript: um <strong>decorator</strong> (o <code>&#64;Component</code>), uma
+      <strong>classe</strong>, um <strong>modificador</strong> (<code>protected readonly</code>) e um
+      <strong>genérico</strong> (o <code>&lt;number&gt;</code>). Ao final deste capítulo, você vai saber o papel de cada
+      uma, e também escrever tipos e interfaces para os dados do Passaporte.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O plugue certo na tomada certa">
+    <vm-analogy emoji="🔌" title="Tomadas e plugues">
+      <p>
+        Uma tomada só aceita o plugue do formato certo. Se o formato não bate, você descobre na hora, antes de ligar o
+        aparelho, e não depois de queimar alguma coisa.
+      </p>
+      <p>
+        Os <strong>tipos</strong> são o formato do plugue. Você diz que uma variável é um número, ou que um país tem nome,
+        capital e população, e o TypeScript confere cada encaixe <strong>enquanto você escreve</strong>. O erro aparece no
+        editor, sublinhado em vermelho, e não no navegador de quem usa o app.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="TypeScript: o JavaScript com tipos">
+    <h3>Tipos que somem antes de rodar</h3>
+    <p>
+      O <vm-term name="typescript">TypeScript</vm-term> é o JavaScript que você já conhece, mais os tipos. Veja uma função
+      com tipos:
+    </p>
+    <vm-code snippet="04/typed-function" caption="percent.ts" />
+    <p>
+      O <code>: number</code> depois de cada parâmetro diz o que ele aceita, e o <code>: number</code> depois dos parênteses
+      diz o que a função devolve. O navegador não entende TypeScript, então o <vm-term name="compilador">compilador</vm-term> (o programa
+      <code>tsc</code>) confere os tipos e depois os apaga, gerando JavaScript comum. Esta é a saída real dele:
+    </p>
+    <vm-code snippet="04/compiled" caption="percent.js (gerado pelo tsc)" />
+    <p>
+      Os tipos sumiram. Eles servem para você e para o editor, enquanto o código é escrito; o navegador nunca os vê. (O
+      <code>"use strict"</code> no topo é um aviso do próprio JavaScript para usar regras mais rígidas; pode ignorar.)
+    </p>
+
+    <h3>Tipos básicos e inferência</h3>
+    <vm-code snippet="04/basic-types" caption="tipos.ts" />
+    <p>
+      <code>string</code> é texto, <code>number</code> é número (inteiro ou não), <code>boolean</code> é verdadeiro ou falso,
+      e <code>string[]</code> é um array de textos. Na linha destacada não há tipo nenhum: o TypeScript
+      <strong>deduz</strong> que <code>capital</code> é uma <code>string</code> pelo valor inicial. Isso se chama
+      <vm-term name="inferencia">inferência</vm-term>, e é por causa dela que o código Angular quase não tem tipos escritos à mão nas variáveis.
+    </p>
+
+    <h3>Interfaces: o formato de um objeto</h3>
+    <vm-code snippet="04/interface" caption="country.ts" />
+    <p>
+      Uma <vm-term name="interface">interface</vm-term> descreve o formato de um objeto: quais propriedades ele tem e o tipo
+      de cada uma. O <code>?</code> em <code>rating?</code> diz que a nota é <strong>opcional</strong>: um país desejado
+      ainda não tem nota. Esta interface, quase igual, vai ser a base do Passaporte.
+    </p>
+
+    <h3>Uniões de valores</h3>
+    <vm-code snippet="04/union" caption="status.ts" />
+    <p>
+      A palavra <code>type</code> dá um nome a um tipo, para você reaproveitá-lo. O <code>|</code> quer dizer "ou". Aqui, <code>Status</code> só aceita exatamente <code>'visited'</code> ou
+      <code>'wishlist'</code>: qualquer outro texto é erro. É um jeito simples de impedir valores inventados.
+    </p>
+    <p>Agora, teste o compilador:</p>
+
+    <vm-type-detective />
+
+    <h3>Classes</h3>
+    <p>
+      Uma <vm-term name="classe">classe</vm-term> é um molde para criar objetos que juntam dados e ações. Todo componente
+      Angular é uma classe.
+    </p>
+    <vm-code snippet="04/class" caption="trip.ts" />
+    <p>
+      Saída: <code>Japão: 5 estrelas</code>. As propriedades (<code>country</code> e <code>rating</code>) guardam os
+      dados; os métodos (<code>rate</code> e <code>describe</code>) são as ações; o <code>constructor</code> roda uma vez,
+      quando o objeto é criado com <code>new</code>. Dentro da classe, <code>this</code> quer dizer "este objeto". O
+      <code>readonly</code> impede trocar o valor depois de criado, e o <code>private</code> avisa que a propriedade é só
+      para uso da própria classe (é uma regra conferida pelo compilador; no JavaScript gerado, ela continua lá). O
+      <code>void</code> em <code>rate(...): void</code> diz que o método não devolve nada.
+    </p>
+    <p>
+      Nos componentes do Angular, você vai ver muito <code>protected readonly</code>. O template de um componente enxerga as
+      propriedades da classe, e o guia oficial recomenda <code>protected</code> para o que só o template usa: deixa claro
+      que aquilo é da tela, e não de outras classes. E o <code>readonly</code> garante que ninguém troque a propriedade por
+      outra sem querer.
+    </p>
+
+    <vm-deep-dive title="public, protected e private">
+      <p>
+        Sem modificador, uma propriedade é <code>public</code>: qualquer código pode usar. <code>private</code> deixa usar
+        só dentro da classe. <code>protected</code> deixa usar dentro da classe e nas classes que herdam dela (as "classes
+        filhas", um recurso que este livro quase não usa). No Angular, o template também enxerga o que é
+        <code>protected</code>.
+      </p>
+    </vm-deep-dive>
+
+    <h3>Genéricos: o tipo como parâmetro</h3>
+    <vm-code snippet="04/generic-array" caption="genericos.ts" />
+    <p>
+      Os sinais de menor e maior, <code>&lt; &gt;</code>, recebem um tipo como se fosse um parâmetro. Isso se chama
+      <vm-term name="generico">genérico</vm-term>. <code>Array&lt;string&gt;</code> é "um array de quê? de textos", o mesmo
+      que <code>string[]</code>. No Angular, você vai escrever <code>signal&lt;number&gt;(0)</code>: um signal de quê? de
+      número.
+    </p>
+
+    <vm-deep-dive title="Escrevendo a sua própria função genérica">
+      <vm-code snippet="04/generics" caption="generics.ts" />
+      <p>
+        O <code>&lt;T&gt;</code> é um tipo que se preenche depois. A função <code>first</code> funciona com array de qualquer
+        tipo e devolve um item do mesmo tipo, ou <code>undefined</code> se o array estiver vazio.
+      </p>
+    </vm-deep-dive>
+
+    <h3>Decorators: a etiqueta que dá superpoderes</h3>
+    <p>
+      O <code>&#64;Component(...)</code> em cima da classe é um <vm-term name="decorator">decorator</vm-term>. Sozinha, a
+      classe <code>Passport</code> do início do capítulo é uma classe comum. O decorator cola nela uma etiqueta com
+      informações extras (o seletor e o template) que transformam a classe num componente. Você vai escrever o seu primeiro
+      componente no <vm-see-chapter [number]="6" />.
+    </p>
+  </vm-view>
+
+  <vm-view kind="code" title="Brinque com o compilador no navegador">
+    <p>Sem instalar nada, o site oficial do TypeScript tem um editor que mostra os erros na hora.</p>
+    <vm-steps label="TypeScript no navegador">
+      <ng-template vmStep="Abrir">
+        <p>
+          Abra o <a href="https://www.typescriptlang.org/pt/play" rel="noopener">TypeScript Playground</a>. À esquerda fica
+          o seu código TypeScript; à direita, o JavaScript gerado.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Colar">
+        <p>Apague o que estiver lá e cole o trecho <code>country.ts</code> da seção anterior.</p>
+        <p><strong>O que muda na tela:</strong> à direita aparece o JavaScript, sem a interface e sem os tipos.</p>
+      </ng-template>
+      <ng-template vmStep="Quebrar">
+        <p>Agora provoque erros, um de cada vez:</p>
+        <ol>
+          <li>Apague a linha <code>capital: 'Brasília',</code>.</li>
+          <li>Troque <code>visited: true</code> por <code>visited: 'sim'</code>.</li>
+          <li>Acrescente <code>rating: 5,</code> e depois troque o 5 por <code>'cinco'</code>.</li>
+        </ol>
+        <p>Depois de ler cada erro, desfaça com <kbd>Ctrl</kbd> + <kbd>Z</kbd> antes de provocar o próximo.</p>
+        <p>
+          <strong>O que muda na tela:</strong> o trecho com problema fica sublinhado em vermelho. Passe o mouse em cima e leia
+          a mensagem: é a mesma que o editor mostra no seu computador.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="O compilador reclamando com razão">
+    <vm-pitfall
+      title="Algo que pode não existir"
+      where="O que o compilador mostra"
+      message="error TS18048: 'found' is possibly 'undefined'."
+    >
+      <vm-code snippet="04/pitfall-undefined" caption="find.ts" />
+      <p>
+        O <code>find</code> pode não achar nada e devolver <code>undefined</code>, e o TypeScript sabe disso. No JavaScript,
+        esse código quebraria só quando rodasse; aqui, o erro aparece antes. <strong>Como sair:</strong> trate a falta, por
+        exemplo com o <code>?.</code> e o <code>??</code> do <vm-see-chapter [number]="3" />:
+      </p>
+      <vm-code snippet="04/fix-undefined" caption="find.ts" />
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Propriedade de classe sem valor inicial"
+      where="O que o compilador mostra"
+      message="error TS2564: Property 'title' has no initializer and is not definitely assigned in the constructor."
+    >
+      <vm-code snippet="04/pitfall-initializer" caption="country-card.ts" />
+      <p>
+        A propriedade foi declarada com um tipo, mas ficou sem valor. Até alguém dar um valor a ela, <code>title</code> seria
+        <code>undefined</code>, o que contradiz o tipo <code>string</code>. Você vai ver muito esse erro em componentes.
+        <strong>Como sair:</strong> dê um valor inicial.
+      </p>
+      <vm-code snippet="04/fix-initializer" caption="country-card.ts" />
+    </vm-pitfall>
+
+    <vm-pitfall title="O any, que desliga o TypeScript" where="O que aparece" message="(nada: e esse é o problema)">
+      <p>
+        Escrever <code>: any</code> diz ao compilador "aceite qualquer coisa aqui". Os erros param de aparecer, e com eles
+        some toda a ajuda do TypeScript; o problema volta a acontecer só no navegador. Ele aparece em tutoriais como atalho
+        para calar o compilador. <strong>Como sair:</strong> escreva o tipo certo, ou crie uma interface. Na dúvida sobre o
+        tipo, use <code>unknown</code>, que obriga a conferir antes de usar.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="04-typescript-para-angular" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Com JavaScript e TypeScript na bagagem, é hora de criar o projeto do Passaporte de verdade:
+      o <vm-see-chapter [number]="5" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

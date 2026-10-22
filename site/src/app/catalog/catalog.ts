@@ -129,7 +129,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Preparando o ambiente',
     description:
       'Instale o Node.js, conheça o terminal e configure o VS Code com as extensões certas para programar em Angular sem tropeços.',
-    minutes: 25,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '03-javascript-moderno',
@@ -138,7 +140,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'JavaScript moderno',
     description:
       'Arrow functions, desestruturação, espalhamento, módulos, Promise e async/await: o JavaScript que o Angular usa em toda linha.',
-    minutes: 35,
+    minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '04-typescript-para-angular',
@@ -147,7 +151,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'TypeScript para Angular',
     description:
       'Tipos, interfaces, classes, genéricos e decorators: o TypeScript que você encontra em qualquer projeto Angular, explicado com calma.',
-    minutes: 40,
+    minutes: 45,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '05-angular-cli',
@@ -156,7 +162,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Angular CLI',
     description:
       'Crie o projeto do Passaporte com o Angular CLI, entenda cada pasta gerada e veja a página atualizar sozinha a cada mudança no código.',
-    minutes: 30,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Fundamentos
   {

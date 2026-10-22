@@ -4,8 +4,8 @@
 //
 // Marque uma linha com "// [!code highlight]" (ou "<!-- [!code highlight] -->" no HTML)
 // para destacá-la; a marca some do código mostrado e do código copiado.
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { basename, dirname, extname, join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { basename, dirname, extname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { transformerNotationHighlight } from '@shikijs/transformers';
 import { codeToHtml } from 'shiki';
@@ -63,6 +63,36 @@ export async function extractAll(root) {
   return entries;
 }
 
+/**
+ * Os arquivos de cada etapa do Passaporte (passaporte/etapas/NN-slug), com a chave
+ * NN/etapa/<caminho>. Assim o capítulo mostra o código que de fato compila na etapa.
+ */
+export async function extractStages(root) {
+  if (!existsSync(root)) return [];
+  const entries = [];
+  for (const stage of readdirSync(root).sort()) {
+    const base = join(root, stage);
+    if (!/^\d{2}-/.test(stage) || !statSync(base).isDirectory()) continue;
+    const files = [];
+    if (existsSync(join(base, 'package.json'))) files.push(join(base, 'package.json'));
+    const walk = (dir) => {
+      for (const name of readdirSync(dir).sort()) {
+        const full = join(dir, name);
+        if (statSync(full).isDirectory()) walk(full);
+        else if (!name.endsWith('.spec.ts')) files.push(full);
+      }
+    };
+    if (existsSync(join(base, 'src'))) walk(join(base, 'src'));
+    for (const file of files) {
+      const path = relative(base, file).split(sep).join('/');
+      const lang = langFor(extname(file).slice(1));
+      const source = readFileSync(file, 'utf8');
+      entries.push({ key: `${stage.slice(0, 2)}/etapa/${path}`, lang, html: await highlight(source, lang), source: stripNotation(source) });
+    }
+  }
+  return entries.sort((a, b) => a.key.localeCompare(b.key));
+}
+
 export function renderModule(entries) {
   const sorted = [...entries].sort((a, b) => a.key.localeCompare(b.key));
   const union = sorted.length ? sorted.map((entry) => `'${entry.key}'`).join(' | ') : 'never';
@@ -85,7 +115,7 @@ export function renderModule(entries) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const entries = await extractAll('site/snippets');
+  const entries = [...(await extractAll('site/snippets')), ...(await extractStages('passaporte/etapas'))];
   mkdirSync('site/src/generated', { recursive: true });
   writeFileSync('site/src/generated/snippets.ts', renderModule(entries));
   console.log(`Trechos de código: ${entries.length} gerado(s) em site/src/generated/snippets.ts.`);

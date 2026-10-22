@@ -10,11 +10,22 @@ export interface GlossaryEntry {
  * componente <vm-term name="chave">; uma chave inexistente quebra o build.
  */
 export const GLOSSARY = {
+  'angular-cli': {
+    term: 'Angular CLI',
+    definition:
+      'A ferramenta de terminal do Angular, usada pelo comando ng: cria projetos (ng new), liga o app (ng serve), roda testes (ng test) e gera a versão final (ng build).',
+    chapter: 5,
+  },
   angularjs: {
     term: 'AngularJS',
     definition:
       'A primeira versão do Angular, de 2010, escrita em JavaScript. Foi reescrita do zero em 2016 e não recebe mais atualizações desde 2021. Exemplos com ng-controller e $scope são dela.',
     chapter: 1,
+  },
+  'arrow-function': {
+    term: 'Arrow function',
+    definition: 'Um jeito curto de escrever uma função com a seta =>, como (c) => c.name. Aparece em todo lugar no Angular, dentro de filter, map e computed.',
+    chapter: 3,
   },
   biblioteca: {
     term: 'Biblioteca',
@@ -28,6 +39,11 @@ export const GLOSSARY = {
       'Um molde que junta dados e funções num lugar só. No Angular, cada componente é uma classe em TypeScript que guarda o estado e as ações da tela.',
     chapter: 1,
   },
+  compilador: {
+    term: 'Compilador',
+    definition: 'Um programa que transforma código de uma forma em outra. O do TypeScript confere os tipos e gera JavaScript; o do Angular transforma templates em JavaScript.',
+    chapter: 4,
+  },
   'codigo-aberto': {
     term: 'Código aberto',
     definition:
@@ -39,6 +55,17 @@ export const GLOSSARY = {
     definition:
       'Um pedaço da tela com aparência (HTML), estilo (CSS) e comportamento (TypeScript) próprios. Uma tela inteira é uma árvore de componentes encaixados.',
     chapter: 1,
+  },
+  decorator: {
+    term: 'Decorator',
+    definition:
+      'Uma marcação com @ em cima de uma classe, como @Component, que acrescenta informações e transforma a classe em algo especial para o Angular.',
+    chapter: 4,
+  },
+  desestruturacao: {
+    term: 'Desestruturação',
+    definition: 'Um atalho do JavaScript para tirar valores de dentro de um objeto ou array e criar variáveis com eles numa linha, como const { name } = country.',
+    chapter: 3,
   },
   estado: {
     term: 'Estado',
@@ -52,17 +79,67 @@ export const GLOSSARY = {
       'Uma estrutura pronta que organiza a aplicação e chama o seu código na hora certa. Você escreve as peças; o framework monta e faz funcionar.',
     chapter: 1,
   },
+  lts: {
+    term: 'LTS (suporte de longo prazo)',
+    definition:
+      'Uma versão estável de um software que recebe correções por bastante tempo. No Node.js, são as versões indicadas para estudar e trabalhar.',
+    chapter: 2,
+  },
+  generico: {
+    term: 'Genérico',
+    definition: 'Um tipo que recebe outro tipo como parâmetro, entre < >. Array<string> é um array de textos; signal<number> é um signal de número.',
+    chapter: 4,
+  },
+  inferencia: {
+    term: 'Inferência de tipos',
+    definition: 'Quando o TypeScript deduz o tipo sozinho, pelo valor inicial: em let capital = \'Brasília\', ele já sabe que capital é uma string.',
+    chapter: 4,
+  },
+  interface: {
+    term: 'Interface',
+    definition:
+      'No TypeScript, a descrição do formato de um objeto: quais propriedades ele tem e o tipo de cada uma. Some quando o código vira JavaScript.',
+    chapter: 4,
+  },
   json: {
     term: 'JSON',
     definition:
       'Um formato de texto para trocar dados, com chaves e valores, como {"nome": "Brasil"}. É o que o servidor costuma devolver para uma SPA.',
     chapter: 1,
   },
+  nodejs: {
+    term: 'Node.js',
+    definition:
+      'Um programa que roda JavaScript direto no computador, sem navegador. As ferramentas do Angular, como o Angular CLI, rodam nele.',
+    chapter: 2,
+  },
+  npm: {
+    term: 'npm',
+    definition:
+      'O gerenciador de pacotes que vem com o Node.js. Baixa e instala códigos prontos, como as partes do Angular, a partir do package.json.',
+    chapter: 2,
+  },
   opinativo: {
     term: 'Opinativo',
     definition:
       'Diz-se de um framework que já decide muita coisa por você: estrutura de pastas, linguagem, forma de testar. Menos liberdade, mais projetos parecidos entre si.',
     chapter: 1,
+  },
+  pacote: {
+    term: 'Pacote',
+    definition: 'Um código pronto publicado no npm para todo mundo usar. O próprio Angular é distribuído como um conjunto de pacotes.',
+    chapter: 2,
+  },
+  porta: {
+    term: 'Porta',
+    definition: 'Um número que identifica um programa que atende pedidos num computador, como o 4200 de http://localhost:4200. É como o número do apartamento num prédio.',
+    chapter: 5,
+  },
+  promise: {
+    term: 'Promise',
+    definition:
+      'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
+    chapter: 3,
   },
   servidor: {
     term: 'Servidor',
@@ -87,6 +164,17 @@ export const GLOSSARY = {
     definition:
       'O HTML de um componente, com marcações do Angular como {{ }} para mostrar valores. É a parte do componente que vira tela.',
     chapter: 1,
+  },
+  'template-string': {
+    term: 'Template string',
+    definition: 'Um texto escrito entre crases, em que você encaixa valores com ${}, como `Olá, ${nome}`.',
+    chapter: 3,
+  },
+  terminal: {
+    term: 'Terminal',
+    definition:
+      'Um programa em que você conversa com o computador por comandos de texto, como pwd, cd e npm, em vez de clicar em ícones.',
+    chapter: 2,
   },
   typescript: {
     term: 'TypeScript',

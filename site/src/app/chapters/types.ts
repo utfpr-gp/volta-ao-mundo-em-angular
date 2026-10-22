@@ -21,4 +21,6 @@ export interface ChapterContent {
   essentials: SnippetId[];
   questions: Question[];
   links: { label: string; url: string }[];
+  /** A pasta da etapa do Passaporte deste capítulo, em passaporte/etapas/. */
+  stage?: string;
 }
