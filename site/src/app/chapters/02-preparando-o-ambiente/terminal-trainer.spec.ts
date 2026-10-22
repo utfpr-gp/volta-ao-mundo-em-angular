@@ -36,6 +36,14 @@ describe('runCommand (modelo do terminal)', () => {
     expect(runCommand(initialTerminal(), 'nodee -v').output).toEqual(['bash: nodee: comando não encontrado']);
   });
 
+  it('cd / goes to the root, where ls shows the system folders, and cd ~ comes back home', () => {
+    let state = runCommand(initialTerminal(), 'cd /').state;
+    expect(runCommand(state, 'pwd').output).toEqual(['/']);
+    expect(runCommand(state, 'ls').output[0]).toContain('home');
+    state = runCommand(state, 'cd ~').state;
+    expect(runCommand(state, 'pwd').output).toEqual(['/home/voce']);
+  });
+
   it('mkdir without a name shows the real coreutils message', () => {
     expect(runCommand(initialTerminal(), 'mkdir').output[0]).toBe('mkdir: falta operando');
   });

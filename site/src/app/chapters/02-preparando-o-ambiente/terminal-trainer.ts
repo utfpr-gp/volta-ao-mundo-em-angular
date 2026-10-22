@@ -11,6 +11,8 @@ export interface TerminalState {
   tree: Folder;
   /** Caminho a partir da pasta pessoal (/home/voce); vazio quando está nela. */
   cwd: string[];
+  /** Verdadeiro quando o terminal está na raiz do sistema, fora da pasta pessoal. */
+  atRoot: boolean;
   done: MissionId[];
 }
 
@@ -31,7 +33,7 @@ export const MISSIONS: { id: MissionId; command: string; goal: string }[] = [
 ];
 
 export function initialTerminal(): TerminalState {
-  return { tree: { Documentos: {}, Downloads: {} }, cwd: [], done: [] };
+  return { tree: { Documentos: {}, Downloads: {} }, cwd: [], atRoot: false, done: [] };
 }
 
 function folderAt(tree: Folder, path: string[]): Folder {
@@ -46,6 +48,16 @@ function withMission(state: TerminalState, mission: MissionId): TerminalState {
 export function runCommand(state: TerminalState, line: string): CommandResult {
   const [command, ...args] = line.trim().split(/\s+/).filter(Boolean);
   const here = folderAt(state.tree, state.cwd);
+
+  if (state.atRoot && command !== undefined) {
+    if (command === 'pwd') return { state, output: ['/'] };
+    if (command === 'ls') return { state, output: ['bin  etc  home  tmp  usr'] };
+    if (command === 'cd' && (args[0] === undefined || args[0] === '~' || args[0] === '/home/voce')) {
+      return { state: { ...state, atRoot: false, cwd: [] }, output: [] };
+    }
+    if (command === 'cd' && args[0] === '/') return { state, output: [] };
+    if (command === 'cd') return { state, output: ['Neste treino, da raiz você volta para casa com cd ~.'] };
+  }
 
   switch (command) {
     case undefined:
@@ -65,6 +77,7 @@ export function runCommand(state: TerminalState, line: string): CommandResult {
     case 'cd': {
       const target = args[0] ?? '~';
       if (target === '~') return { state: { ...state, cwd: [] }, output: [] };
+      if (target === '/') return { state: { ...state, atRoot: true }, output: [] };
       if (target === '..') return { state: { ...state, cwd: state.cwd.slice(0, -1) }, output: [] };
       if (!(target in here)) return { state, output: [`bash: cd: ${target}: Arquivo ou diretório inexistente`] };
       return { state: withMission({ ...state, cwd: [...state.cwd, target] }, 'cd'), output: [] };
@@ -80,7 +93,7 @@ export function runCommand(state: TerminalState, line: string): CommandResult {
     case 'clear':
       return { state, output: [], clear: true };
     case 'help':
-      return { state, output: ['Comandos deste treino: pwd, ls, mkdir <nome>, cd <pasta>, cd .., node -v, npm -v, clear'] };
+      return { state, output: ['Comandos deste treino: pwd, ls, mkdir <nome>, cd <pasta>, cd .., cd ~, cd /, node -v, npm -v, clear'] };
     default:
       return { state, output: [`bash: ${command}: comando não encontrado`] };
   }
@@ -179,7 +192,9 @@ export class TerminalTrainer {
   protected readonly screen = signal<ScreenLine[]>([{ text: 'Boas-vindas ao terminal de treino. Digite pwd e aperte Enter. (O ~ no começo da linha é um apelido da sua pasta pessoal, /home/voce.)' }]);
   protected readonly draft = signal('');
   protected readonly announcement = signal('');
-  protected readonly prompt = computed(() => `voce@computador:${['~', ...this.state().cwd].join('/')}`);
+  protected readonly prompt = computed(() =>
+    this.state().atRoot ? 'voce@computador:/' : `voce@computador:${['~', ...this.state().cwd].join('/')}`,
+  );
   private readonly history: string[] = [];
   private historyIndex = 0;
 

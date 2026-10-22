@@ -2,7 +2,7 @@ import type { ChapterContent } from '../types';
 
 export const CHAPTER_02: ChapterContent = {
   summary: [
-    'O terminal recebe comandos em texto e sempre age sobre a pasta atual: `pwd`, `ls`, `mkdir`, `cd`.',
+    'O terminal sempre age sobre a pasta atual: `pwd`, `ls`, `mkdir`, `cd`; `~` é a pasta pessoal, `/` a raiz, `..` a pasta de cima.',
     'O Node.js roda JavaScript fora do navegador; é nele que rodam as ferramentas do Angular.',
     'O npm vem com o Node.js e instala pacotes, como as partes do próprio Angular.',
     'Use uma versão LTS do Node.js aceita pelo Angular 22 e confira com `node -v` e `npm -v`.',

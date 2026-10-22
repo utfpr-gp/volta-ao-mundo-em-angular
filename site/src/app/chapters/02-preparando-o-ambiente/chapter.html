@@ -6,7 +6,7 @@
       cada uma.
     </p>
     <ul>
-      <li>o <strong>terminal</strong>, para conversar com o computador por comandos;</li>
+      <li>o <strong>terminal</strong>, que você já conhece, agora como a casa das ferramentas do Angular;</li>
       <li>o <strong>Node.js</strong> e o <strong>npm</strong>, que rodam e instalam as ferramentas do Angular;</li>
       <li>o <strong>VS Code</strong>, com a extensão oficial do Angular.</li>
     </ul>
@@ -34,28 +34,79 @@
         uma vez, para os próximos capítulos serem só código.
       </p>
     </vm-analogy>
-    <p>
-      E o terminal? Nele, em vez de clicar em ícones, você escreve um pedido
-      curto (<code>mkdir angular</code>: "crie a pasta angular"), aperta Enter e o computador responde em texto. Parece
-      estranho no começo, mas é mais rápido e mais preciso do que procurar o botão certo, e todas as ferramentas do Angular
-      funcionam assim.
-    </p>
   </vm-view>
 
   <vm-view kind="inside" title="As três ferramentas por dentro">
-    <h3>O terminal</h3>
+    <h3>Revisão rápida do terminal</h3>
     <p>
-      O <vm-term name="terminal">terminal</vm-term> é um programa em que você digita comandos. Ele sempre está "dentro" de
-      uma pasta, a <strong>pasta atual</strong>, e cada comando age sobre ela. Um comando tem um nome e, às vezes,
-      <strong>argumentos</strong>: em <code>cd angular</code>, <code>cd</code> é o comando ("mude de pasta") e
-      <code>angular</code> é o argumento ("para qual pasta"). Os cinco comandos que você mais vai usar:
+      Você já usou um <vm-term name="terminal">terminal</vm-term>. Vale relembrar o essencial, porque, no Angular, tudo passa
+      por ele: criar o projeto, ligar o app, rodar os testes e publicar. O ponto que mais causa erro é a
+      <strong>pasta atual</strong>: cada comando age sobre a pasta em que o terminal está, e os comandos do Angular só
+      funcionam dentro da pasta do projeto. Os cinco comandos que você mais vai usar neste livro:
     </p>
     <vm-code snippet="02/navigate" caption="terminal" />
-    <p>
-      O <code>#</code> começa um comentário: tudo depois dele é só para você ler, o terminal ignora. No terminal, o
-      <code>~</code> é um apelido da sua pasta pessoal; no Linux ela se chama algo como <code>/home/seu-nome</code>, no
-      macOS <code>/Users/seu-nome</code> e no Windows <code>C:\Users\seu-nome</code>. Experimente sem medo:
-    </p>
+    <p>O <code>#</code> começa um comentário: tudo depois dele é só para você ler, o terminal ignora.</p>
+
+    <p>E uma cola com os símbolos e atalhos que mais evitam tropeços:</p>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Símbolo ou atalho</th>
+            <th>O que quer dizer</th>
+            <th>Exemplo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>~</code></td>
+            <td>a sua pasta pessoal (no Linux, <code>/home/seu-nome</code>; no macOS, <code>/Users/seu-nome</code>; no Windows, <code>C:\Users\seu-nome</code>)</td>
+            <td><code>cd ~</code> volta para ela de qualquer lugar</td>
+          </tr>
+          <tr>
+            <td><code>/</code></td>
+            <td>a raiz (<em>root</em>): a pasta mais alta do sistema, onde tudo começa. No Windows, o equivalente é o disco, como <code>C:\</code></td>
+            <td><code>cd /</code> vai para a raiz</td>
+          </tr>
+          <tr>
+            <td><code>.</code></td>
+            <td>a pasta atual</td>
+            <td><code>code .</code> abre a pasta atual no VS Code</td>
+          </tr>
+          <tr>
+            <td><code>..</code></td>
+            <td>a pasta de cima, a "mãe" da atual</td>
+            <td><code>cd ..</code> sobe uma pasta</td>
+          </tr>
+          <tr>
+            <td>caminho absoluto</td>
+            <td>começa na raiz ou no <code>~</code> e funciona de qualquer lugar</td>
+            <td><code>cd ~/angular/passaporte</code></td>
+          </tr>
+          <tr>
+            <td>caminho relativo</td>
+            <td>parte da pasta atual; depende de onde você está</td>
+            <td><code>cd passaporte</code></td>
+          </tr>
+          <tr>
+            <td><kbd>Tab</kbd></td>
+            <td>completa nomes de pastas e arquivos; evita erro de digitação</td>
+            <td><code>cd pass</code> + <kbd>Tab</kbd></td>
+          </tr>
+          <tr>
+            <td><kbd>↑</kbd></td>
+            <td>traz de volta os comandos anteriores</td>
+            <td>repetir o <code>ng serve</code></td>
+          </tr>
+          <tr>
+            <td><kbd>Ctrl</kbd> + <kbd>C</kbd></td>
+            <td>interrompe o programa que está rodando (no terminal, não copia)</td>
+            <td>desligar o <code>ng serve</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Se quiser relembrar na prática, use o terminal de treino; se já está à vontade, pule direto para o Node.js:</p>
 
     <vm-terminal-trainer />
 
