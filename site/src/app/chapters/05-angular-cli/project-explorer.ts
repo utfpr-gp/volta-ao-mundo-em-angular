@@ -53,6 +53,7 @@ const BOOT_STEPS = [
           <span class="block text-xl font-extrabold text-ink">O projeto por dentro</span>
           <span class="mt-1 block max-w-2xl text-ink-muted">
             Clique num arquivo para ver para que ele serve e o conteúdo real dele no Passaporte. Ou veja como o app liga.
+            No VS Code aparecem mais alguns arquivos (README.md, .gitignore, tsconfig.app.json); aqui ficam só os principais.
           </span>
         </span>
         <button

@@ -23,7 +23,7 @@ export const CHAPTER_02: ChapterContent = {
           explanation: 'Isso: o Node.js roda as ferramentas no seu computador; o app pronto roda no navegador de quem usa.',
         },
         {
-          text: 'Porque o Node.js é o editor de código do Angular.',
+          text: 'Porque o Node.js é o editor em que você escreve e organiza os arquivos do projeto.',
           explanation: 'O editor é o VS Code (ou outro). O Node.js roda JavaScript fora do navegador.',
         },
       ],

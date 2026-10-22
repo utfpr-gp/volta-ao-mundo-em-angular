@@ -1,3 +1,4 @@
+// Imita um servidor: entrega o país depois de meio segundo.
 function fetchCountry(name) {
   return new Promise((resolve) => {
     setTimeout(() => resolve({ name, capital: 'Brasília' }), 500);

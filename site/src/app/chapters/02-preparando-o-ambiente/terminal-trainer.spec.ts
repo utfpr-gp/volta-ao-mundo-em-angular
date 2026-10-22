@@ -36,6 +36,10 @@ describe('runCommand (modelo do terminal)', () => {
     expect(runCommand(initialTerminal(), 'nodee -v').output).toEqual(['bash: nodee: comando não encontrado']);
   });
 
+  it('mkdir without a name shows the real coreutils message', () => {
+    expect(runCommand(initialTerminal(), 'mkdir').output[0]).toBe('mkdir: falta operando');
+  });
+
   it('clear empties the screen and an empty line does nothing', () => {
     expect(runCommand(initialTerminal(), 'clear').clear).toBe(true);
     expect(runCommand(initialTerminal(), '   ').output).toEqual([]);

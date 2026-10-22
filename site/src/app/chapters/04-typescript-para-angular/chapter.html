@@ -36,11 +36,14 @@
     <vm-code snippet="04/typed-function" caption="percent.ts" />
     <p>
       O <code>: number</code> depois de cada parâmetro diz o que ele aceita, e o <code>: number</code> depois dos parênteses
-      diz o que a função devolve. O navegador não entende TypeScript, então o <strong>compilador</strong> (o programa
+      diz o que a função devolve. O navegador não entende TypeScript, então o <vm-term name="compilador">compilador</vm-term> (o programa
       <code>tsc</code>) confere os tipos e depois os apaga, gerando JavaScript comum. Esta é a saída real dele:
     </p>
     <vm-code snippet="04/compiled" caption="percent.js (gerado pelo tsc)" />
-    <p>Os tipos sumiram. Eles servem para você e para o editor, enquanto o código é escrito; o navegador nunca os vê.</p>
+    <p>
+      Os tipos sumiram. Eles servem para você e para o editor, enquanto o código é escrito; o navegador nunca os vê. (O
+      <code>"use strict"</code> no topo é um aviso do próprio JavaScript para usar regras mais rígidas; pode ignorar.)
+    </p>
 
     <h3>Tipos básicos e inferência</h3>
     <vm-code snippet="04/basic-types" caption="tipos.ts" />
@@ -48,7 +51,7 @@
       <code>string</code> é texto, <code>number</code> é número (inteiro ou não), <code>boolean</code> é verdadeiro ou falso,
       e <code>string[]</code> é um array de textos. Na linha destacada não há tipo nenhum: o TypeScript
       <strong>deduz</strong> que <code>capital</code> é uma <code>string</code> pelo valor inicial. Isso se chama
-      inferência, e é por causa dela que o código Angular quase não tem tipos escritos à mão nas variáveis.
+      <vm-term name="inferencia">inferência</vm-term>, e é por causa dela que o código Angular quase não tem tipos escritos à mão nas variáveis.
     </p>
 
     <h3>Interfaces: o formato de um objeto</h3>
@@ -62,7 +65,7 @@
     <h3>Uniões de valores</h3>
     <vm-code snippet="04/union" caption="status.ts" />
     <p>
-      O <code>|</code> quer dizer "ou". Aqui, <code>Status</code> só aceita exatamente <code>'visited'</code> ou
+      A palavra <code>type</code> dá um nome a um tipo, para você reaproveitá-lo. O <code>|</code> quer dizer "ou". Aqui, <code>Status</code> só aceita exatamente <code>'visited'</code> ou
       <code>'wishlist'</code>: qualquer outro texto é erro. É um jeito simples de impedir valores inventados.
     </p>
     <p>Agora, teste o compilador:</p>
@@ -79,29 +82,42 @@
       Saída: <code>Japão: 5 estrelas</code>. As propriedades (<code>country</code> e <code>rating</code>) guardam os
       dados; os métodos (<code>rate</code> e <code>describe</code>) são as ações; o <code>constructor</code> roda uma vez,
       quando o objeto é criado com <code>new</code>. Dentro da classe, <code>this</code> quer dizer "este objeto". O
-      <code>readonly</code> impede trocar o valor depois de criado, e o <code>private</code> esconde a propriedade de quem
-      está fora da classe.
+      <code>readonly</code> impede trocar o valor depois de criado, e o <code>private</code> avisa que a propriedade é só
+      para uso da própria classe (é uma regra conferida pelo compilador; no JavaScript gerado, ela continua lá). O
+      <code>void</code> em <code>rate(...): void</code> diz que o método não devolve nada.
+    </p>
+    <p>
+      Nos componentes do Angular, você vai ver muito <code>protected readonly</code>. O template de um componente enxerga as
+      propriedades da classe, e o guia oficial recomenda <code>protected</code> para o que só o template usa: deixa claro
+      que aquilo é da tela, e não de outras classes. E o <code>readonly</code> garante que ninguém troque a propriedade por
+      outra sem querer.
     </p>
 
-    <vm-deep-dive title="public, protected e private no Angular">
+    <vm-deep-dive title="public, protected e private">
       <p>
-        Sem modificador, uma propriedade é <code>public</code>: qualquer código pode ler. <code>private</code> deixa usar só
-        dentro da classe. <code>protected</code> deixa usar dentro da classe e nas classes filhas.
-      </p>
-      <p>
-        No Angular, o template de um componente consegue ler propriedades <code>protected</code>, mas não
-        <code>private</code>. Por isso o guia oficial recomenda <code>protected</code> para o que só o template usa, e é
-        assim que você vai ver no Passaporte.
+        Sem modificador, uma propriedade é <code>public</code>: qualquer código pode usar. <code>private</code> deixa usar
+        só dentro da classe. <code>protected</code> deixa usar dentro da classe e nas classes que herdam dela (as "classes
+        filhas", um recurso que este livro quase não usa). No Angular, o template também enxerga o que é
+        <code>protected</code>.
       </p>
     </vm-deep-dive>
 
     <h3>Genéricos: o tipo como parâmetro</h3>
-    <vm-code snippet="04/generics" caption="generics.ts" />
+    <vm-code snippet="04/generic-array" caption="genericos.ts" />
     <p>
-      O <code>&lt;T&gt;</code> é um tipo que se preenche depois. <code>Array&lt;string&gt;</code> é "um array de quê? de
-      textos". A função <code>first</code> funciona com array de qualquer tipo e devolve um item do mesmo tipo. No Angular,
-      você vai escrever genéricos como <code>signal&lt;number&gt;(0)</code>: um signal de quê? de número.
+      Os sinais de menor e maior, <code>&lt; &gt;</code>, recebem um tipo como se fosse um parâmetro. Isso se chama
+      <vm-term name="generico">genérico</vm-term>. <code>Array&lt;string&gt;</code> é "um array de quê? de textos", o mesmo
+      que <code>string[]</code>. No Angular, você vai escrever <code>signal&lt;number&gt;(0)</code>: um signal de quê? de
+      número.
     </p>
+
+    <vm-deep-dive title="Escrevendo a sua própria função genérica">
+      <vm-code snippet="04/generics" caption="generics.ts" />
+      <p>
+        O <code>&lt;T&gt;</code> é um tipo que se preenche depois. A função <code>first</code> funciona com array de qualquer
+        tipo e devolve um item do mesmo tipo, ou <code>undefined</code> se o array estiver vazio.
+      </p>
+    </vm-deep-dive>
 
     <h3>Decorators: a etiqueta que dá superpoderes</h3>
     <p>
@@ -132,6 +148,7 @@
           <li>Troque <code>visited: true</code> por <code>visited: 'sim'</code>.</li>
           <li>Acrescente <code>rating: 5,</code> e depois troque o 5 por <code>'cinco'</code>.</li>
         </ol>
+        <p>Depois de ler cada erro, desfaça com <kbd>Ctrl</kbd> + <kbd>Z</kbd> antes de provocar o próximo.</p>
         <p>
           <strong>O que muda na tela:</strong> o trecho com problema fica sublinhado em vermelho. Passe o mouse em cima e leia
           a mensagem: é a mesma que o editor mostra no seu computador.

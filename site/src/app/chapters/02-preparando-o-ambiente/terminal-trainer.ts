@@ -56,7 +56,7 @@ export function runCommand(state: TerminalState, line: string): CommandResult {
       return { state: withMission(state, 'ls'), output: Object.keys(here).length ? [Object.keys(here).sort().join('  ')] : [] };
     case 'mkdir': {
       const name = args[0];
-      if (!name) return { state, output: ['mkdir: falta o operando'] };
+      if (!name) return { state, output: ['mkdir: falta operando', 'Tente "mkdir --help" para mais informações.'] };
       if (name in here) return { state, output: [`mkdir: não foi possível criar o diretório “${name}”: Arquivo existe`] };
       const tree = structuredClone(state.tree);
       folderAt(tree, state.cwd)[name] = {};
@@ -176,7 +176,7 @@ export class TerminalTrainer {
 
   protected readonly missions = MISSIONS;
   protected readonly state = signal(initialTerminal());
-  protected readonly screen = signal<ScreenLine[]>([{ text: 'Boas-vindas ao terminal de treino. Digite pwd e aperte Enter.' }]);
+  protected readonly screen = signal<ScreenLine[]>([{ text: 'Boas-vindas ao terminal de treino. Digite pwd e aperte Enter. (O ~ no começo da linha é um apelido da sua pasta pessoal, /home/voce.)' }]);
   protected readonly draft = signal('');
   protected readonly announcement = signal('');
   protected readonly prompt = computed(() => `voce@computador:${['~', ...this.state().cwd].join('/')}`);

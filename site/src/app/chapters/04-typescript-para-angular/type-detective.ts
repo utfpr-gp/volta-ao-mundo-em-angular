@@ -21,12 +21,12 @@ export const SCENARIOS: Scenario[] = [
     before: 'population = ',
     after: ';',
     options: [
-      { code: '213_000_000', error: null, why: 'Um número numa variável do tipo number.' },
       {
         code: "'213 milhões'",
         error: "error TS2322: Type 'string' is not assignable to type 'number'.",
         why: 'Entre aspas é texto (string), e a variável só aceita número.',
       },
+      { code: '213_000_000', error: null, why: 'Um número numa variável do tipo number.' },
     ],
   },
   {
@@ -49,12 +49,12 @@ export const SCENARIOS: Scenario[] = [
     after: ';',
     options: [
       { code: "'visited'", error: null, why: 'Um dos dois valores permitidos.' },
-      { code: "'wishlist'", error: null, why: 'O outro valor permitido.' },
       {
         code: "'visitado'",
         error: "error TS2820: Type '\"visitado\"' is not assignable to type 'Status'. Did you mean '\"visited\"'?",
         why: 'Só valem exatamente os textos do tipo; o compilador até sugere o certo.',
       },
+      { code: "'wishlist'", error: null, why: 'O outro valor permitido.' },
     ],
   },
   {
@@ -75,12 +75,12 @@ export const SCENARIOS: Scenario[] = [
     before: 'console.log(chile.',
     after: ');',
     options: [
-      { code: 'name', error: null, why: 'name existe na interface Country.' },
       {
         code: 'nome',
         error: "error TS2339: Property 'nome' does not exist on type 'Country'.",
         why: 'A propriedade se chama name, em inglês; o TypeScript pega o erro antes de rodar.',
       },
+      { code: 'name', error: null, why: 'name existe na interface Country.' },
     ],
   },
 ];

@@ -32,7 +32,7 @@ export const CHAPTER_05: ChapterContent = {
       alternatives: [
         { text: 'Reinstalar o Node.js.', explanation: 'O Node.js e o CLI estão funcionando: o CLI respondeu. O problema é a pasta.' },
         { text: 'Entrar na pasta do projeto com `cd` e rodar de novo.', correct: true, explanation: 'Isso: comandos como `ng serve` só funcionam dentro de um projeto Angular.' },
-        { text: 'Trocar a porta com `--port`.', explanation: 'Esse é o caminho para o erro de porta ocupada, não para este.' },
+        { text: 'Rodar de novo com `--port 4300`, porque a porta padrão pode estar ocupada.', explanation: 'Esse é o caminho para o erro de porta ocupada, não para este.' },
       ],
     },
     {
@@ -44,11 +44,11 @@ export const CHAPTER_05: ChapterContent = {
       ],
     },
     {
-      prompt: 'Por que a pasta `node_modules` não vai para o Git?',
+      prompt: 'O `ng serve` está rodando e você precisa digitar outro comando no terminal. O que fazer?',
       alternatives: [
-        { text: 'Porque ela tem senhas.', explanation: 'Ela tem os pacotes baixados, sem segredo nenhum. O motivo é outro.' },
-        { text: 'Porque é enorme e qualquer pessoa a recria rodando `npm install`.', correct: true, explanation: 'Isso: o `package.json` já diz o que baixar.' },
-        { text: 'Porque o Angular apaga essa pasta depois do build.', explanation: 'Ela continua lá; só não precisa ser guardada no Git.' },
+        { text: 'Apertar `Ctrl` + `C` para copiar o endereço e colar o comando.', explanation: 'No terminal, `Ctrl` + `C` interrompe o programa: o servidor desligaria.' },
+        { text: 'Fechar o VS Code e abrir de novo, para liberar o terminal.', explanation: 'Isso desligaria o servidor também. Não é preciso fechar nada.' },
+        { text: 'Abrir um segundo terminal e deixar o servidor rodando no primeiro.', correct: true, explanation: 'Isso: o terminal do `ng serve` fica ocupado enquanto o servidor roda.' },
       ],
     },
   ],

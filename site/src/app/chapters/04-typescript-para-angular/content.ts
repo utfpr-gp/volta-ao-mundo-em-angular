@@ -46,7 +46,7 @@ export const CHAPTER_04: ChapterContent = {
       prompt: 'Por que evitar `: any`?',
       alternatives: [
         { text: 'Porque deixa o app mais lento no navegador.', explanation: 'Os tipos somem antes de rodar; o `any` não muda a velocidade.' },
-        { text: 'Porque é proibido no Angular.', explanation: 'Não é proibido; é desaconselhado, pelo motivo da outra alternativa.' },
+        { text: 'Porque o Angular se recusa a compilar qualquer arquivo que tenha `any`.', explanation: 'O Angular compila, sim; o `any` é desaconselhado, pelo motivo da outra alternativa.' },
         { text: 'Porque desliga a conferência de tipos, e os erros voltam a aparecer só no navegador.', correct: true, explanation: 'Isso: você perde exatamente a ajuda que o TypeScript dá.' },
       ],
     },

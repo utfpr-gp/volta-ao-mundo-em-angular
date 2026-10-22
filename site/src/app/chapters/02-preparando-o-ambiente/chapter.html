@@ -35,7 +35,7 @@
       </p>
     </vm-analogy>
     <p>
-      E o terminal? Pense nele como trocar mensagens com o computador. Em vez de clicar em ícones, você escreve um pedido
+      E o terminal? Nele, em vez de clicar em ícones, você escreve um pedido
       curto (<code>mkdir angular</code>: "crie a pasta angular"), aperta Enter e o computador responde em texto. Parece
       estranho no começo, mas é mais rápido e mais preciso do que procurar o botão certo, e todas as ferramentas do Angular
       funcionam assim.
@@ -52,7 +52,9 @@
     </p>
     <vm-code snippet="02/navigate" caption="terminal" />
     <p>
-      O <code>#</code> começa um comentário: tudo depois dele é só para você ler, o terminal ignora. Experimente sem medo:
+      O <code>#</code> começa um comentário: tudo depois dele é só para você ler, o terminal ignora. No terminal, o
+      <code>~</code> é um apelido da sua pasta pessoal; no Linux ela se chama algo como <code>/home/seu-nome</code>, no
+      macOS <code>/Users/seu-nome</code> e no Windows <code>C:\Users\seu-nome</code>. Experimente sem medo:
     </p>
 
     <vm-terminal-trainer />
@@ -67,7 +69,8 @@
     <p>
       Até aqui, o JavaScript que você conhece roda dentro do navegador, numa página. O
       <vm-term name="nodejs">Node.js</vm-term> é um programa que roda JavaScript <strong>direto no computador</strong>,
-      sem navegador. Veja um arquivo JavaScript comum:
+      sem navegador. Veja um arquivo JavaScript comum (por enquanto, só observe: você cria e roda um arquivo assim no
+      próximo capítulo):
     </p>
     <vm-code snippet="02/hello" caption="hello.js" />
     <p>E rodando com o Node.js, no terminal:</p>
@@ -135,14 +138,15 @@
         <p>
           O jeito mais simples é baixar o instalador marcado como <strong>LTS</strong> em
           <a href="https://nodejs.org/pt/download" rel="noopener">nodejs.org</a> e clicar em "Avançar" até o fim. Se
-          preferir o terminal, no PowerShell:
+          preferir o terminal, abra o PowerShell (procure "PowerShell" no menu Iniciar) e rode:
         </p>
         <vm-code snippet="02/install-windows" caption="PowerShell" />
       </ng-template>
       <ng-template vmStep="macOS">
         <p>
           Baixe o instalador <strong>LTS</strong> em <a href="https://nodejs.org/pt/download" rel="noopener">nodejs.org</a>.
-          Se você já usa o Homebrew, um comando resolve:
+          Se você já usa o Homebrew (um instalador de programas para macOS), este comando instala a versão mais nova do
+          Node.js, que o Angular 22 também aceita:
         </p>
         <vm-code snippet="02/install-mac" caption="Terminal" />
       </ng-template>

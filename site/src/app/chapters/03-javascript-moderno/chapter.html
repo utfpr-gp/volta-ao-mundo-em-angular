@@ -8,8 +8,8 @@
     <p>
       Repare que quase nada nela é Angular. É <strong>JavaScript moderno</strong>: uma arrow function, um
       <code>filter</code>, um <code>map</code> e uma template string. Ao final deste capítulo, você vai ler cada pedaço
-      dessa linha e saber o que ele faz. O <code>computed</code> e os parênteses em <code>countries()</code> ficam para o
-      <vm-see-chapter [number]="9" />.
+      dessa linha e saber o que ele faz. O <code>protected readonly</code> e o <code>this</code> ficam para o próximo
+      capítulo, e o <code>computed</code> e os parênteses em <code>countries()</code>, para o <vm-see-chapter [number]="9" />.
     </p>
     <p>
       Se você aprendeu JavaScript há pouco tempo, muito do que vem a seguir pode ser novidade. Se já conhece tudo, faça o
@@ -48,15 +48,15 @@
     <h3>Template strings</h3>
     <vm-code snippet="03/template-literal" caption="template-literal.js" />
     <p>
-      Saída: <code>A capital de Japão é Tóquio.</code> Com a crase, você monta textos encaixando valores no meio, sem
+      Saída: <code>A capital de Portugal é Lisboa.</code> Com a <vm-term name="template-string">template string</vm-term>, feita com crase, você monta textos encaixando valores no meio, sem
       somar pedaços com <code>+</code>. Atenção: é crase, e não aspas.
     </p>
 
     <h3>Arrow functions</h3>
     <vm-code snippet="03/arrow" caption="arrow.js" />
     <p>
-      Saída: <code>42 42</code>. As duas funções fazem a mesma coisa. A arrow function é um jeito curto de escrever uma
-      função: os parâmetros, a seta <code>=&gt;</code> e o resultado. Quando o corpo é uma linha só, o
+      Saída: <code>42 42</code>. As duas funções fazem a mesma coisa. A <vm-term name="arrow-function">arrow function</vm-term>
+      é um jeito curto de escrever uma função: os parâmetros, a seta <code>=&gt;</code> e o resultado. Quando o corpo é uma linha só, o
       <code>return</code> fica implícito. Elas aparecem em todo lugar no Angular, principalmente dentro de
       <code>filter</code>, <code>map</code> e <code>computed</code>.
     </p>
@@ -64,7 +64,7 @@
     <h3>Desestruturação</h3>
     <vm-code snippet="03/destructuring" caption="destructuring.js" />
     <p>
-      Saída: <code>Portugal Lisboa</code> e <code>Brasil Japão</code>. A desestruturação tira valores de dentro de um
+      Saída: <code>Portugal Lisboa</code> e <code>Brasil Japão</code>. A <vm-term name="desestruturacao">desestruturação</vm-term> tira valores de dentro de um
       objeto ou de um array e cria variáveis com eles, numa linha só. O <code>10_600_000</code> é só um número com
       separadores, para ler melhor.
     </p>
@@ -93,7 +93,13 @@
       Saída: <code>[ 'Brasil', 'Portugal' ]</code> e <code>Ásia</code>. O <code>filter</code> devolve um array só com quem
       passou no teste; o <code>map</code> devolve um array do mesmo tamanho, com cada item transformado; o
       <code>find</code> devolve o primeiro item que passa no teste (ou <code>undefined</code>, se nenhum passar). Os três
-      não mudam o array original. Brinque com a esteira:
+      não mudam o array original.
+    </p>
+    <p>
+      E o <code>c</code> em <code>(c) =&gt; c.visited</code>? É o parâmetro da arrow function: o
+      <code>filter</code> chama a função uma vez para cada item, e a cada vez o <code>c</code> é um país diferente. Leia
+      como "para cada país <code>c</code>, ele foi visitado?". O nome é livre; <code>c</code> vem de <em>country</em>. Brinque
+      com a esteira:
     </p>
 
     <vm-array-conveyor />
@@ -120,7 +126,9 @@
     </vm-analogy>
     <vm-code snippet="03/async-await" caption="async-await.js" />
     <p>
-      Saída: <code>Buscando...</code> e, meio segundo depois, <code>Brasil: Brasília</code>. O <code>await</code> só pode
+      Saída: <code>Buscando...</code> e, meio segundo depois, <code>Brasil: Brasília</code>. Não se preocupe com o miolo de
+      <code>fetchCountry</code> (o <code>new Promise</code> e o <code>setTimeout</code>): ele só finge a espera de um
+      servidor. Foque no <code>await</code>, que só pode
       ser usado dentro de uma função marcada com <code>async</code>. No Angular, você vai buscar dados de outro jeito, com
       ferramentas próprias, a partir do <vm-see-chapter [number]="29" />; mas a ideia de "um valor que chega depois" é a
       mesma.
@@ -146,8 +154,8 @@
         <p>No terminal, crie uma pasta para os testes deste capítulo e entre nela:</p>
         <vm-code snippet="03/run-countries" caption="terminal" />
         <p>
-          O último comando, <code>node paises.js</code>, ainda vai dar erro, porque o arquivo não existe. Crie o arquivo no
-          próximo passo e rode de novo.
+          Dica: guarde tudo do livro numa pasta só, por exemplo uma pasta <code>angular</code> na sua pasta pessoal, como você
+          treinou no simulador do capítulo 2. O importante é saber onde a pasta está: confira com <code>pwd</code>.
         </p>
       </ng-template>
       <ng-template vmStep="Criar o arquivo">
