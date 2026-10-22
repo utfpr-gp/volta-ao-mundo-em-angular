@@ -40,6 +40,12 @@ export const GLOSSARY = {
       'Um pedaço da tela com aparência (HTML), estilo (CSS) e comportamento (TypeScript) próprios. Uma tela inteira é uma árvore de componentes encaixados.',
     chapter: 1,
   },
+  decorator: {
+    term: 'Decorator',
+    definition:
+      'Uma marcação com @ em cima de uma classe, como @Component, que acrescenta informações e transforma a classe em algo especial para o Angular.',
+    chapter: 4,
+  },
   estado: {
     term: 'Estado',
     definition:
@@ -57,6 +63,12 @@ export const GLOSSARY = {
     definition:
       'Uma versão estável de um software que recebe correções por bastante tempo. No Node.js, são as versões indicadas para estudar e trabalhar.',
     chapter: 2,
+  },
+  interface: {
+    term: 'Interface',
+    definition:
+      'No TypeScript, a descrição do formato de um objeto: quais propriedades ele tem e o tipo de cada uma. Some quando o código vira JavaScript.',
+    chapter: 4,
   },
   json: {
     term: 'JSON',

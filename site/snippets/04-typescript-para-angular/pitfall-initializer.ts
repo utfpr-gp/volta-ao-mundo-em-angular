@@ -1,0 +1,3 @@
+class CountryCard {
+  title: string;
+}

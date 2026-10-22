@@ -151,7 +151,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'TypeScript para Angular',
     description:
       'Tipos, interfaces, classes, genéricos e decorators: o TypeScript que você encontra em qualquer projeto Angular, explicado com calma.',
-    minutes: 40,
+    minutes: 45,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '05-angular-cli',
