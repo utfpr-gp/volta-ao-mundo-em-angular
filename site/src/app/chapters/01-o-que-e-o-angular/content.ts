@@ -106,7 +106,7 @@ export const CHAPTER_01: ChapterContent = {
     { label: 'Playground: Angular no navegador, sem instalar nada', url: 'https://angular.dev/playground' },
     { label: 'Versões e suporte do Angular', url: 'https://angular.dev/reference/releases' },
     { label: 'Novidades do Angular 22', url: 'https://angular.dev/events/v22' },
-    { label: 'Tutoriais oficiais', url: 'https://angular.dev/tutorials' },
+    { label: 'Aprenda Angular: tutorial interativo no navegador', url: 'https://angular.dev/tutorials/learn-angular' },
     { label: 'SPA, no glossário da MDN', url: 'https://developer.mozilla.org/pt-BR/docs/Glossary/SPA' },
   ],
 };
