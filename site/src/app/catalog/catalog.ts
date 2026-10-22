@@ -174,7 +174,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Componentes',
     description:
       'Desmonte uma tela em átomos, moléculas e organismos, crie componentes standalone e monte com eles a árvore de componentes do app.',
-    minutes: 35,
+    minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '07-interpolacao-e-property-binding',

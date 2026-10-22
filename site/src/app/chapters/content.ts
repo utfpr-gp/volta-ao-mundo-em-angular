@@ -3,6 +3,7 @@ import { CHAPTER_02 } from './02-preparando-o-ambiente/content';
 import { CHAPTER_03 } from './03-javascript-moderno/content';
 import { CHAPTER_04 } from './04-typescript-para-angular/content';
 import { CHAPTER_05 } from './05-angular-cli/content';
+import { CHAPTER_06 } from './06-componentes/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -12,4 +13,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '03-javascript-moderno': CHAPTER_03,
   '04-typescript-para-angular': CHAPTER_04,
   '05-angular-cli': CHAPTER_05,
+  '06-componentes': CHAPTER_06,
 };

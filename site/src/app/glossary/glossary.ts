@@ -27,6 +27,11 @@ export const GLOSSARY = {
     definition: 'Um jeito curto de escrever uma função com a seta =>, como (c) => c.name. Aparece em todo lugar no Angular, dentro de filter, map e computed.',
     chapter: 3,
   },
+  'atomic-design': {
+    term: 'Atomic Design',
+    definition: 'Um jeito de pensar telas em cinco níveis, inspirado na química: átomos, moléculas, organismos, templates e páginas. Criado pelo designer Brad Frost.',
+    chapter: 6,
+  },
   biblioteca: {
     term: 'Biblioteca',
     definition:
@@ -140,6 +145,11 @@ export const GLOSSARY = {
     definition:
       'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
     chapter: 3,
+  },
+  seletor: {
+    term: 'Seletor (selector)',
+    definition: 'O nome da tag que representa um componente no HTML. Com selector: \'app-header\', o componente aparece onde estiver <app-header />.',
+    chapter: 6,
   },
   servidor: {
     term: 'Servidor',
