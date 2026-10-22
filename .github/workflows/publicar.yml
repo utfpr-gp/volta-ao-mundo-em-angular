@@ -49,5 +49,13 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
+      # Eventos de push podem chegar atrasados; uma execução de um commit antigo não pode
+      # publicar por cima de uma versão mais nova. Só publica se este commit ainda for o topo da main.
+      - name: Conferir se é a versão mais recente da main
+        id: latest
+        run: |
+          head=$(git ls-remote "https://github.com/${{ github.repository }}" refs/heads/main | cut -f1)
+          if [ "$head" = "${{ github.sha }}" ]; then echo "current=yes" >> "$GITHUB_OUTPUT"; else echo "current=no" >> "$GITHUB_OUTPUT"; echo "Commit antigo (${{ github.sha }}); a main está em $head. Nada a publicar."; fi
       - id: deploy
+        if: steps.latest.outputs.current == 'yes'
         uses: actions/deploy-pages@v4
