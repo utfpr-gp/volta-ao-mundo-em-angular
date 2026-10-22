@@ -251,7 +251,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Estilos e Tailwind',
     description:
       'Entenda o CSS isolado de cada componente, aplique classes do Tailwind direto no template e use ícones para dar vida ao Passaporte.',
-    minutes: 35,
+    minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '14-design-tokens',

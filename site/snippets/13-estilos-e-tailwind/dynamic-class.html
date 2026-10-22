@@ -1,0 +1,5 @@
+<!-- Não funciona: o Tailwind não acha a classe completa no código -->
+<span [class]="'text-' + color + '-700'">Visitado</span>
+
+<!-- Funciona: as classes aparecem inteiras no código -->
+<span [class]="visited() ? 'text-emerald-700' : 'text-slate-500'">Visitado</span>

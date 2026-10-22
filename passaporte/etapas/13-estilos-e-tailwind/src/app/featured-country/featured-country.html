@@ -1,0 +1,23 @@
+<article class="featured">
+  <img [src]="country.flagUrl" [alt]="'Bandeira do ' + country.name" width="80" />
+  <div>
+    <p class="label">País em destaque</p>
+    <h2>{{ country.name }}</h2>
+    <p>Capital: {{ country.capital | uppercase }} · {{ country.population | number }} habitantes</p>
+    @if (visited()) {
+      <p class="stamp">🛂 Carimbado! Você já esteve aqui.</p>
+      <button type="button" class="secondary" (click)="toggleVisited()">Desmarcar</button>
+    } @else {
+      <button type="button" (click)="toggleVisited()">Marcar como visitado</button>
+    }
+
+    <label class="note">
+      Anotação da viagem
+      <input #note (input)="onType(note.value)" (keydown.enter)="saveNote(note.value)" />
+    </label>
+    <p class="hint">{{ draft().length }} letras · aperte Enter para salvar</p>
+    @if (savedNote()) {
+      <p class="saved">Anotação salva em {{ savedAt() | date: 'dd/MM/yyyy, HH:mm' }}: {{ savedNote() }}</p>
+    }
+  </div>
+</article>

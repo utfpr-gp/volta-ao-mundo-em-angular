@@ -1,0 +1,8 @@
+/* Estilos que valem para o app inteiro. */
+@import 'tailwindcss';
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #fbf8f1;
+}

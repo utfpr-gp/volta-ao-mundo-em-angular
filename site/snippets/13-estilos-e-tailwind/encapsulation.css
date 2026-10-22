@@ -1,0 +1,9 @@
+/* O que você escreve em country-list.css */
+.card {
+  border: 1px solid #e7e1d3;
+}
+
+/* O que o Angular entrega ao navegador (o código do atributo varia) */
+.card[_ngcontent-ng-c2093716537] {
+  border: 1px solid #e7e1d3;
+}

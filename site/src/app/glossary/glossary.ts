@@ -82,6 +82,11 @@ export const GLOSSARY = {
     definition: 'Um atalho do JavaScript para tirar valores de dentro de um objeto ou array e criar variáveis com eles numa linha, como const { name } = country.',
     chapter: 3,
   },
+  encapsulamento: {
+    term: 'Encapsulamento de estilos',
+    definition: 'O jeito como o Angular faz o CSS de um componente valer só para ele: marca os elementos com um atributo único e limita as regras a esse atributo.',
+    chapter: 13,
+  },
   estado: {
     term: 'Estado',
     definition:
@@ -209,6 +214,11 @@ export const GLOSSARY = {
     term: 'Variável de template',
     definition: 'Um nome dado a um elemento com #, como <input #note>. Pode ser usado em outros pontos do mesmo template, como note.value.',
     chapter: 8,
+  },
+  tailwind: {
+    term: 'Tailwind CSS',
+    definition: 'Uma biblioteca de CSS com classes pequenas e prontas, como p-4 e rounded-xl, que você junta direto no HTML para montar o visual.',
+    chapter: 13,
   },
   'template-string': {
     term: 'Template string',
