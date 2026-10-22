@@ -24,7 +24,7 @@ const chapterRoutes: Routes = CHAPTERS.map((chapter): Route => {
 
 const trackFrom = (route: ActivatedRouteSnapshot) => trackById(route.paramMap.get('trilha') ?? '');
 
-const page = (description: string): PageData => ({ kind: 'page', description });
+const page = (description: string, noindex?: true): PageData => ({ kind: 'page', description, ...(noindex && { noindex }) });
 const notFound: PageData = { kind: 'not-found', description: 'Este endereço não existe no livro.' };
 
 export const routes: Routes = [
@@ -38,7 +38,7 @@ export const routes: Routes = [
     path: 'passaporte',
     title: 'Meu passaporte',
     loadComponent: () => import('./pages/passport').then((m) => m.Passport),
-    data: page('Os carimbos que você conquistou em cada trilha do livro, o seu progresso pelo mundo do Angular e a cópia de segurança do passaporte.'),
+    data: page('Os carimbos que você conquistou em cada trilha do livro, o seu progresso pelo mundo do Angular e a cópia de segurança do passaporte.', true),
   },
   {
     path: 'trilhas/:trilha',
@@ -64,7 +64,7 @@ export const routes: Routes = [
     path: 'busca',
     title: 'Busca',
     loadComponent: () => import('./pages/search-page').then((m) => m.SearchPage),
-    data: page('Procure qualquer assunto em todos os capítulos, no glossário e nas referências rápidas do livro.'),
+    data: page('Procure qualquer assunto em todos os capítulos, no glossário e nas referências rápidas do livro.', true),
   },
   {
     path: 'sobre',

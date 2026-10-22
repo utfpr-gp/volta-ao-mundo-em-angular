@@ -22,6 +22,7 @@ describe('BookTitleStrategy', () => {
           { path: 'capitulos/09-signals', title: 'Como usar signals?', component: Blank, data: { kind: 'chapter', slug: '09-signals', description: 'Signals.' } },
           { path: 'capitulos/50-pwabuilder', title: 'Como usar o PWABuilder?', component: Blank, data: { kind: 'coming-soon', slug: '50-pwabuilder', description: 'Em breve.' } },
           { path: 'sobre', title: 'Sobre o livro', component: Blank, data: { kind: 'page', description: 'Sobre.' } },
+          { path: 'busca', title: 'Busca', component: Blank, data: { kind: 'page', description: 'Busca.', noindex: true } },
           { path: '**', title: 'Destino não encontrado', component: Blank, data: { kind: 'not-found', description: 'Nada.' } },
         ]),
         { provide: TitleStrategy, useClass: BookTitleStrategy },
@@ -64,5 +65,10 @@ describe('BookTitleStrategy', () => {
   it('ignores query string and fragment in the canonical URL', async () => {
     await harness.navigateByUrl('/sobre?x=1#licencas');
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(/\/sobre\/$/);
+  });
+
+  it('pages that declare noindex (search, personal passport) get the robots tag', async () => {
+    await harness.navigateByUrl('/busca');
+    expect(meta('name="robots"')).toBe('noindex');
   });
 });

@@ -40,4 +40,9 @@ describe('routes', () => {
     expect(find('404').data!['kind']).toBe('not-found');
     expect(find('**').data!['kind']).toBe('not-found');
   });
+
+  it('search and personal passport pages are not indexed', () => {
+    expect(find('busca').data!['noindex']).toBe(true);
+    expect(find('passaporte').data!['noindex']).toBe(true);
+  });
 });

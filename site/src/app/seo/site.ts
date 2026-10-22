@@ -11,6 +11,8 @@ export interface PageData {
   kind: PageKind;
   description: string;
   slug?: string;
+  /** Páginas que não fazem sentido no Google, como a busca e o passaporte pessoal. */
+  noindex?: boolean;
 }
 
 /** O endereço canônico de uma página. No GitHub Pages cada página é uma pasta, por isso a barra final. */

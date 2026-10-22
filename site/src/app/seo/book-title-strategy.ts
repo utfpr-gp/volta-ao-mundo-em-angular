@@ -42,7 +42,7 @@ export class BookTitleStrategy extends TitleStrategy {
       title: fullTitle,
       description,
       path,
-      noindex: data.kind === 'coming-soon' || data.kind === 'not-found',
+      noindex: data.noindex === true || data.kind === 'coming-soon' || data.kind === 'not-found',
       jsonLd: this.jsonLd(path, data.kind, title, description),
     });
   }
