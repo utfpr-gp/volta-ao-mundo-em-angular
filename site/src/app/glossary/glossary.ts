@@ -22,6 +22,12 @@ export const GLOSSARY = {
       'Um conjunto de código pronto que você chama quando precisa, como uma caixa de ferramentas. Quem decide a hora de usar é o seu código.',
     chapter: 1,
   },
+  classe: {
+    term: 'Classe',
+    definition:
+      'Um molde que junta dados e funções num lugar só. No Angular, cada componente é uma classe em TypeScript que guarda o estado e as ações da tela.',
+    chapter: 1,
+  },
   'codigo-aberto': {
     term: 'Código aberto',
     definition:
@@ -32,6 +38,12 @@ export const GLOSSARY = {
     term: 'Componente',
     definition:
       'Um pedaço da tela com aparência (HTML), estilo (CSS) e comportamento (TypeScript) próprios. Uma tela inteira é uma árvore de componentes encaixados.',
+    chapter: 1,
+  },
+  estado: {
+    term: 'Estado',
+    definition:
+      'Um valor que muda enquanto o app roda, como o número de cliques ou a lista de países visitados. Quando o estado muda, a tela precisa mostrar o valor novo.',
     chapter: 1,
   },
   framework: {
@@ -52,6 +64,12 @@ export const GLOSSARY = {
       'Diz-se de um framework que já decide muita coisa por você: estrutura de pastas, linguagem, forma de testar. Menos liberdade, mais projetos parecidos entre si.',
     chapter: 1,
   },
+  servidor: {
+    term: 'Servidor',
+    definition:
+      'O computador, em algum lugar da internet, que guarda o site e os dados e responde aos pedidos que o navegador faz.',
+    chapter: 1,
+  },
   signal: {
     term: 'Signal',
     definition:
@@ -62,6 +80,12 @@ export const GLOSSARY = {
     term: 'SPA (aplicação de página única)',
     definition:
       'Uma aplicação web que carrega a página uma vez e, depois, troca só partes da tela, pedindo ao servidor apenas os dados que faltam.',
+    chapter: 1,
+  },
+  template: {
+    term: 'Template',
+    definition:
+      'O HTML de um componente, com marcações do Angular como {{ }} para mostrar valores. É a parte do componente que vira tela.',
     chapter: 1,
   },
   typescript: {

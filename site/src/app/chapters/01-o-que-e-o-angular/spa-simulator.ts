@@ -70,7 +70,7 @@ const REDRAWN = 'ring-4 ring-highlight motion-safe:animate-redraw';
       <figcaption class="mb-5 flex flex-wrap items-start justify-between gap-3">
         <span>
           <span class="block text-xs font-extrabold uppercase tracking-[0.18em] text-inside">Simulador</span>
-          <span class="block text-xl font-extrabold text-ink">Do clique à página nova × SPA</span>
+          <span class="block text-xl font-extrabold text-ink">Site tradicional × SPA</span>
           <span class="mt-1 block max-w-2xl text-ink-muted">
             Clique no menu de cada lado e compare o que é redesenhado e o que viaja pela rede. Os tamanhos são ilustrativos.
           </span>

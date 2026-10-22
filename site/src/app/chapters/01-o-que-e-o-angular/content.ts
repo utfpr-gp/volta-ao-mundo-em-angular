@@ -31,17 +31,17 @@ export const CHAPTER_01: ChapterContent = {
       prompt: 'Qual frase resume a diferença entre uma biblioteca e um framework?',
       alternatives: [
         {
-          text: 'A biblioteca é paga e o framework é gratuito.',
-          explanation: 'Preço não tem nada a ver: as duas podem ser gratuitas e de código aberto, como o React e o Angular.',
-        },
-        {
-          text: 'Com a biblioteca, o seu código a chama quando precisa; o framework é a estrutura que chama o seu código na hora certa.',
-          correct: true,
-          explanation: 'Exato: a diferença está em quem chama quem. Caixa de ferramentas de um lado, linha de montagem do outro.',
+          text: 'A biblioteca é pequena e o framework é grande.',
+          explanation: 'Tamanho não define: há bibliotecas enormes e frameworks enxutos. O que muda é quem chama quem.',
         },
         {
           text: 'A biblioteca serve para o servidor e o framework, para o navegador.',
           explanation: 'Os dois existem nos dois lugares. A diferença está em quem controla o fluxo do programa.',
+        },
+        {
+          text: 'Você chama a biblioteca; o framework chama você.',
+          correct: true,
+          explanation: 'Exato: a diferença está em quem chama quem. Caixa de ferramentas de um lado, linha de montagem do outro.',
         },
       ],
     },
@@ -56,7 +56,7 @@ export const CHAPTER_01: ChapterContent = {
         },
         {
           text: 'Angular antigo, que ainda funciona mas não é o jeito atual.',
-          explanation: 'O Angular antigo usaria `*ngFor`, com asterisco. O `ng-repeat`, sem asterisco e com hífen, é do AngularJS.',
+          explanation: 'O Angular antigo usaria `*ngFor`, com asterisco. Atributos como `ng-repeat` e `ng-if` são a marca do AngularJS.',
         },
         {
           text: 'Angular de hoje.',
@@ -68,17 +68,17 @@ export const CHAPTER_01: ChapterContent = {
       prompt: 'Por que o Angular é chamado de opinativo?',
       alternatives: [
         {
-          text: 'Porque ele mostra a opinião de quem usa o app em avaliações.',
-          explanation: 'Não tem relação com avaliações. "Opinativo" fala de quem decide como o projeto é organizado.',
-        },
-        {
-          text: 'Porque já decide muita coisa por você: a linguagem, a estrutura de pastas, como fazer rotas, formulários e testes.',
-          correct: true,
-          explanation: 'Isso: menos escolhas para pesquisar e projetos parecidos entre si, em troca de mais conceitos no começo.',
+          text: 'Porque, sendo de código aberto, qualquer pessoa pode opinar e mudar o código dele.',
+          explanation: 'Código aberto permite contribuir, mas "opinativo" fala das decisões que o framework já toma por você.',
         },
         {
           text: 'Porque cada equipe escolhe livremente as bibliotecas de rotas e formulários.',
           explanation: 'É o contrário: isso descreve o React. No Angular, rotas e formulários já vêm de fábrica.',
+        },
+        {
+          text: 'Porque já decide muita coisa por você: linguagem, pastas, rotas, formulários e testes.',
+          correct: true,
+          explanation: 'Isso: menos escolhas para pesquisar e projetos parecidos entre si, em troca de mais conceitos no começo.',
         },
       ],
     },
@@ -86,13 +86,13 @@ export const CHAPTER_01: ChapterContent = {
       prompt: 'O que o Angular tem que uma página feita só com JavaScript, atualizada à mão, não tem?',
       alternatives: [
         {
+          text: 'Ele deixa o primeiro acesso ao site mais leve.',
+          explanation: 'É o contrário: no simulador, a SPA baixa mais no primeiro acesso, porque traz o código do app junto.',
+        },
+        {
           text: 'Ele atualiza sozinho cada lugar da tela que mostra um valor, quando esse valor muda.',
           correct: true,
           explanation: 'Isso: a tela declara o que mostra, como uma fórmula de planilha, e o framework mantém tudo em dia.',
-        },
-        {
-          text: 'Ele dispensa o HTML: a tela é desenhada só com TypeScript.',
-          explanation: 'O Angular usa HTML, sim: é o template de cada componente.',
         },
         {
           text: 'Ele faz o site funcionar sem nenhum servidor.',

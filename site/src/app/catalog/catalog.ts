@@ -400,7 +400,7 @@ const ENTRIES: ChapterEntry[] = [
     slug: '32-resource-e-http-resource',
     track: 'dados',
     question: 'Como buscar dados com `resource()` e `httpResource()`?',
-    shortTitle: 'resource() e httpResource',
+    shortTitle: 'resource() e httpResource()',
     description:
       'Busque dados que dependem de signals com resource() e httpResource(), mostrando carregando, erro e resultado sem escrever subscribe.',
     minutes: 30,
@@ -467,7 +467,7 @@ const ENTRIES: ChapterEntry[] = [
     question: 'Como enviar o token em toda requisição com interceptors?',
     shortTitle: 'Interceptors',
     description:
-      'Coloque o token de acesso em toda requisição, trate erros num lugar só e mostre um indicador de carregamento usando interceptors.',
+      'Coloque o token em toda requisição do HttpClient, trate erros num lugar só e mostre um indicador de carregamento com interceptors.',
     minutes: 30,
   },
   {
