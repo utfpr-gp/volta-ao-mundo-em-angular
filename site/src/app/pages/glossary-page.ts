@@ -43,6 +43,7 @@ function groupByLetter(): LetterGroup[] {
       </nav>
 
       <div data-pagefind-body>
+        <span data-pagefind-meta="title" hidden>Glossário</span>
         @for (group of groups; track group.letter) {
           <section class="mt-10" [attr.aria-labelledby]="'letra-' + group.letter">
             <h2 [id]="'letra-' + group.letter" class="scroll-mt-48 border-b border-line pb-2 text-3xl font-extrabold text-idea">{{ group.letter }}</h2>
