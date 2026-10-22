@@ -55,12 +55,12 @@ export const CHAPTER_01: ChapterContent = {
           explanation: 'Isso: `ng-repeat` é uma pista certeira de AngularJS. É outro produto, sem suporte desde o fim de 2021. Feche o tutorial.',
         },
         {
-          text: 'Angular antigo, que ainda funciona mas não é o jeito atual.',
-          explanation: 'O Angular antigo usaria `*ngFor`, com asterisco. Atributos como `ng-repeat` e `ng-if` são a marca do AngularJS.',
+          text: 'Angular de hoje, com um componente novo chamado `ng-repeat`.',
+          explanation: 'Não existe `ng-repeat` no Angular de hoje. Atributos como `ng-repeat` e `ng-if` são a marca do AngularJS.',
         },
         {
-          text: 'Angular de hoje.',
-          explanation: 'O Angular de hoje repete elementos com o bloco `@for`, e não com atributos no HTML.',
+          text: 'Não é Angular: é React.',
+          explanation: 'O React escreve o HTML dentro do JavaScript, em JSX; `ng-repeat` num atributo é a marca do AngularJS.',
         },
       ],
     },

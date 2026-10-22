@@ -119,3 +119,18 @@ a marca some do código mostrado e do código copiado.
 | `npm run build` | Site estático em `site/dist/site/browser/`, com 404, sitemap, robots e índice da busca |
 | `npm run check` | Contraste, verificação de cada página gerada e links internos |
 | `node scripts/make-og-image.mjs` | Regera a imagem de compartilhamento a partir de `site/og.html` |
+
+## Notas para capítulos futuros
+
+Vindas das revisões do capítulo 1 (professor, estudante e especialista):
+
+- **Capítulo 5 (CLI):** incluir um "Aprofundando: como ler uma mensagem de erro", porque os erros começam a aparecer ali,
+  bem antes do capítulo 43.
+- **Capítulo 11 (`@for`):** armadilha do `*ngFor` antigo com a mensagem real do compilador
+  (`NG8103: The *ngFor directive was used in the template, but neither the NgFor directive nor the CommonModule was imported...`),
+  e o aviso de que `*ngIf`/`*ngFor` estão obsoletos desde a versão 20. Não citar `*ngFor` antes desse capítulo.
+- **Capítulo 29 (`HttpClient`):** uma caixa curta de "primeiro contato com Observable", ligada ao capítulo 30.
+- **Capítulo 39 (interceptors):** deixar claro que interceptors só veem requisições do `HttpClient`; o cliente do
+  Supabase usa `fetch` e põe o token sozinho.
+- **Em todo capítulo:** no máximo duas ou três analogias; termo novo vai ao glossário; partes de curiosidade vão para
+  `<vm-deep-dive>`; terminar com "E agora?" apontando a próxima parada.
