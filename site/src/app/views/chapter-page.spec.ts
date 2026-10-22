@@ -73,7 +73,10 @@ describe('ChapterPage', () => {
   });
 
   it('has no stage card when the chapter has no stage', async () => {
-    const element = await render();
-    expect(element.querySelector('[data-stage]')).toBeNull();
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(ChapterPage);
+    fixture.componentRef.setInput('slug', '01-o-que-e-o-angular');
+    await fixture.whenStable();
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-stage]')).toBeNull();
   });
 });
