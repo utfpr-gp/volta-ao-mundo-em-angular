@@ -1,0 +1,151 @@
+<vm-chapter-page slug="10-if-e-switch">
+  <vm-view kind="mission" title="A tela que muda de forma">
+    <p class="lead">
+      Até aqui, o Passaporte mudava só os <strong>valores</strong> na tela. Agora ele muda a própria
+      <strong>forma</strong>: com zero países, o placar mostra uma mensagem de boas-vindas em vez dos números; conforme você
+      viaja, aparece o seu nível de viajante; e o país em destaque ganha um carimbo quando é visitado.
+    </p>
+    <div class="not-prose my-6 grid gap-3 sm:grid-cols-2" aria-hidden="true">
+      <div class="rounded-2xl bg-primary p-4 text-on-primary">
+        <p class="text-lg font-extrabold">Nenhum país ainda</p>
+        <p class="text-sm text-on-primary-muted">Todo passaporte começa vazio. Que tal marcar o primeiro?</p>
+        <p class="mt-2 font-bold text-highlight">✈️ Nível: no aeroporto</p>
+      </div>
+      <div class="rounded-2xl bg-primary p-4 text-on-primary">
+        <p class="text-lg font-extrabold">12 de 195 países</p>
+        <p class="text-sm text-on-primary-muted">6% do mundo · faltam 183</p>
+        <p class="mt-2 font-bold text-highlight">🧳 Nível: viajante</p>
+      </div>
+    </div>
+    <p>
+      O mesmo componente, duas aparências, decididas pelo estado. Ao final do capítulo, você vai saber mostrar, esconder e
+      alternar partes da tela com <code>&#64;if</code>, <code>&#64;else</code> e <code>&#64;switch</code>.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A placa de bifurcação">
+    <vm-analogy emoji="🪧" title="Uma estrada, vários caminhos">
+      <p>
+        Numa bifurcação, uma placa diz: "se for para o litoral, vire à direita; senão, siga em frente". Você só percorre um
+        dos caminhos. O outro continua existindo no mapa, mas você não passa por ele.
+      </p>
+      <p>
+        O <code>&#64;if</code> é essa placa no template: se a condição for verdadeira, o Angular desenha um bloco; senão,
+        desenha o outro. E o <code>&#64;switch</code> é o trevo com várias saídas: uma para cada valor possível.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Controle de fluxo no template">
+    <h3><code>&#64;if</code> e <code>&#64;else</code></h3>
+    <vm-code snippet="10/etapa/src/app/world-progress/world-progress.html" caption="world-progress.html" />
+    <p>
+      O <code>&#64;if</code> recebe uma condição entre parênteses e um bloco entre chaves. Se a condição for verdadeira, o
+      bloco aparece; o <code>&#64;else</code> é opcional e vale quando ela é falsa. Repare na condição:
+      <code>visitedCount() === 0</code>, com parênteses, porque <code>visitedCount</code> é um signal. Existe também o
+      <code>&#64;else if (...)</code>, para encadear mais condições.
+    </p>
+
+    <h3><code>&#64;switch</code> e <code>&#64;case</code></h3>
+    <p>
+      Quando há vários casos para um mesmo valor, o <code>&#64;switch</code> fica mais limpo que uma escada de
+      <code>&#64;else if</code>. Ele compara o valor com cada <code>&#64;case</code> e mostra o primeiro que bater; o
+      <code>&#64;default</code> vale quando nenhum bate. O valor do nível vem de um computed na classe:
+    </p>
+    <vm-code snippet="10/etapa/src/app/world-progress/world-progress.ts" caption="world-progress.ts" />
+    <p>
+      Repare na divisão de trabalho: a <strong>regra</strong> (quantos países fazem um viajante) fica na classe, num
+      computed; o template só escolhe o que mostrar. É a regra de ouro do capítulo 7, de novo.
+    </p>
+
+    <vm-control-flow-lab />
+
+    <h3>O que não vale não existe</h3>
+    <p>
+      Quando a condição de um <code>&#64;if</code> é falsa, o bloco não fica escondido: ele é <strong>removido</strong> da
+      página. Os elementos de dentro somem do HTML, e, se houver componentes ali, eles são destruídos. Quando a condição
+      volta a ser verdadeira, tudo é criado de novo. Isso é diferente de esconder com CSS, que mantém o elemento na página,
+      só invisível.
+    </p>
+
+    <vm-deep-dive title="E o *ngIf dos tutoriais antigos?">
+      <p>
+        Antes da versão 17, o Angular fazia isso com diretivas: <code>&lt;p *ngIf="condicao"&gt;</code>, com asterisco. Elas
+        ainda funcionam, desde que você importe <code>NgIf</code>, mas estão obsoletas desde a versão 20. O
+        <code>&#64;if</code> vem embutido, não precisa de import e é mais fácil de ler. Se encontrar <code>*ngIf</code> num
+        tutorial, traduza: o conteúdo do atributo vira a condição do <code>&#64;if</code>.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O Passaporte muda de forma">
+    <vm-steps label="Usar @if e @switch">
+      <ng-template vmStep="O nível">
+        <p>No <code>WorldProgress</code>, acrescente o computed <code>level</code>, como na seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="O template">
+        <p>Troque o template pelo da seção anterior, com o <code>&#64;if</code> e o <code>&#64;switch</code>, e dê cor ao nível:</p>
+        <vm-code snippet="10/level-css" caption="world-progress.css (acrescente)" />
+        <p>
+          <strong>O que muda na tela:</strong> clique em "Desfazer" até zerar e veja a mensagem de passaporte vazio. Depois,
+          visite países e acompanhe o nível mudar em 1 e em 10.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O carimbo">
+        <p>No país em destaque, o botão vira um <code>&#64;if</code>, e a anotação só aparece se existir:</p>
+        <vm-code snippet="10/etapa/src/app/featured-country/featured-country.html" caption="featured-country.html" />
+        <p>O estilo do carimbo e do botão secundário está no <code>featured-country.css</code> da etapa.</p>
+        <p><strong>O que muda na tela:</strong> ao marcar como visitado, aparece "Carimbado!" e o botão "Desmarcar".</p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Bifurcações traiçoeiras">
+    <vm-pitfall
+      title="Signal sem parênteses na condição"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2774: This condition will always return true since this function is always defined. Did you mean to call it instead?"
+    >
+      <p>
+        Você escreveu <code>&#64;if (visited)</code>. Sem os parênteses, a condição é o signal em si, que sempre existe, e
+        não o valor dele. O TypeScript percebe: "essa condição sempre vai dar verdadeiro, porque a função sempre está
+        definida; você quis chamá-la?". <strong>Como sair:</strong> <code>&#64;if (visited())</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Esquecer as chaves do bloco"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG5002: Incomplete block &quot;if&quot;. If you meant to write the @ character, you should use the &quot;&amp;#64;&quot; HTML entity instead."
+    >
+      <p>
+        Todo bloco de controle de fluxo precisa de chaves: <code>&#64;if (condicao) &#123; ... &#125;</code>. Sem elas, o
+        Angular acha que o <code>&#64;if</code> ficou pela metade. A dica sobre o <code>&amp;#64;</code> vale para quando você
+        quer mostrar o caractere @ como texto, por exemplo num e-mail.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="*ngIf sem importar"
+      where="O aviso que o Angular mostra"
+      message="▲ [WARNING] NG8103: NG8103: The `*ngIf` directive was used in the template, but neither the `NgIf` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @if or make sure that either the `NgIf` directive or the `CommonModule` is included in the `@Component.imports` array of this component."
+    >
+      <p>
+        Código copiado de um tutorial antigo: o <code>*ngIf</code> não faz nada sem o import, e o elemento simplesmente
+        não aparece. A própria mensagem sugere o caminho: <strong>use o <code>&#64;if</code></strong>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="10-if-e-switch" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Falta tirar os três países escritos à mão da lista e gerar um cartão para cada país de um
+      array: o <vm-see-chapter [number]="11" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

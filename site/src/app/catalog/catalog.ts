@@ -218,7 +218,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: '@if e @switch',
     description:
       'Mostre, esconda e alterne partes da tela conforme o estado com @if e @switch, incluindo a mensagem de lista vazia do Passaporte.',
-    minutes: 20,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '11-for-e-track',

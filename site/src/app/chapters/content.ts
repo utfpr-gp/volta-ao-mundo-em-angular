@@ -7,6 +7,7 @@ import { CHAPTER_06 } from './06-componentes/content';
 import { CHAPTER_07 } from './07-interpolacao-e-property-binding/content';
 import { CHAPTER_08 } from './08-event-binding/content';
 import { CHAPTER_09 } from './09-signals/content';
+import { CHAPTER_10 } from './10-if-e-switch/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -20,4 +21,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '07-interpolacao-e-property-binding': CHAPTER_07,
   '08-event-binding': CHAPTER_08,
   '09-signals': CHAPTER_09,
+  '10-if-e-switch': CHAPTER_10,
 };
