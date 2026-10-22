@@ -83,6 +83,11 @@ export const GLOSSARY = {
       'Um valor que muda enquanto o app roda, como o número de cliques ou a lista de países visitados. Quando o estado muda, a tela precisa mostrar o valor novo.',
     chapter: 1,
   },
+  'event-binding': {
+    term: 'Event binding',
+    definition: 'Os parênteses ( ) no template, como (click)="salvar()": chamam um método da classe quando um evento acontece na tela.',
+    chapter: 8,
+  },
   framework: {
     term: 'Framework',
     definition:
@@ -189,6 +194,11 @@ export const GLOSSARY = {
     definition:
       'O HTML de um componente, com marcações do Angular como {{ }} para mostrar valores. É a parte do componente que vira tela.',
     chapter: 1,
+  },
+  'variavel-de-template': {
+    term: 'Variável de template',
+    definition: 'Um nome dado a um elemento com #, como <input #note>. Pode ser usado em outros pontos do mesmo template, como note.value.',
+    chapter: 8,
   },
   'template-string': {
     term: 'Template string',

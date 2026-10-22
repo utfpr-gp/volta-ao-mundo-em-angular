@@ -10,4 +10,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '06-componentes': () => import('./06-componentes/chapter').then((m) => m.Chapter06),
   '07-interpolacao-e-property-binding': () =>
     import('./07-interpolacao-e-property-binding/chapter').then((m) => m.Chapter07),
+  '08-event-binding': () => import('./08-event-binding/chapter').then((m) => m.Chapter08),
 };

@@ -1,0 +1,168 @@
+<vm-chapter-page slug="08-event-binding">
+  <vm-view kind="mission" title="O botão que responde">
+    <p class="lead">
+      No capítulo anterior, o botão "Marcar como visitado" estava lá, mas não fazia nada. Agora ele responde ao clique, e o
+      país em destaque ganha um campo de anotação que conta as letras enquanto você digita e salva quando você aperta Enter.
+    </p>
+    <div class="not-prose my-6 rounded-2xl border-2 border-highlight bg-surface-raised p-5" aria-hidden="true">
+      <p class="text-xs font-extrabold uppercase tracking-[0.15em] text-idea">País em destaque</p>
+      <p class="mt-1 text-2xl font-extrabold text-ink">🇯🇵 Japão</p>
+      <span class="mt-3 inline-block rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary">Visitado ✓</span>
+      <p class="mt-4 font-semibold text-ink">Anotação da viagem</p>
+      <p class="mt-1 rounded-lg border border-line bg-surface px-3 py-2 text-ink">Comer ramen em Tóquio</p>
+      <p class="mt-1 text-sm text-ink-muted">21 letras · aperte Enter para salvar</p>
+      <p class="mt-2 font-bold text-code">Anotação salva: Comer ramen em Tóquio</p>
+    </div>
+    <p>
+      É a primeira vez que o Passaporte reage a quem usa. Ao final do capítulo, você vai saber responder a cliques, a
+      digitação e a teclas específicas, e passar dados da tela para a classe.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A campainha da casa">
+    <vm-analogy emoji="🔔" title="Quem atende a campainha">
+      <p>
+        Quando alguém aperta a campainha, a casa não precisa ficar vigiando a porta o tempo todo: o som avisa, e alguém vai
+        atender. Você decide de antemão quem atende cada coisa: a campainha, você; o telefone, outra pessoa.
+      </p>
+      <p>
+        No Angular, o clique, a tecla e a digitação são as campainhas, chamadas <strong>eventos</strong>. O event binding
+        diz quem atende: "quando clicarem neste botão, chame o método <code>toggleVisited()</code>".
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Eventos: da tela para a classe">
+    <h3>Os parênteses: <code>(evento)="método()"</code></h3>
+    <p>
+      No <vm-see-chapter [number]="7" />, os dados desciam da classe para a tela, com <code ngNonBindable>{{ }}</code> e
+      <code>[ ]</code>. O <vm-term name="event-binding">event binding</vm-term> faz o caminho contrário: com parênteses em
+      volta do nome do evento, a tela avisa a classe de que algo aconteceu.
+    </p>
+    <vm-code snippet="08/etapa/src/app/featured-country/featured-country.html" caption="featured-country.html" />
+    <vm-code snippet="08/etapa/src/app/featured-country/featured-country.ts" caption="featured-country.ts" />
+    <p>Leia o botão assim: "quando houver um <code>click</code> neste botão, chame <code>toggleVisited()</code>".</p>
+
+    <h3>O ciclo completo</h3>
+    <p>
+      Repare no que acontece no clique: o evento chama o método, o método muda <code>visited</code> na classe, e a
+      interpolação do texto do botão mostra o valor novo. O dado <strong>sobe</strong> pelo evento e <strong>desce</strong>
+      pela interpolação. É esse ciclo, em todo lugar, que faz um app parecer vivo. Veja os dois sentidos funcionando:
+    </p>
+
+    <vm-binding-flow mode="event" />
+
+    <h3>Pegando o que foi digitado: a variável de template</h3>
+    <p>
+      O <code>#note</code> no campo cria uma <vm-term name="variavel-de-template">variável de template</vm-term>: um nome
+      para aquele elemento, que pode ser usado em outros lugares do mesmo template. Assim, <code>note.value</code> é o texto
+      que está no campo naquele momento, e <code>(input)="onType(note.value)"</code> manda esse texto para a classe a cada
+      letra.
+    </p>
+
+    <h3>Teclas específicas</h3>
+    <p>
+      Em <code>(keydown.enter)</code>, o <code>.enter</code> é um filtro: o método só é chamado quando a tecla é Enter.
+      Funciona com outras teclas também, como <code>(keydown.escape)</code>. Sem o filtro, <code>(keydown)</code> chamaria o
+      método a cada tecla apertada.
+    </p>
+
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Evento</th>
+            <th>Acontece quando…</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>(click)</code></td><td>a pessoa clica (ou aperta Enter ou Espaço num botão com o teclado)</td></tr>
+          <tr><td><code>(input)</code></td><td>o texto de um campo muda, a cada letra</td></tr>
+          <tr><td><code>(change)</code></td><td>o valor muda e o campo perde o foco, ou uma caixa de seleção é marcada</td></tr>
+          <tr><td><code>(keydown.enter)</code></td><td>a pessoa aperta Enter com o foco no elemento</td></tr>
+          <tr><td><code>(submit)</code></td><td>um formulário é enviado</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <vm-deep-dive title="E o $event?">
+      <p>
+        Dentro de um event binding, existe uma variável especial, <code>$event</code>, com o objeto do evento que o navegador
+        criou. Em tutoriais, você vai ver <code>(input)="onType($event.target.value)"</code>. Funciona no projeto padrão,
+        mas o TypeScript não sabe que <code>target</code> é um campo de texto, então não ajuda a pegar erros ali.
+      </p>
+      <p>
+        A variável de template, <code>#note</code> com <code>note.value</code>, faz o mesmo de um jeito mais claro e com o
+        tipo certo. Por isso este livro prefere ela. Mais adiante, nos formulários, você vai ver jeitos ainda melhores de
+        ligar campos à classe.
+      </p>
+    </vm-deep-dive>
+
+    <p>
+      Uma observação: aqui, <code>visited</code> e <code>savedNote</code> são propriedades comuns, e a tela se atualiza
+      porque o Angular confere o componente depois de cada evento dele. Para estados que mudam por outros caminhos (um
+      temporizador, uma resposta do servidor), existe uma ferramenta melhor, os signals, no <vm-see-chapter [number]="9" />.
+    </p>
+  </vm-view>
+
+  <vm-view kind="code" title="O país em destaque ganha vida">
+    <vm-steps label="Responder a eventos">
+      <ng-template vmStep="O clique">
+        <p>
+          Na classe <code>FeaturedCountry</code>, tire o <code>visited</code> de dentro do objeto <code>country</code> e
+          crie a propriedade e o método:
+        </p>
+        <vm-code snippet="08/etapa/src/app/featured-country/featured-country.ts" caption="featured-country.ts" />
+        <p>No template, troque o botão por:</p>
+        <vm-code snippet="08/button" caption="featured-country.html (o botão)" />
+        <p><strong>O que muda na tela:</strong> cada clique alterna entre "Marcar como visitado" e "Visitado ✓".</p>
+      </ng-template>
+      <ng-template vmStep="A digitação">
+        <p>Logo abaixo do botão, acrescente o campo e a contagem de letras:</p>
+        <vm-code snippet="08/note" caption="featured-country.html (a anotação)" />
+        <p><strong>O que muda na tela:</strong> a contagem acompanha cada letra que você digita.</p>
+      </ng-template>
+      <ng-template vmStep="O Enter">
+        <p>
+          O <code>(keydown.enter)</code> no mesmo campo já chama <code>saveNote</code>. Digite uma anotação e aperte Enter.
+        </p>
+        <p><strong>O que muda na tela:</strong> a linha "Anotação salva" mostra o texto.</p>
+        <p>O estilo dos elementos novos está no arquivo <code>featured-country.css</code> da etapa.</p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Campainhas que não tocam">
+    <vm-pitfall
+      title="Esquecer os parênteses do método"
+      where="O aviso que o Angular mostra"
+      message="▲ [WARNING] NG8111: NG8111: Function in event binding should be invoked: toggleVisited()."
+    >
+      <p>
+        Você escreveu <code>(click)="toggleVisited"</code>, sem os parênteses. Assim, o clique só "lê" o método, sem
+        chamá-lo, e nada acontece na tela. O Angular percebe e avisa: "a função no event binding deveria ser chamada".
+        <strong>Como sair:</strong> escreva <code>toggleVisited()</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Evento com o nome errado" where="O que aparece" message="(nada: o clique não faz nada e não há erro)">
+      <p>
+        Com <code>(onclick)="toggleVisited()"</code> ou <code>(Click)="toggleVisited()"</code>, o Angular escuta um evento
+        chamado "onclick" ou "Click", que o navegador nunca dispara. Não há erro, porque um componente pode criar eventos com
+        qualquer nome. <strong>Como sair:</strong> use o nome do evento sem o "on" e em minúsculas: <code>(click)</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="08-event-binding" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> A próxima parada apresenta os signals, o jeito moderno de guardar estado no Angular, e o
+      Passaporte ganha o contador de países visitados: o <vm-see-chapter [number]="9" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

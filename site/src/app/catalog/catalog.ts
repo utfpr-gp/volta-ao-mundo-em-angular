@@ -196,7 +196,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Event binding',
     description:
       'Faça a tela reagir a cliques, teclas e digitação com event binding, e veja os dados voltando da tela para a classe do componente.',
-    minutes: 25,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '09-signals',
