@@ -155,6 +155,11 @@ export const GLOSSARY = {
     definition: 'Um código pronto publicado no npm para todo mundo usar. O próprio Angular é distribuído como um conjunto de pacotes.',
     chapter: 2,
   },
+  pipe: {
+    term: 'Pipe',
+    definition: 'Um filtro do template, escrito com a barra vertical: {{ valor | number }}. Formata o valor para a tela sem mudar o dado na classe.',
+    chapter: 12,
+  },
   porta: {
     term: 'Porta',
     definition: 'Um número que identifica um programa que atende pedidos num computador, como o 4200 de http://localhost:4200. É como o número do apartamento num prédio.',

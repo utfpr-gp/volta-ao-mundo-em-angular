@@ -1,0 +1,1 @@
+ng generate pipe flag

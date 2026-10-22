@@ -240,7 +240,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Pipes',
     description:
       'Formate números, datas e porcentagens com os pipes prontos do Angular e crie o seu próprio pipe para mostrar a bandeira de um país.',
-    minutes: 25,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '13-estilos-e-tailwind',
