@@ -1,0 +1,194 @@
+<vm-chapter-page slug="05-angular-cli">
+  <vm-view kind="mission" title="O Passaporte nasce">
+    <p class="lead">
+      Chegou a hora: neste capítulo você cria o projeto do Passaporte, liga o app no navegador e troca a página de
+      boas-vindas pela primeira tela dele. Vai ficar assim:
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-05/primeira-tela.png"
+      width="1000"
+      height="500"
+      alt="O app no navegador: um cartão azul-marinho com o título Passaporte e a frase Meu primeiro app Angular. Em breve, aqui vai aparecer uma lista de países."
+    />
+    <p>
+      É pouco, mas é um app Angular de verdade, rodando no seu computador. Daqui até o fim do livro, cada capítulo
+      acrescenta uma peça nele. Ao final deste capítulo, você também vai saber para que serve cada arquivo do projeto e
+      como o app "liga".
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A planta pronta da casa">
+    <vm-analogy emoji="🏗️" title="A construtora que entrega a casa com fundação">
+      <p>
+        Construir uma casa do zero exige fundação, encanamento e fiação antes da primeira parede bonita. Uma boa construtora
+        entrega tudo isso pronto, no padrão, e você começa direto pela parte que importa: os cômodos do seu jeito.
+      </p>
+      <p>
+        O <strong>Angular CLI</strong> é essa construtora. Um comando cria o projeto inteiro, com a estrutura que todo
+        projeto Angular segue, e outros comandos ligam o app, criam peças novas, rodam os testes e preparam a versão final.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O Angular CLI e o projeto que ele cria">
+    <h3>O comando <code>ng</code></h3>
+    <p>
+      O <vm-term name="angular-cli">Angular CLI</vm-term> é um programa de terminal; o comando dele se chama
+      <code>ng</code>. Os que você mais vai usar:
+    </p>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>O que faz</th>
+            <th>Onde aparece</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>ng new nome</code></td><td>Cria um projeto novo</td><td>Neste capítulo</td></tr>
+          <tr><td><code>ng serve</code></td><td>Liga o app no seu computador e recarrega a cada mudança</td><td>Neste capítulo</td></tr>
+          <tr><td><code>ng generate component nome</code></td><td>Cria um componente novo</td><td>Capítulo 6</td></tr>
+          <tr><td><code>ng test</code></td><td>Roda os testes (com o Vitest)</td><td>Capítulo 42</td></tr>
+          <tr><td><code>ng build</code></td><td>Gera a versão final, pronta para publicar</td><td>Capítulo 48</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>O que o <code>ng new</code> cria</h3>
+    <p>Ao criar o projeto, o CLI lista cada arquivo que gerou. Um trecho da saída real:</p>
+    <vm-code snippet="05/ng-new-output" caption="saída do ng new (trecho)" />
+    <p>
+      São muitos arquivos, mas você não precisa entender todos agora. Explore o projeto do Passaporte, como ele fica ao fim
+      deste capítulo, e use o botão para ver como o app liga:
+    </p>
+
+    <vm-project-explorer />
+
+    <h3>Como o app liga</h3>
+    <p>
+      O caminho que o simulador mostrou acontece toda vez que alguém abre o app. Ele é a SPA do <vm-see-chapter [number]="1" />
+      na prática: o navegador recebe uma única página, o <code>index.html</code>, quase vazia, com um elemento
+      <code>&lt;app-root&gt;</code>. O <code>main.ts</code> manda o Angular ligar o app a partir do componente
+      <code>App</code>, e o Angular desenha o template dele dentro do <code>&lt;app-root&gt;</code>. Tudo o que você
+      construir daqui em diante vai aparecer ali dentro.
+    </p>
+
+    <h3>O <code>ng serve</code> e a recarga automática</h3>
+    <p>
+      O <code>ng serve</code> monta o app e o deixa disponível só no seu computador, num endereço como
+      <code>http://localhost:4200/</code>. <code>localhost</code> quer dizer "este computador", e <code>4200</code> é a
+      <strong>porta</strong>, uma espécie de número de apartamento no prédio que é o seu computador. Esta é a saída real:
+    </p>
+    <vm-code snippet="05/ng-serve-output" caption="saída do ng serve" />
+    <p>
+      Repare em <code>Watch mode enabled</code>: o CLI fica de olho nos arquivos. A cada vez que você salva um arquivo, ele
+      monta o app de novo e o navegador recarrega sozinho. O terminal fica ocupado enquanto o servidor roda; para
+      desligar, aperte <kbd>Ctrl</kbd> + <kbd>C</kbd>.
+    </p>
+
+    <vm-deep-dive title="O que o CLI usa por baixo">
+      <p>
+        Para montar o app, o CLI usa ferramentas especializadas: o compilador do Angular transforma os templates em
+        JavaScript, e o <strong>esbuild</strong> junta e enxuga todos os arquivos num pacote pequeno, chamado
+        <em>bundle</em>. Os testes rodam com o <strong>Vitest</strong>. O CLI esconde essa complexidade: você só usa
+        <code>ng serve</code>, <code>ng build</code> e <code>ng test</code>.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="Crie o Passaporte">
+    <vm-steps label="Criar e ligar o projeto">
+      <ng-template vmStep="Instalar o CLI">
+        <p>No terminal, instale o Angular CLI para todo o computador (o <code>-g</code> quer dizer global) e confira:</p>
+        <vm-code snippet="05/install-cli" caption="terminal" />
+        <p>
+          <strong>O que muda na tela:</strong> o <code>ng version</code> mostra um quadro com a versão do Angular CLI (22 ou
+          mais nova) e a do Node.js.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Criar o projeto">
+        <p>Entre na pasta onde quer guardar seus projetos e crie o Passaporte:</p>
+        <vm-code snippet="05/ng-new" caption="terminal" />
+        <p>
+          O <code>ng new</code> faz algumas perguntas antes de criar. Para acompanhar o livro, escolha <strong>CSS</strong>
+          para os estilos, <strong>não</strong> para a renderização no servidor (SSR) e nenhuma ferramenta de IA por
+          enquanto. Depois ele baixa os pacotes, o que pode levar alguns minutos na primeira vez.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Abrir no navegador">
+        <p>
+          Com o <code>ng serve</code> rodando, abra <code>http://localhost:4200/</code> no navegador.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> aparece a página de boas-vindas do Angular, com o título "Hello, passaporte"
+          e links para a documentação.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Trocar a página">
+        <p>
+          Abra a pasta <code>passaporte</code> no VS Code. Em <code>src/app/app.html</code>, apague tudo (são centenas de
+          linhas da página de boas-vindas) e escreva:
+        </p>
+        <vm-code snippet="05/etapa/src/app/app.html" caption="src/app/app.html" />
+        <p>Em <code>src/app/app.ts</code>, troque o título para <code>'Passaporte'</code>, com maiúscula:</p>
+        <vm-code snippet="05/etapa/src/app/app.ts" caption="src/app/app.ts" />
+        <p>E dê um estilo ao cartão em <code>src/app/app.css</code>:</p>
+        <vm-code snippet="05/etapa/src/app/app.css" caption="src/app/app.css" />
+        <p>
+          <strong>O que muda na tela:</strong> ao salvar, o navegador recarrega sozinho e mostra o cartão do Passaporte da
+          missão. O <code ngNonBindable>{{ title() }}</code> no template mostra o valor do <code>title</code> da classe;
+          você entende os detalhes nos capítulos 7 e 9.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Quando o CLI não colabora">
+    <vm-pitfall
+      title="Comando do Angular fora da pasta do projeto"
+      where="O que o Angular CLI mostra"
+      message="Error: This command is not available when running the Angular CLI outside a workspace."
+    >
+      <p>
+        "Este comando não está disponível fora de um workspace", ou seja, fora da pasta de um projeto Angular. Você abriu o
+        terminal e rodou <code>ng serve</code> sem entrar na pasta do projeto. <strong>Como sair:</strong> entre na pasta
+        com <code>cd passaporte</code> (confira com <code>pwd</code>) e rode de novo.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Porta já ocupada"
+      where="O que o Angular CLI mostra"
+      message="An unhandled exception occurred: Port 4200 is already in use. Use '--port' to specify a different port."
+    >
+      <p>
+        Já existe um <code>ng serve</code> rodando, quase sempre esquecido em outra janela do terminal ou do VS Code.
+        <strong>Como sair:</strong> volte ao terminal antigo e pare o servidor com <kbd>Ctrl</kbd> + <kbd>C</kbd>, ou use
+        outra porta:
+      </p>
+      <vm-code snippet="05/other-port" caption="terminal" />
+    </vm-pitfall>
+
+    <vm-pitfall title="O terminal não conhece o ng" where="O que aparece no terminal" message="bash: ng: comando não encontrado">
+      <p>
+        É o mesmo erro do <code>node</code> que você viu no <vm-see-chapter [number]="2" />: o Angular CLI não foi instalado,
+        ou o terminal foi aberto antes da instalação. <strong>Como sair:</strong> rode o
+        <code>npm install -g &#64;angular/cli</code> e abra um terminal novo.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="05-angular-cli" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Você terminou a trilha Embarque. A próxima parada abre a trilha Fundamentos e transforma a
+      tela do Passaporte em componentes: o <vm-see-chapter [number]="6" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

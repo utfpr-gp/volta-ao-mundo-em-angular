@@ -162,7 +162,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Angular CLI',
     description:
       'Crie o projeto do Passaporte com o Angular CLI, entenda cada pasta gerada e veja a página atualizar sozinha a cada mudança no código.',
-    minutes: 30,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Fundamentos
   {

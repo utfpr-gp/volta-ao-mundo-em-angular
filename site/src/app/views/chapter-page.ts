@@ -85,6 +85,18 @@ import { VIEWS } from './view';
                 </ul>
               </section>
             }
+            @if (stage(); as stage) {
+              <section data-stage class="rounded-2xl border border-code/30 bg-code/8 p-5" aria-labelledby="etapa">
+                <h2 id="etapa" class="flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.15em] text-code">
+                  <span aria-hidden="true">🧳</span> Código desta etapa
+                </h2>
+                <p class="mt-2 text-sm text-ink">O Passaporte completo como fica ao fim deste capítulo.</p>
+                <ul class="mt-3 flex flex-col gap-2 text-sm font-bold">
+                  <li><a [href]="stage.github" rel="noopener">Ver no GitHub ↗</a></li>
+                  <li><a [href]="stage.stackblitz" rel="noopener">Abrir no StackBlitz, sem instalar nada ↗</a></li>
+                </ul>
+              </section>
+            }
             <section class="rounded-2xl border border-line bg-surface-raised p-5" aria-labelledby="passaporte-trilha">
               <h2 id="passaporte-trilha" class="text-sm font-extrabold uppercase tracking-[0.15em] text-ink-muted">
                 Passaporte · {{ track()?.name }}
@@ -155,6 +167,12 @@ export class ChapterPage {
     return this.trackChapters().filter((chapter) => chapter.slug in stamps).length;
   });
   protected readonly summary = computed(() => CONTENT[this.slug()]?.summary ?? []);
+  protected readonly stage = computed(() => {
+    const folder = CONTENT[this.slug()]?.stage;
+    if (!folder) return null;
+    const path = `utfpr-gp/volta-ao-mundo-em-angular/tree/main/passaporte/etapas/${folder}`;
+    return { github: `https://github.com/${path}`, stackblitz: `https://stackblitz.com/github/${path}` };
+  });
   protected readonly active = signal<string | null>(null);
 
   constructor() {

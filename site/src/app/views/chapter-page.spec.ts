@@ -58,4 +58,22 @@ describe('ChapterPage', () => {
     expect(nav.textContent).toContain('Capítulo 8');
     expect(nav.textContent).toMatch(/Próxima parada: capítulo 10/);
   });
+
+  it('links to the Passaporte stage on GitHub and StackBlitz when the chapter has one', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(ChapterPage);
+    fixture.componentRef.setInput('slug', '05-angular-cli');
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+    const hrefs = [...element.querySelectorAll('[data-stage] a')].map((link) => link.getAttribute('href'));
+    expect(hrefs).toEqual([
+      'https://github.com/utfpr-gp/volta-ao-mundo-em-angular/tree/main/passaporte/etapas/05-angular-cli',
+      'https://stackblitz.com/github/utfpr-gp/volta-ao-mundo-em-angular/tree/main/passaporte/etapas/05-angular-cli',
+    ]);
+  });
+
+  it('has no stage card when the chapter has no stage', async () => {
+    const element = await render();
+    expect(element.querySelector('[data-stage]')).toBeNull();
+  });
 });

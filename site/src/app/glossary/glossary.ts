@@ -10,6 +10,12 @@ export interface GlossaryEntry {
  * componente <vm-term name="chave">; uma chave inexistente quebra o build.
  */
 export const GLOSSARY = {
+  'angular-cli': {
+    term: 'Angular CLI',
+    definition:
+      'A ferramenta de terminal do Angular, usada pelo comando ng: cria projetos (ng new), liga o app (ng serve), roda testes (ng test) e gera a versão final (ng build).',
+    chapter: 5,
+  },
   angularjs: {
     term: 'AngularJS',
     definition:

@@ -1,0 +1,9 @@
+.passport {
+  max-width: 40rem;
+  margin: 4rem auto;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: #12263a;
+  color: #ffffff;
+  font-family: system-ui, sans-serif;
+}

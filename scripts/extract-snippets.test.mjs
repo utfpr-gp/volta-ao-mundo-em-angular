@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { extractAll, highlight, keyFor, langFor, renderModule, stripNotation } from './extract-snippets.mjs';
+import { extractAll, extractStages, highlight, keyFor, langFor, renderModule, stripNotation } from './extract-snippets.mjs';
 
 test('maps extensions to Shiki languages', () => {
   assert.deepEqual(
@@ -72,4 +72,18 @@ test('extractAll reads every snippet folder', async () => {
 
 test('extractAll returns nothing when the folder does not exist', async () => {
   assert.deepEqual(await extractAll(join(tmpdir(), 'nao-existe-mesmo')), []);
+});
+
+test('extractStages reads the src files and package.json of each stage, skipping specs', async () => {
+  const root = mkdtempSync(join(tmpdir(), 'stages-'));
+  const stage = join(root, '05-angular-cli');
+  mkdirSync(join(stage, 'src', 'app'), { recursive: true });
+  writeFileSync(join(stage, 'package.json'), '{ "name": "x" }\n');
+  writeFileSync(join(stage, 'src', 'main.ts'), 'bootstrap();\n');
+  writeFileSync(join(stage, 'src', 'app', 'app.html'), '<h1>Passaporte</h1>\n');
+  writeFileSync(join(stage, 'src', 'app', 'app.spec.ts'), 'it();\n');
+  mkdirSync(join(stage, 'node_modules', 'x'), { recursive: true });
+  writeFileSync(join(stage, 'node_modules', 'x', 'index.js'), '');
+  const keys = (await extractStages(root)).map((entry) => entry.key);
+  assert.deepEqual(keys, ['05/etapa/package.json', '05/etapa/src/app/app.html', '05/etapa/src/main.ts']);
 });
