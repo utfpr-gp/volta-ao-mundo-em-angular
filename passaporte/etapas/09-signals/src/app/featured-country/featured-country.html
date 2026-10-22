@@ -1,0 +1,18 @@
+<article class="featured">
+  <img [src]="country.flagUrl" [alt]="'Bandeira do ' + country.name" width="80" />
+  <div>
+    <p class="label">País em destaque</p>
+    <h2>{{ country.name }}</h2>
+    <p>Capital: {{ country.capital }} · {{ country.population }} habitantes</p>
+    <button type="button" (click)="toggleVisited()">
+      {{ visited() ? 'Visitado ✓' : 'Marcar como visitado' }}
+    </button>
+
+    <label class="note">
+      Anotação da viagem
+      <input #note (input)="onType(note.value)" (keydown.enter)="saveNote(note.value)" />
+    </label>
+    <p class="hint">{{ draft().length }} letras · aperte Enter para salvar</p>
+    <p class="saved">Anotação salva: {{ savedNote() || 'nenhuma ainda' }}</p>
+  </div>
+</article>

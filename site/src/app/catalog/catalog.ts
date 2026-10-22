@@ -207,7 +207,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Signals',
     description:
       'Guarde o estado do app em signals, derive valores com computed e veja o Angular atualizar só o que mudou na tela, sem você pedir.',
-    minutes: 35,
+    minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '10-if-e-switch',

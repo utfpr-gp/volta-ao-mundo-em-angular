@@ -54,6 +54,11 @@ export const GLOSSARY = {
     definition: 'Um programa que transforma código de uma forma em outra. O do TypeScript confere os tipos e gera JavaScript; o do Angular transforma templates em JavaScript.',
     chapter: 4,
   },
+  computed: {
+    term: 'Computed',
+    definition: 'Um signal calculado a partir de outros, como uma fórmula de planilha: computed(() => a() + b()). Recalcula sozinho quando o que ele lê muda.',
+    chapter: 9,
+  },
   'codigo-aberto': {
     term: 'Código aberto',
     definition:
