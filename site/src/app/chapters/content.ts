@@ -8,6 +8,7 @@ import { CHAPTER_07 } from './07-interpolacao-e-property-binding/content';
 import { CHAPTER_08 } from './08-event-binding/content';
 import { CHAPTER_09 } from './09-signals/content';
 import { CHAPTER_10 } from './10-if-e-switch/content';
+import { CHAPTER_11 } from './11-for-e-track/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -22,4 +23,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '08-event-binding': CHAPTER_08,
   '09-signals': CHAPTER_09,
   '10-if-e-switch': CHAPTER_10,
+  '11-for-e-track': CHAPTER_11,
 };

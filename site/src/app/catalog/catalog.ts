@@ -229,7 +229,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: '@for e track',
     description:
       'Repita cartões para cada país com @for, entenda para que serve o track e por que ele evita que o Angular recrie a lista inteira.',
-    minutes: 25,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '12-pipes',

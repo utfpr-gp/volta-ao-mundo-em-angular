@@ -1,0 +1,166 @@
+<vm-chapter-page slug="11-for-e-track">
+  <vm-view kind="mission" title="Uma lista que vem dos dados">
+    <p class="lead">
+      Desde o capítulo 6, a lista de países do Passaporte era HTML repetido à mão: três cartões copiados e colados. Agora
+      ela sai de um array na classe. Seis países, filtros para ver só os visitados ou só os desejados, um botão para remover
+      e uma mensagem quando a lista fica vazia.
+    </p>
+    <div class="not-prose my-6 rounded-2xl border border-line bg-surface-raised p-4" aria-hidden="true">
+      <p class="text-lg font-extrabold text-ink">Países</p>
+      <div class="mt-2 flex gap-2 text-sm font-bold">
+        <span class="rounded-full border border-primary px-3 py-1 text-ink">Todos</span>
+        <span class="rounded-full bg-primary px-3 py-1 text-on-primary">Visitados</span>
+        <span class="rounded-full border border-primary px-3 py-1 text-ink">Desejados</span>
+      </div>
+      <ul class="mt-3 flex flex-col gap-2 text-ink">
+        <li class="flex items-center gap-3 rounded-xl border border-line px-3 py-2"><span class="text-ink-muted">1</span>🇧🇷 <strong>Brasil</strong><span class="ml-auto text-ink-muted">Brasília ✕</span></li>
+        <li class="flex items-center gap-3 rounded-xl border border-line px-3 py-2"><span class="text-ink-muted">2</span>🇵🇹 <strong>Portugal</strong><span class="ml-auto text-ink-muted">Lisboa ✕</span></li>
+        <li class="flex items-center gap-3 rounded-xl border border-line px-3 py-2"><span class="text-ink-muted">3</span>🇦🇷 <strong>Argentina</strong><span class="ml-auto text-ink-muted">Buenos Aires ✕</span></li>
+      </ul>
+      <p class="mt-2 text-sm text-ink-muted">3 de 6 países</p>
+    </div>
+    <p>
+      É o momento em que o app deixa de ser uma página estática e vira um app de dados. Ao final do capítulo, você vai saber
+      transformar qualquer array num pedaço de tela com <code>&#64;for</code>, e entender o papel do <code>track</code>.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O carimbo de cada página">
+    <vm-analogy emoji="🖨️" title="A gráfica que imprime crachás">
+      <p>
+        Para um evento com 300 pessoas, a gráfica não desenha 300 crachás à mão: faz um modelo e imprime um para cada nome
+        da lista. Se chegar uma pessoa nova, imprime só o crachá dela, e não os 300 de novo.
+      </p>
+      <p>
+        O <code>&#64;for</code> é o modelo do crachá: um bloco de template repetido para cada item do array. E o
+        <code>track</code> é o que permite à gráfica saber de quem é cada crachá, para refazer só o que mudou.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="@for e track por dentro">
+    <h3>Primeiro, o formato dos dados</h3>
+    <p>
+      Antes de repetir, vale dar um formato aos itens com uma interface, como no <vm-see-chapter [number]="4" />. Ela fica
+      num arquivo próprio, para outros componentes também usarem:
+    </p>
+    <vm-code snippet="11/etapa/src/app/country.ts" caption="country.ts" />
+
+    <h3>O <code>&#64;for</code></h3>
+    <vm-code snippet="11/etapa/src/app/country-list/country-list.html" caption="country-list.html" />
+    <p>
+      Leia a primeira linha assim: "para cada <code>country</code> do array <code>visible()</code>, identificado pelo
+      <code>country.code</code>, repita este bloco". Dentro do bloco, <code>country</code> é o item da vez, como o
+      <code>c</code> das arrow functions do <vm-see-chapter [number]="3" />. O <code>&#64;empty</code> é opcional e aparece
+      quando o array está vazio.
+    </p>
+    <p>
+      O <code>let i = $index</code> dá um nome à posição do item, começando em zero; por isso a tela mostra
+      <code ngNonBindable>{{ i + 1 }}</code>. Além do <code>$index</code>, o <code>&#64;for</code> oferece
+      <code>$count</code> (o total), <code>$first</code>, <code>$last</code>, <code>$even</code> e <code>$odd</code>.
+    </p>
+
+    <h3>A classe: um array num signal</h3>
+    <vm-code snippet="11/etapa/src/app/country-list/country-list.ts" caption="country-list.ts" />
+    <p>
+      Repare em três coisas. O array está num <strong>signal</strong>, com o tipo <code>Country[]</code>. A lista visível é um
+      <strong>computed</strong> que usa o <code>filter</code> do capítulo 3. E o <code>remove</code> não altera o array: cria
+      um novo, sem o país, com <code>update</code> e <code>filter</code>. Trocar o array inteiro é o que avisa o signal de
+      que algo mudou. Os botões de filtro usam <code>[class.active]</code>, um property binding que liga uma classe CSS
+      quando a condição é verdadeira.
+    </p>
+
+    <h3>Por que o <code>track</code> é obrigatório</h3>
+    <p>
+      Quando o array muda, o Angular precisa decidir o que fazer com cada elemento da página: manter, mover, reescrever,
+      criar ou remover. O <code>track</code> diz qual valor identifica cada item. Com uma identidade estável, como o código
+      do país, o Angular reconhece "este é o Brasil de antes" e só mexe no que realmente mudou. Compare:
+    </p>
+
+    <vm-track-lab />
+
+    <p>
+      Com <code>track country.code</code>, adicionar um país no começo cria um único nó. Com <code>track $index</code>, o
+      Angular acha que o item da posição 0 "mudou de conteúdo", e reescreve todos. Numa lista de seis países, você não
+      percebe; numa de mil, com imagens e campos, a diferença aparece. Use sempre um identificador único do item,
+      geralmente um <code>id</code> ou um código.
+    </p>
+  </vm-view>
+
+  <vm-view kind="code" title="A lista de países com @for">
+    <vm-steps label="Trocar o HTML repetido por @for">
+      <ng-template vmStep="A interface">
+        <p>Crie o arquivo <code>src/app/country.ts</code> com a interface <code>Country</code> da seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="Os dados">
+        <p>Na <code>CountryList</code>, crie o signal com os seis países, o filtro e o método de remover:</p>
+        <vm-code snippet="11/etapa/src/app/country-list/country-list.ts" caption="country-list.ts" />
+      </ng-template>
+      <ng-template vmStep="O template">
+        <p>Apague os três cartões escritos à mão e use o template com <code>&#64;for</code> da seção anterior.</p>
+        <p>
+          <strong>O que muda na tela:</strong> seis países, numerados. Clique nos filtros e no ✕; remova todos os desejados e
+          veja a mensagem do <code>&#64;empty</code>.
+        </p>
+        <p>Os estilos novos (filtros, posição e botão de remover) estão no <code>country-list.css</code> da etapa.</p>
+      </ng-template>
+      <ng-template vmStep="Seu desafio">
+        <p>
+          Acrescente um sétimo país ao array, como o México (<code>MX</code>, Cidade do México, 🇲🇽), e mostre o total de
+          países no fim da lista usando o <code>$count</code> em vez do <code>.length</code>.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Repetições que não repetem">
+    <vm-pitfall
+      title="Esquecer o track"
+      where="O que o Angular mostra no terminal"
+      message='✘ [ERROR] NG5002: &#64;for loop must have a "track" expression'
+    >
+      <p>
+        No <code>&#64;for</code>, o <code>track</code> é obrigatório. <strong>Como sair:</strong> acrescente
+        <code>; track</code> com o identificador do item, como em <code>&#64;for (country of countries(); track country.code)</code>.
+        Se os itens não tiverem identificador nenhum, como uma lista de textos, use <code>track $index</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Esquecer de chamar o signal"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2488: Type 'Signal<Country[]>' must have a '[Symbol.iterator]()' method that returns an iterator."
+    >
+      <p>
+        Você escreveu <code>&#64;for (country of visible; ...)</code>. O signal não é o array: é a caixinha com o array dentro.
+        O TypeScript reclama que não sabe percorrer aquilo. <strong>Como sair:</strong> <code>visible()</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O *ngFor dos tutoriais antigos"
+      where="O aviso que o Angular mostra"
+      message="▲ [WARNING] NG8103: NG8103: The `*ngFor` directive was used in the template, but neither the `NgFor` directive nor the `CommonModule` was imported. Use Angular's built-in control flow @for or make sure that either the `NgFor` directive or the `CommonModule` is included in the `@Component.imports` array of this component."
+    >
+      <p>
+        Antes da versão 17, a repetição era feita com a diretiva <code>*ngFor</code>, hoje obsoleta. Sem o import, a lista
+        simplesmente não aparece, e só há um aviso no terminal. Traduza para o <code>&#64;for</code>:
+      </p>
+      <vm-code snippet="11/old-ngfor" caption="Angular antigo" />
+      <vm-code snippet="11/new-for" caption="Angular de hoje" />
+      <p>Repare nas diferenças: o signal com parênteses, o <code>track</code> obrigatório e o <code>$index</code> no lugar de <code>index</code>.</p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="11-for-e-track" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> A população do país em destaque ainda aparece como <code>123000000</code>. A próxima parada
+      formata números, datas e porcentagens: o <vm-see-chapter [number]="12" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
