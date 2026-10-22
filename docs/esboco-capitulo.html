@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esboço — capítulo de Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#12263A; --navy2:#1C3550; --paper:#FBF8F1; --ink:#1E2430; --muted:#5B6474;
+    --stamp:#C8102E; --gold:#D99A1E; --ocean:#1F6FB2; --green:#1E8A6E; --violet:#6B4FD8;
+    --card:#FFFFFF; --line:#E7E1D3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Nunito Sans',system-ui,sans-serif;font-size:18px;line-height:1.65}
+  code,pre{font-family:'JetBrains Mono',ui-monospace,monospace}
+  a{color:var(--ocean)}
+  /* topo */
+  .top{background:var(--navy);color:#fff;display:flex;align-items:center;gap:24px;padding:14px 32px;position:sticky;top:0;z-index:5}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+  .brand .book{width:30px;height:38px;border-radius:4px;background:var(--stamp);display:grid;place-items:center;font-size:16px}
+  .conts{display:flex;gap:6px;flex:1;overflow:auto}
+  .conts span{font-size:14px;padding:6px 12px;border-radius:999px;background:var(--navy2);color:#C9D6E3;white-space:nowrap}
+  .conts span.on{background:var(--gold);color:var(--navy);font-weight:800}
+  .prog{font-size:14px;color:#C9D6E3;white-space:nowrap}
+  .prog b{color:#fff}
+  /* layout */
+  .wrap{display:grid;grid-template-columns:240px minmax(0,780px) 260px;gap:40px;max-width:1400px;margin:0 auto;padding:40px 32px}
+  @media (max-width:1100px){.wrap{grid-template-columns:1fr}.toc,.side{display:none}}
+  .toc{position:sticky;top:90px;align-self:start;font-size:15px}
+  .toc h4{margin:0 0 10px;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+  .toc a{display:flex;gap:10px;align-items:center;padding:7px 10px;border-radius:10px;color:var(--ink);text-decoration:none}
+  .toc a:hover{background:#fff}
+  .dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:14px;flex:none}
+  /* cabeçalho do capítulo */
+  .hero{background:var(--navy);color:#fff;border-radius:22px;padding:36px 40px;position:relative;overflow:hidden}
+  .hero .meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .chip{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--navy2);color:#C9D6E3}
+  .chip.gold{background:var(--gold);color:var(--navy)}
+  .hero h1{font-size:38px;line-height:1.2;margin:0 0 12px;max-width:560px}
+  .hero h1 code{background:#2A4766;padding:2px 10px;border-radius:8px;font-size:34px}
+  .hero p{color:#C9D6E3;margin:0;max-width:540px}
+  .stamp{position:absolute;right:36px;top:30px;width:150px;height:150px;border:5px dashed #5A7491;border-radius:50%;display:grid;place-items:center;text-align:center;color:#7F98B2;font-weight:800;font-size:14px;transform:rotate(-12deg);line-height:1.3}
+  /* seções com "visões" */
+  section{margin-top:44px}
+  .vh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .vh .dot{width:40px;height:40px;font-size:20px}
+  .vh h2{margin:0;font-size:26px}
+  .vh small{display:block;font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:800}
+  .missao .dot{background:#FCE5E9}.missao small{color:var(--stamp)}
+  .ideia .dot{background:#FBEFD8}.ideia small{color:var(--gold)}
+  .dentro .dot{background:#E3EEF8}.dentro small{color:var(--ocean)}
+  .codigo .dot{background:#E1F2EC}.codigo small{color:var(--green)}
+  .armad .dot{background:#FCE5E9}.armad small{color:var(--stamp)}
+  .desafio .dot{background:#ECE7FB}.desafio small{color:var(--violet)}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 28px}
+  .analog{background:#FFF7E8;border:1px solid #F1DDB2;border-radius:18px;padding:22px 26px;display:flex;gap:18px}
+  .analog .big{font-size:44px;line-height:1}
+  /* missão: preview do app */
+  .preview{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+  .phone{width:260px;border-radius:26px;background:var(--navy);padding:14px;box-shadow:0 12px 30px rgba(18,38,58,.25)}
+  .screen{background:#fff;border-radius:16px;padding:16px;font-size:15px}
+  .screen .ttl{font-weight:800;color:var(--navy);margin-bottom:8px}
+  .counter{font-size:30px;font-weight:800;color:var(--stamp)}
+  .bar{height:10px;background:#EEF1F5;border-radius:6px;overflow:hidden;margin:8px 0}
+  .bar i{display:block;height:100%;background:var(--ocean);width:1.5%;transition:width .6s}
+  .flags{display:flex;gap:6px;font-size:22px;margin-top:6px;flex-wrap:wrap}
+  /* simulador */
+  .sim{background:var(--navy);border-radius:20px;padding:26px;color:#fff}
+  .sim h3{margin:0 0 4px;font-size:18px}
+  .sim p{margin:0 0 18px;color:#C9D6E3;font-size:15px}
+  .graph{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:center}
+  .node{background:var(--navy2);border:2px solid #3A587A;border-radius:14px;padding:14px;text-align:center;transition:all .25s}
+  .node .k{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#9FB4C9}
+  .node .v{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;margin-top:4px}
+  .node.flash{border-color:var(--gold);box-shadow:0 0 0 6px rgba(217,154,30,.25);transform:scale(1.04)}
+  .wire{height:4px;background:#3A587A;position:relative;border-radius:2px}
+  .wire .pulse{position:absolute;top:-5px;left:0;width:14px;height:14px;border-radius:50%;background:var(--gold);opacity:0}
+  .wire.go .pulse{animation:go .45s linear forwards}
+  @keyframes go{0%{left:0;opacity:1}100%{left:calc(100% - 14px);opacity:1}}
+  .simbtns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+  .btn{border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}
+  .btn.primary{background:var(--gold);color:var(--navy)}
+  .btn.ghost{background:transparent;color:#C9D6E3;border:2px solid #3A587A}
+  .log{margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:14px;color:#9FB4C9;min-height:22px}
+  /* código */
+  .steps{display:flex;gap:8px;margin-bottom:14px}
+  .steps span{font-size:14px;font-weight:700;padding:6px 14px;border-radius:999px;background:#E1F2EC;color:var(--green)}
+  .steps span.on{background:var(--green);color:#fff}
+  pre{background:#0F1F30;color:#E6EDF5;border-radius:16px;padding:20px 22px;font-size:15px;line-height:1.7;overflow:auto;margin:0}
+  .hl{background:rgba(217,154,30,.18);display:block;margin:0 -22px;padding:0 22px;border-left:4px solid var(--gold)}
+  .ann{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--gold);color:var(--navy);font-size:12px;font-weight:800;margin-left:8px;vertical-align:middle}
+  .notes{margin-top:14px;display:grid;gap:8px}
+  .notes div{display:flex;gap:10px;font-size:16px}
+  .notes .ann{margin:4px 0 0}
+  .result{margin-top:14px;display:flex;align-items:center;gap:12px;background:#E1F2EC;border-radius:14px;padding:12px 16px;font-size:16px}
+  details{margin-top:16px;background:#fff;border:1px dashed #C5CCD6;border-radius:14px;padding:12px 18px}
+  summary{cursor:pointer;font-weight:700;color:var(--ocean)}
+  /* armadilhas */
+  .err{background:#1A1014;color:#FFD6DD;border-radius:14px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:14px;margin:10px 0}
+  /* desafio */
+  .quiz label{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:2px solid var(--line);border-radius:12px;margin-top:10px;cursor:pointer;background:#fff}
+  .quiz label.ok{border-color:var(--green);background:#E1F2EC}
+  .quiz label.no{border-color:var(--stamp);background:#FCE5E9}
+  .earned{display:none;align-items:center;gap:16px;margin-top:16px}
+  .earned .st{width:96px;height:96px;border:4px solid var(--stamp);border-radius:50%;display:grid;place-items:center;color:var(--stamp);font-weight:800;font-size:12px;text-align:center;transform:rotate(-12deg);animation:stampin .5s ease-out}
+  @keyframes stampin{0%{transform:scale(2.2) rotate(-12deg);opacity:0}100%{transform:scale(1) rotate(-12deg);opacity:1}}
+  /* lateral */
+  .side{position:sticky;top:90px;align-self:start;display:grid;gap:16px}
+  .resumo{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;font-size:15px}
+  .resumo h4{margin:0 0 8px}
+  .resumo ul{margin:0;padding-left:18px}
+  .passport{background:var(--navy);color:#fff;border-radius:18px;padding:18px;font-size:14px}
+  .passport .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+  .passport .s{aspect-ratio:1;border-radius:50%;border:2px dashed #3A587A}
+  .passport .s.on{border:3px solid var(--gold);background:radial-gradient(circle,#2A4766 55%,transparent 56%)}
+  footer{text-align:center;color:var(--muted);font-size:14px;padding:40px 20px 60px;border-top:1px solid var(--line);margin-top:60px}
+  .note-esboco{background:#FFF3C4;border-bottom:1px solid #EAD27A;padding:10px 32px;font-size:15px;text-align:center}
+</style>
+</head>
+<body>
+<div class="note-esboco"><b>Esboço para discussão.</b> Conteúdo e visual provisórios. O simulador e o quiz funcionam: experimente.</div>
+<header class="top">
+  <div class="brand"><div class="book">🛂</div>Passaporte Angular</div>
+  <nav class="conts">
+    <span>Embarque</span><span class="on">Fundamentos</span><span>Componentes</span><span>Navegação</span><span>Dados</span><span>Formulários</span><span>Back-end</span><span>Qualidade</span><span>Produção</span>
+  </nav>
+  <div class="prog">Seu passaporte: <b>4 de 38</b> carimbos</div>
+</header>
+
+<div class="wrap">
+  <aside class="toc">
+    <h4>Neste capítulo</h4>
+    <a href="#missao"><span class="dot" style="background:#FCE5E9">🎯</span>A missão</a>
+    <a href="#ideia"><span class="dot" style="background:#FBEFD8">💡</span>A ideia</a>
+    <a href="#dentro"><span class="dot" style="background:#E3EEF8">🔬</span>Por dentro</a>
+    <a href="#codigo"><span class="dot" style="background:#E1F2EC">🛠️</span>Mão no código</a>
+    <a href="#armadilhas"><span class="dot" style="background:#FCE5E9">⚠️</span>Armadilhas</a>
+    <a href="#desafio"><span class="dot" style="background:#ECE7FB">🏁</span>Desafio e carimbo</a>
+    <a href="#alem"><span class="dot" style="background:#EEF1F5">📚</span>Para ir além</a>
+  </aside>
+
+  <main>
+    <div class="hero">
+      <div class="meta"><span class="chip gold">Fundamentos · capítulo 6</span><span class="chip">⏱ cerca de 35 min</span><span class="chip">Antes: Templates e binding</span></div>
+      <h1>Como guardar estado que atualiza a tela com <code>signal()</code>?</h1>
+      <p>Você vai fazer o contador de países visitados do Passaporte se atualizar sozinho, e entender por que nenhuma linha de “atualizar a tela” foi necessária.</p>
+      <div class="stamp">CARIMBO<br>Signals<br>ainda não</div>
+    </div>
+
+    <section id="missao" class="missao">
+      <div class="vh"><span class="dot">🎯</span><div><small>A missão</small><h2>O que o seu Passaporte ganha hoje</h2></div></div>
+      <div class="preview">
+        <div class="phone"><div class="screen">
+          <div class="ttl">Meu passaporte</div>
+          Países visitados
+          <div class="counter" id="pv-count">3</div>
+          <div class="bar"><i id="pv-bar"></i></div>
+          <div style="font-size:13px;color:var(--muted)"><span id="pv-pct">1,5</span>% do mundo</div>
+          <div class="flags" id="pv-flags">🇧🇷 🇦🇷 🇵🇹</div>
+        </div></div>
+        <div style="flex:1;min-width:260px">
+          <p style="margin-top:0">Ao final do capítulo, cada país marcado como visitado atualiza <b>três lugares da tela ao mesmo tempo</b>: o número, a barra e as bandeiras.</p>
+          <p>E você não vai escrever nenhuma linha para atualizar a tela. Quem faz isso é o Angular, graças aos <b>signals</b>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="ideia" class="ideia">
+      <div class="vh"><span class="dot">💡</span><div><small>A ideia</small><h2>O placar do estádio</h2></div></div>
+      <div class="analog"><div class="big">🏟️</div><div>
+        <p style="margin-top:0">Ninguém no estádio conta os gols de cabeça. Todo mundo olha para o <b>placar</b>. Quando sai um gol, alguém muda o placar <b>uma vez</b>, e todos os torcedores veem o número novo, sem ninguém avisar cada um.</p>
+        <p style="margin-bottom:0">Um <b>signal</b> é o placar: um valor guardado num lugar só. A tela é a torcida: ela olha para o signal e se atualiza quando ele muda.</p>
+      </div></div>
+    </section>
+
+    <section id="dentro" class="dentro">
+      <div class="vh"><span class="dot">🔬</span><div><small>Por dentro</small><h2>Veja a mudança se espalhar</h2></div></div>
+      <p>Abaixo, um <b>signal</b> guarda os países visitados. Um <b>computed</b> calcula a porcentagem a partir dele. O <b>template</b> mostra os dois. Clique e acompanhe o caminho da mudança.</p>
+      <div class="sim">
+        <h3>Simulador: signal → computed → tela</h3>
+        <p>No site, este simulador roda com signals de verdade do Angular.</p>
+        <div class="graph">
+          <div class="node" id="n1"><div class="k">signal</div><div class="v">visitados = <span id="v1">3</span></div></div>
+          <div class="wire" id="w1"><span class="pulse"></span></div>
+          <div class="node" id="n2"><div class="k">computed</div><div class="v">pct = <span id="v2">1,5</span>%</div></div>
+          <div class="wire" id="w2"><span class="pulse"></span></div>
+          <div class="node" id="n3"><div class="k">template</div><div class="v"><span id="v3">3</span> países</div></div>
+        </div>
+        <div class="simbtns">
+          <button class="btn primary" onclick="visitar()">＋ Visitar um país</button>
+          <button class="btn ghost" onclick="zerar()">Recomeçar</button>
+        </div>
+        <div class="log" id="log">› clique em “Visitar um país”</div>
+      </div>
+      <details><summary>Aprofundando: o computed recalcula sempre?</summary>
+        <p>Não. Ele é <b>preguiçoso</b> e <b>memoriza</b> o resultado: só recalcula quando alguém lê o valor <i>e</i> algum signal de que ele depende mudou. Se ninguém olhar, não gasta processamento.</p>
+      </details>
+    </section>
+
+    <section id="codigo" class="codigo">
+      <div class="vh"><span class="dot">🛠️</span><div><small>Mão no código</small><h2>Construindo o contador</h2></div></div>
+      <div class="steps"><span>1. Criar o signal</span><span class="on">2. Derivar com computed</span><span>3. Mostrar e atualizar</span></div>
+      <p>Na classe do componente, a porcentagem nasce do número de visitados. Repare que ela é uma <b>fórmula</b>, não um valor guardado:</p>
+<pre>export class Contador {
+  visitados = signal(3);<span class="ann">1</span>
+<span class="hl">  pct = computed(() =&gt; this.visitados() / 195 * 100);<span class="ann">2</span></span>
+  visitar() {
+    this.visitados.update(n =&gt; n + 1);<span class="ann">3</span>
+  }
+}</pre>
+      <div class="notes">
+        <div><span class="ann">1</span><span><code>signal(3)</code> cria a caixinha com o valor inicial.</span></div>
+        <div><span class="ann">2</span><span><code>computed</code> lê <code>visitados()</code>, com parênteses: é assim que se lê um signal.</span></div>
+        <div><span class="ann">3</span><span><code>update</code> calcula o valor novo a partir do atual.</span></div>
+      </div>
+      <div class="result">✅ <span><b>Na tela:</b> clique em “Visitar” e veja a porcentagem mudar junto com o número.</span></div>
+    </section>
+
+    <section id="armadilhas" class="armad">
+      <div class="vh"><span class="dot">⚠️</span><div><small>Armadilhas</small><h2>Os erros que você vai ver</h2></div></div>
+      <div class="box">
+        <p style="margin-top:0"><b>Esqueceu os parênteses no template?</b> Em vez do número, aparece isto na tela:</p>
+        <div class="err">[Signal: 3]</div>
+        <p style="margin-bottom:0">Para ler um signal, sempre <code>visitados()</code>, com parênteses.</p>
+      </div>
+    </section>
+
+    <section id="desafio" class="desafio">
+      <div class="vh"><span class="dot">🏁</span><div><small>Desafio</small><h2>Ganhe o carimbo</h2></div></div>
+      <div class="box quiz">
+        <p style="margin-top:0"><b>Qual linha atualiza o signal corretamente?</b></p>
+        <label onclick="q(this,false)"><input type="radio" name="q"> <code>this.visitados = 4;</code></label>
+        <label onclick="q(this,true)"><input type="radio" name="q"> <code>this.visitados.set(4);</code></label>
+        <label onclick="q(this,false)"><input type="radio" name="q"> <code>this.visitados() = 4;</code></label>
+        <div class="earned" id="earned"><div class="st">CARIMBO<br>SIGNALS<br>✓</div><div><b>Carimbo conquistado!</b><br>Fundamentos: 5 de 7 capítulos.</div></div>
+      </div>
+    </section>
+
+    <section id="alem">
+      <div class="vh"><span class="dot" style="background:#EEF1F5">📚</span><div><small style="color:var(--muted)">Para ir além</small><h2>Na documentação oficial</h2></div></div>
+      <p>O guia de Signals em <a href="https://angular.dev/guide/signals">angular.dev/guide/signals</a>, em inglês, para quem quer os detalhes.</p>
+    </section>
+  </main>
+
+  <aside class="side">
+    <div class="resumo"><h4>⏱ Resumo em 1 minuto</h4><ul>
+      <li><code>signal(v)</code> guarda um valor</li>
+      <li>Ler: <code>s()</code> · mudar: <code>set</code> ou <code>update</code></li>
+      <li><code>computed</code> deriva valores e se atualiza sozinho</li>
+      <li>A tela acompanha, sem código extra</li></ul></div>
+    <div class="passport"><b>🛂 Fundamentos</b><div class="grid">
+      <div class="s on"></div><div class="s on"></div><div class="s on"></div><div class="s on"></div><div class="s" id="slot"></div><div class="s"></div><div class="s"></div></div></div>
+  </aside>
+</div>
+
+<footer>Passaporte Angular · Prof. Roni Fabio Banaszewski · Tecnologia em Sistemas para Internet · UTFPR Guarapuava</footer>
+
+<script>
+  const flags=['🇧🇷','🇦🇷','🇵🇹','🇯🇵','🇮🇹','🇲🇽','🇨🇦','🇰🇪','🇮🇸','🇳🇿','🇪🇬','🇨🇱'];
+  let n=3;
+  const fmt=x=>(x/195*100).toFixed(1).replace('.',',');
+  function flash(id){const e=document.getElementById(id);e.classList.add('flash');setTimeout(()=>e.classList.remove('flash'),450)}
+  function pulse(id){const w=document.getElementById(id);w.classList.remove('go');void w.offsetWidth;w.classList.add('go')}
+  function render(){
+    document.getElementById('pv-count').textContent=n;
+    document.getElementById('pv-pct').textContent=fmt(n);
+    document.getElementById('pv-bar').style.width=Math.max(1.5,n/195*100*8)+'%';
+    document.getElementById('pv-flags').textContent=flags.slice(0,Math.min(n,flags.length)).join(' ');
+  }
+  function visitar(){
+    n++; const log=document.getElementById('log');
+    document.getElementById('v1').textContent=n; flash('n1'); log.textContent='› visitados.update(n => n + 1)  →  '+n;
+    setTimeout(()=>pulse('w1'),150);
+    setTimeout(()=>{document.getElementById('v2').textContent=fmt(n);flash('n2');log.textContent+='   ›  pct recalculado: '+fmt(n)+'%'},620);
+    setTimeout(()=>pulse('w2'),770);
+    setTimeout(()=>{document.getElementById('v3').textContent=n;flash('n3');render();log.textContent+='   ›  tela atualizada'},1240);
+  }
+  function zerar(){n=3;['v1','v3'].forEach(i=>document.getElementById(i).textContent=3);document.getElementById('v2').textContent=fmt(3);render();document.getElementById('log').textContent='› clique em “Visitar um país”'}
+  function q(el,ok){document.querySelectorAll('.quiz label').forEach(l=>l.classList.remove('ok','no'));el.classList.add(ok?'ok':'no');if(ok){document.getElementById('earned').style.display='flex';document.getElementById('slot').classList.add('on')}}
+  render();
+</script>
+</body>
+</html>

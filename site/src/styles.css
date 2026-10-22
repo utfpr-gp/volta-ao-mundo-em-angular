@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@import "@fontsource-variable/nunito-sans";
+@import "@fontsource-variable/jetbrains-mono";

@@ -1,0 +1,20 @@
+{
+  "name": "volta-ao-mundo-em-angular",
+  "private": true,
+  "description": "Livro aberto e interativo de Angular moderno, do zero ao deploy",
+  "license": "MIT",
+  "workspaces": [
+    "site",
+    "passaporte/etapas/*"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "snippets": "node scripts/extract-snippets.mjs",
+    "start": "npm run snippets && npm start -w site",
+    "build": "npm run snippets && npm run build -w site && node scripts/post-build.mjs",
+    "test": "npm run snippets && npm test -w site -- --watch=false && node --test 'scripts/**/*.test.mjs'",
+    "check": "node scripts/check-contrast.mjs && node scripts/check-output.mjs && node scripts/check-links.mjs"
+  }
+}
