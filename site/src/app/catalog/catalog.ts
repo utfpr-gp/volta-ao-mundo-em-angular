@@ -475,6 +475,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Rode código sempre que um signal mudar com effect(), por exemplo para salvar no navegador, e aprenda quando um computed é melhor.',
     minutes: 20,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Formulários
   {

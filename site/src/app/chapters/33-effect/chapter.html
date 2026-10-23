@@ -1,0 +1,161 @@
+<vm-chapter-page slug="33-effect">
+  <vm-view kind="mission" title="Uma cópia no bolso">
+    <p class="lead">
+      O Passaporte guarda o que você marca no json-server. Mas, se ele estiver desligado, tudo se perde ao recarregar. Neste
+      capítulo, o app passa a guardar uma cópia no próprio navegador, sempre que algo muda, e abre com ela quando o servidor
+      não responde.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-33/sem-servidor.png"
+      width="1100"
+      height="360"
+      alt="O Passaporte com a faixa amarela: o servidor local não respondeu, o passaporte está salvo só neste navegador. O placar mostra 5 de 195 países, recuperados da cópia."
+    />
+    <p>
+      A ferramenta é o <vm-term name="effect">effect</vm-term>: código que roda sozinho quando um signal muda. Ao final do
+      capítulo, você vai saber usar o <code>effect()</code> para efeitos colaterais, e, tão importante quanto, reconhecer
+      quando um <code>computed</code> é a escolha certa.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O diário de bordo">
+    <vm-analogy emoji="📓" title="Anotar no diário a cada carimbo">
+      <p>
+        Todo viajante cuidadoso tem um hábito: a cada carimbo novo no passaporte, anota no diário de bordo. Ninguém precisa
+        lembrá-lo; a anotação vem junto com o carimbo. E o diário não muda o passaporte: só registra.
+      </p>
+      <p>
+        O <code>effect</code> é esse hábito. Ele observa signals e, quando eles mudam, faz algo <strong>fora</strong> do
+        Angular: grava no navegador, manda uma mensagem, mexe no DOM à mão. Já o <code>computed</code> é a conta de quantos
+        carimbos você tem: um valor que vem de outros, sempre certo, sem hábito nenhum.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O effect por dentro">
+    <h3>Gravar no navegador quando o passaporte muda</h3>
+    <vm-code snippet="33/etapa/src/app/core/passport.ts" caption="core/passport.ts" />
+    <ul>
+      <li>
+        O <code>effect()</code> recebe uma função. O Angular a roda uma vez e anota quais signals ela leu, aqui o
+        <code>saved()</code>. Quando algum deles muda, a função roda de novo.
+      </li>
+      <li>
+        O <code>localStorage</code> é um armário do navegador, que guarda texto por site e continua lá depois de fechar a aba.
+        O <code>JSON.stringify</code> transforma o passaporte em texto, e o <code>JSON.parse</code>, na volta, em objeto.
+      </li>
+      <li>
+        O <code>readCopy()</code> lê a cópia uma vez, ao abrir o app, e o <code>saved</code> passa a valer a cópia enquanto o
+        json-server não responde. Com o <code>try</code>, uma cópia estragada não derruba o app.
+      </li>
+    </ul>
+
+    <h3>Quando o effect roda</h3>
+    <p>
+      O <code>effect</code> não roda no mesmo instante em que o signal muda: ele espera o Angular terminar o que está fazendo.
+      Se o signal mudar três vezes seguidas, o <code>effect</code> roda uma vez, com o último valor. Para gravar no navegador,
+      é ótimo: três gravações seriam desperdício.
+    </p>
+    <p>
+      Esse atraso é o motivo da regra mais importante do capítulo: <strong>se o que você quer é um valor, use
+      computed</strong>. Um <code>computed</code> está sempre certo, na hora em que é lido; um signal mantido por um
+      <code>effect</code> fica um passo atrás.
+    </p>
+
+    <vm-effect-sim />
+
+    <h3>A pergunta que decide</h3>
+    <table>
+      <thead>
+        <tr><th>Você quer…</th><th>Use</th><th>No Passaporte</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>um valor calculado a partir de signals</td><td><code>computed</code></td><td><code>visitedCount</code>, <code>countries</code>, <code>visible</code></td></tr>
+        <tr><td>fazer algo fora do Angular quando um signal muda</td><td><code>effect</code></td><td>gravar a cópia no <code>localStorage</code></td></tr>
+        <tr><td>reagir a um clique ou a outra ação</td><td>um método</td><td><code>toggleVisited</code>, <code>saveNote</code></td></tr>
+      </tbody>
+    </table>
+    <p>
+      Repare que, até este capítulo, o Passaporte não tinha nenhum <code>effect</code>, e funcionava muito bem. Na maior
+      parte do tempo, <code>computed</code> e métodos bastam; o <code>effect</code> é para a borda, onde o app conversa com o
+      mundo de fora.
+    </p>
+
+    <vm-deep-dive title="Limpar antes de rodar de novo">
+      <p>
+        A função do <code>effect</code> pode receber um <code>onCleanup</code>, que roda antes da próxima execução e quando o
+        <code>effect</code> é destruído. Serve, por exemplo, para cancelar um temporizador que a execução anterior ligou:
+      </p>
+      <vm-code snippet="33/limpeza" caption="um effect que espera 1 s sem mudanças" />
+      <p>
+        Um <code>effect</code> criado num componente é destruído junto com ele; num service com <code>&#64;Service()</code>,
+        vive enquanto o app estiver aberto.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A cópia no navegador">
+    <vm-steps label="Guardar o passaporte no navegador">
+      <ng-template vmStep="Ler a cópia">
+        <p>
+          No <code>passport.ts</code>, crie a constante <code>STORAGE_KEY</code> e a função <code>readCopy()</code>, e faça o
+          <code>saved</code> usar a cópia quando o json-server não tiver respondido.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Gravar a cópia">
+        <p>No constructor, o <code>effect</code> que grava o <code>saved()</code> no <code>localStorage</code>. E o aviso do topo agora diz o que acontece:</p>
+        <vm-code snippet="33/etapa/src/app/app.html" caption="app.html" />
+        <p>
+          <strong>O que muda na tela:</strong> marque alguns países com o json-server ligado. Pare o <code>npm run api</code>
+          e recarregue: o aviso aparece, e os países continuam marcados. No Chrome, abra as ferramentas com
+          <kbd>F12</kbd>, aba Application, e veja a chave <code>passaporte</code> em Local Storage.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Efeitos colaterais demais">
+    <vm-pitfall title="Um effect que só copia um valor" where="O que aparece na tela" message="(por um instante, o placar mostra o número antigo)">
+      <vm-code snippet="33/espelho" caption="passport.ts" />
+      <p>
+        Funciona, mas o valor chega um passo atrasado, e quem lê o signal no meio do caminho vê o número velho.
+        <strong>Como sair:</strong> se é um valor calculado a partir de outros, é <code>computed</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Um effect que alimenta a si mesmo" where="O que aparece na tela" message="(a aba trava, sem mensagem de erro)">
+      <vm-code snippet="33/laco" caption="um componente qualquer" />
+      <p>
+        O <code>effect</code> lê <code>visits</code>, escreve em <code>visits</code>, e a escrita o faz rodar de novo, sem fim.
+        <strong>Como sair:</strong> um <code>effect</code> não deve escrever nos signals que lê. Se precisar mesmo ler um signal
+        sem passar a depender dele, use <code>untracked(() => ...)</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Criar o effect num método"
+      where="O que aparece no console do navegador"
+      message="NG0203: effect() can only be used within an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`."
+    >
+      <vm-code snippet="33/no-metodo" caption="passport.ts" />
+      <p>
+        Como o <code>toSignal</code> e o resource, o <code>effect</code> precisa saber a quem pertence, para ser destruído na
+        hora certa. <strong>Como sair:</strong> crie-o no constructor ou num campo da classe.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="33-effect" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Você terminou a trilha Dados. O Passaporte busca, guarda e mostra dados, mas a única coisa que
+      se escreve nele é uma anotação. A próxima trilha traz formulários de verdade, com validação: o
+      <vm-see-chapter [number]="34" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
