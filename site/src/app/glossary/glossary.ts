@@ -218,6 +218,12 @@ export const GLOSSARY = {
       'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
     chapter: 3,
   },
+  rota: {
+    term: 'Rota',
+    definition:
+      'Uma regra que liga um endereço do app, como /sobre, a um componente. O Router lê as rotas em ordem e mostra no <router-outlet> o componente da primeira que combina.',
+    chapter: 23,
+  },
   seletor: {
     term: 'Seletor (selector)',
     definition: 'O nome da tag que representa um componente no HTML. Com selector: \'app-header\', o componente aparece onde estiver <app-header />.',
