@@ -1,0 +1,119 @@
+<vm-chapter-page slug="18-view-child">
+  <vm-view kind="mission" title="O cursor vai sozinho">
+    <p class="lead">
+      Um detalhe que faz um app parecer bem cuidado: ao marcar o país em destaque como visitado, o cursor vai sozinho para o
+      campo de anotação, pronto para você escrever como foi a viagem.
+    </p>
+    <p>
+      Para isso, o componente precisa pôr a mão num elemento do próprio template e chamar o <code>focus()</code> dele. É o
+      que o <code>viewChild()</code> faz. Ao final do capítulo, você vai saber encontrar elementos e componentes filhos, e,
+      tão importante quanto, quando não usar esse recurso.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="Apontar com o dedo">
+    <vm-analogy emoji="👉" title="Aquele ali">
+      <p>
+        Na maior parte do tempo, você conversa com as pessoas pelo que elas mostram: o crachá, o uniforme. Mas, às vezes,
+        precisa apontar: "você aí, pode abrir a porta?". O <code>viewChild()</code> é o dedo que aponta: ele encontra um
+        elemento específico do template para você pedir algo direto a ele.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="viewChild por dentro">
+    <h3>Encontrar um elemento</h3>
+    <vm-code snippet="18/etapa/src/app/featured-country/featured-country.ts" caption="featured-country.ts" />
+    <p>
+      <code>viewChild.required&lt;ElementRef&lt;HTMLInputElement&gt;&gt;('note')</code> procura no template o elemento com a
+      variável <code>#note</code>, a mesma do capítulo 8. O resultado é um signal; ao chamá-lo, você recebe um
+      <code>ElementRef</code>, um envelope com o elemento de verdade dentro, em <code>nativeElement</code>. O
+      <code>.required</code> garante que o elemento existe; sem ele, o resultado pode ser <code>undefined</code>.
+    </p>
+    <p>
+      O genérico <code>&lt;HTMLInputElement&gt;</code> diz ao TypeScript que tipo de elemento está no envelope, e é ele que
+      libera métodos como <code>focus()</code> e <code>select()</code> e propriedades como <code>value</code>.
+    </p>
+
+    <vm-query-lab />
+
+    <h3>Encontrar um componente filho</h3>
+    <p>
+      Em vez de uma variável de template, você pode passar a classe de um componente. O resultado é a instância do
+      componente, e você pode chamar os métodos públicos dele:
+    </p>
+    <vm-code snippet="18/component-query" caption="trecho de um componente pai" />
+
+    <h3>Quando evitar</h3>
+    <p>
+      O <code>viewChild()</code> é poderoso, mas fura o fluxo de dados limpo dos capítulos 15 e 16. Prefira sempre o caminho
+      declarativo: para mostrar ou esconder, <code>&#64;if</code>; para mudar texto ou estilo, bindings; para conversar com
+      um filho, inputs e outputs. Use o <code>viewChild()</code> para o que só dá para fazer chamando o elemento: dar foco,
+      selecionar texto, rolar até um ponto, tocar um som, medir o tamanho.
+    </p>
+
+    <vm-deep-dive title="viewChildren, contentChild e o @ViewChild antigo">
+      <p>
+        <code>viewChildren()</code> encontra todos os que batem, e devolve uma lista. <code>contentChild()</code> e
+        <code>contentChildren()</code> procuram no conteúdo projetado com <code>ng-content</code>, do capítulo 17. Em código
+        antigo, você vai ver <code>&#64;ViewChild('note') note!: ElementRef;</code>, com decorator: a ideia é a mesma, sem
+        signal.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O foco na anotação">
+    <vm-steps label="Usar viewChild">
+      <ng-template vmStep="A consulta">
+        <p>
+          No <code>FeaturedCountry</code>, importe <code>ElementRef</code> e <code>viewChild</code> de
+          <code>&#64;angular/core</code> e declare a consulta ao campo <code>#note</code>, que já existe no template desde o
+          capítulo 8.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O foco">
+        <p>No <code>toggleVisited</code>, depois de mudar o signal, chame o <code>focus()</code> se o país passou a visitado, como na seção anterior.</p>
+        <p><strong>O que muda na tela:</strong> clique em "Marcar como visitado" e comece a digitar, sem clicar no campo.</p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Apontando para o nada">
+    <vm-pitfall
+      title="ElementRef sem o tipo do elemento"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2339: Property 'focus' does not exist on type 'ElementRef<any>'."
+    >
+      <p>
+        Dois tropeços juntos: faltou o <code>.nativeElement</code> (o <code>focus</code> é do elemento, e não do envelope) e
+        faltou o genérico. <strong>Como sair:</strong> <code>viewChild.required&lt;ElementRef&lt;HTMLInputElement&gt;&gt;('note')</code>
+        e <code>this.noteField().nativeElement.focus()</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Uma referência que não existe no template"
+      where="O erro que aparece no console do navegador"
+      message="ERROR RuntimeError: NG0951: Child query result is required but no value is available."
+    >
+      <p>
+        A consulta procura <code>'note'</code>, mas o template tem <code>#nota</code>, ou o elemento está dentro de um
+        <code>&#64;if</code> que ainda não apareceu. Como a consulta é <code>required</code>, ler o resultado sem valor é
+        erro. <strong>Como sair:</strong> confira o nome da variável; se o elemento pode não existir, use
+        <code>viewChild()</code> sem <code>.required</code> e trate o <code>undefined</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="18-view-child" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Um componente nasce, vive e é destruído. Rodar código nesses momentos é o assunto do
+      <vm-see-chapter [number]="19" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
