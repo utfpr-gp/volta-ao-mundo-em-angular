@@ -1,0 +1,202 @@
+<vm-chapter-page slug="21-do-prototipo-ao-componente">
+  <vm-view kind="mission" title="O livro de carimbos">
+    <p class="lead">
+      O Passaporte ganha um pedaço novo: o livro de carimbos, com um carimbo para cada país visitado. Desta vez, a tela não
+      nasceu no código. Ela nasceu num protótipo do Figma, como costuma acontecer em equipes, e o seu trabalho é transformar
+      o desenho em componentes.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-21/carimbos.png"
+      width="668"
+      height="270"
+      alt="O painel Meus carimbos: seis cartões lado a lado. Brasil, Portugal e Argentina têm um carimbo vermelho, redondo e tracejado, com a sigla do país; Japão, Itália e Canadá têm um círculo cinza com um ponto de interrogação. No rodapé, 3 de 6 carimbos."
+    />
+    <p>
+      Ao final do capítulo, você vai saber ler um protótipo, separar nele os átomos, as moléculas e os organismos, tirar dele
+      os tokens e traduzir as medidas em classes do Tailwind.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A planta e a obra">
+    <vm-analogy emoji="📐" title="O arquiteto e o mestre de obras">
+      <p>
+        O arquiteto desenha a planta da casa. O mestre de obras lê a planta e decide como construir: que peças vêm prontas da
+        fábrica, que medidas se repetem, por onde começar. E ele sabe que a planta não conta tudo: ela mostra a porta, mas não
+        diz se a porta range.
+      </p>
+      <p>
+        O protótipo é a planta, e você é o mestre de obras. O desenho mostra como a tela fica; quem decide quais peças viram
+        componentes, quais valores viram tokens e quais estados faltam desenhar é quem escreve o código.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Do protótipo ao código, por dentro">
+    <h3>O vocabulário do Figma</h3>
+    <p>
+      O <a href="https://www.figma.com" rel="noopener">Figma</a> é a ferramenta de design de interfaces mais usada hoje. Roda
+      no navegador e é gratuita para estudantes. Para quem programa, o que importa é que quase tudo nele tem um par no
+      Angular:
+    </p>
+    <table>
+      <thead>
+        <tr><th>No Figma</th><th>O que é</th><th>No Angular</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Frame com auto layout</td><td>Uma caixa que arruma o conteúdo sozinha: direção, espaço entre itens, margem</td><td>Um elemento com <code>flex</code> ou <code>grid</code></td></tr>
+        <tr><td>Componente ◆</td><td>Um molde reutilizável</td><td>Um componente</td></tr>
+        <tr><td>Instância</td><td>Um uso do molde</td><td>A tag, como <code>&lt;app-stamp /&gt;</code></td></tr>
+        <tr><td>Variante</td><td>Versões do mesmo componente, como "Carimbado: sim / não"</td><td>Um <code>input()</code></td></tr>
+        <tr><td>Variável ou estilo</td><td>Um valor com nome, usado em vários lugares</td><td>Um <vm-term name="design-token">design token</vm-term> no <code>&#64;theme</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Primeiro passo: o inventário</h3>
+    <p>
+      Olhe a tela e separe as peças da menor para a maior, como no <vm-term name="atomic-design">Atomic Design</vm-term> do
+      <vm-see-chapter [number]="6" />. O <strong>carimbo</strong> é um átomo: não dá para dividir. O <strong>cartão de
+      carimbo</strong>, carimbo mais o nome do país, é uma molécula. O <strong>livro de carimbos</strong>, o painel com a grade
+      e a contagem, é um organismo.
+    </p>
+    <p>
+      Nem toda camada vira componente. A regra prática: vira componente o que se <strong>repete</strong> ou o que tem
+      <strong>variantes</strong>. Uma caixa que só arruma os cartões numa grade fica no template de quem a usa.
+    </p>
+
+    <vm-proto-inspector />
+
+    <h3>Segundo passo: os tokens</h3>
+    <p>
+      Cada cor e cada medida do protótipo deveria bater com um token que o app já tem. O vermelho do carimbo,
+      <code>#C8102E</code>, já é o <code>--color-stamp</code> do <vm-see-chapter [number]="14" />. A fonte Courier New, com cara
+      de carimbo de verdade, é nova: vira o token <code>--font-stamp</code>, e o Tailwind cria a classe
+      <code>font-stamp</code>.
+    </p>
+    <vm-code snippet="21/etapa/src/styles.css" caption="src/styles.css" />
+    <p>
+      Se uma cor do protótipo não bate com nenhum token, pergunte a quem desenhou. Quase sempre é um engano ou um token novo
+      que ainda não foi combinado.
+    </p>
+
+    <h3>Terceiro passo: as medidas viram classes</h3>
+    <p>
+      Na escala do Tailwind, cada unidade vale 4 px: o espaço de 8 px do auto layout vira <code>gap-2</code>, a margem de 12 px
+      vira <code>p-3</code>, os 64 × 64 do carimbo viram <code>size-16</code>. A direção vertical vira
+      <code>flex flex-col</code>, e o alinhamento no centro vira <code>items-center</code>.
+    </p>
+
+    <h3>Quarto passo: construir de baixo para cima</h3>
+    <p>
+      Comece pelo átomo, que não depende de nada. A variante "Carimbado" do Figma vira um input com valor padrão
+      <code>false</code>, e cada valor da variante ganha o seu desenho num <code>&#64;if</code>:
+    </p>
+    <vm-code snippet="21/etapa/src/app/stamp/stamp.ts" caption="stamp.ts" />
+    <vm-code snippet="21/etapa/src/app/stamp/stamp.html" caption="stamp.html" />
+    <p>
+      O <code>role="img"</code> com o <code>aria-label</code> conta aos leitores de tela o que o desenho quer dizer: "Carimbo de
+      BR" ou "Ainda sem carimbo". A molécula junta o carimbo e o nome, e passa adiante os dados do país:
+    </p>
+    <vm-code snippet="21/etapa/src/app/stamp-card/stamp-card.html" caption="stamp-card.html" />
+    <p>
+      O organismo reaproveita o <code>Panel</code> do <vm-see-chapter [number]="17" />, porque o protótipo usa uma instância
+      do Painel, e conta os carimbos com um <code>computed</code>:
+    </p>
+    <vm-code snippet="21/etapa/src/app/stamp-book/stamp-book.ts" caption="stamp-book.ts" />
+    <vm-code snippet="21/etapa/src/app/stamp-book/stamp-book.html" caption="stamp-book.html" />
+
+    <vm-deep-dive title="Por que o livro de carimbos está dentro da lista?">
+      <p>
+        Porque é a <code>CountryList</code> que guarda os países. O livro precisa deles, e o único caminho que você conhece
+        até aqui é o input, de pai para filho. Quando os dados saírem da lista para um <strong>service</strong>, no
+        <vm-see-chapter [number]="28" />, o livro poderá morar em qualquer lugar do app, até numa tela só dele.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="E o código que o Figma gera?">
+      <p>
+        O <a href="https://help.figma.com/hc/en-us/articles/15023124644247-Guide-to-Dev-Mode" rel="noopener">Dev Mode</a> do
+        Figma mostra o CSS de cada camada, e há plugins e assistentes de IA que geram componentes inteiros. Use como
+        referência para conferir medidas. O código gerado copia os pixels do desenho, e não conhece os seus tokens nem os
+        seus componentes: quem faz a tradução continua sendo você.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="Os carimbos no Passaporte">
+    <vm-steps label="Criar o livro de carimbos">
+      <ng-template vmStep="O token">
+        <p>No <code>src/styles.css</code>, acrescente ao <code>&#64;theme</code> a linha do <code>--font-stamp</code>, como na seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="Os componentes">
+        <p>Gere os três componentes, do menor para o maior:</p>
+        <vm-code snippet="21/ng-generate" caption="terminal" />
+        <p>
+          Apague os arquivos <code>.css</code> gerados e as linhas <code>styleUrl</code>: tudo é feito com classes. Escreva o
+          <code>Stamp</code>, depois o <code>StampCard</code> e por último o <code>StampBook</code>, como na seção anterior.
+          O <code>stamp-card.ts</code> importa o <code>Stamp</code> e tem um input <code>country</code>, obrigatório.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Na lista">
+        <p>
+          No <code>country-list.ts</code>, acrescente o <code>StampBook</code> ao <code>imports</code>. No fim do template,
+          depois do painel de países, use o livro:
+        </p>
+        <vm-code snippet="21/etapa/src/app/country-list/country-list.html" caption="country-list.html" />
+        <p>
+          <strong>O que muda na tela:</strong> abaixo da lista aparece o painel "Meus carimbos", com três carimbos vermelhos e
+          três círculos vazios. Clique em "Visitar" no Japão: o carimbo JP aparece na hora, e a contagem passa para 4 de 6.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Traduções que saem tortas">
+    <vm-pitfall title="Copiar os pixels do protótipo" where="O que aparece no código" message="(classes cheias de colchetes, como w-[64px] e text-[#C8102E])">
+      <vm-code snippet="21/pixels" caption="stamp.html" />
+      <p>
+        Funciona, mas a cor solta não muda no modo escuro, e cada medida quebrada vira uma exceção para manter.
+        <strong>Como sair:</strong> traduza o valor para a escala do Tailwind e cada cor para o token que ela representa.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Duas classes que brigam" where="O que aparece na tela" message="(o carimbo fica com a borda da cor errada)">
+      <vm-code snippet="21/class-conflict" caption="stamp.html" />
+      <p>
+        Com <code>border-line</code> e <code>border-stamp</code> no mesmo elemento, não vence a que aparece por último no
+        atributo, e sim a que o Tailwind escreveu por último no CSS. Quem lê o template não tem como saber.
+        <strong>Como sair:</strong> nunca deixe duas classes da mesma propriedade ligadas juntas; um <code>&#64;if</code> com um
+        desenho para cada variante deixa isso claro.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Um estado que ninguém desenhou" where="O que aparece no meio do caminho" message="(e a Bósnia e Herzegovina, como fica? O protótipo não mostra)">
+      <p>
+        O protótipo mostra os casos bonitos: "Brasil", "Japão". Ninguém desenhou "Bósnia e Herzegovina", nem o livro sem
+        nenhum carimbo. <strong>Como sair:</strong> antes de codificar, liste os estados de cada componente (vazio, cheio,
+        texto longo, carregando, erro) e confira com quem desenhou como cada um deve ficar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Um componente para cada camada" where="O que aparece no projeto" message="(dezenas de componentes com uma linha de template cada)">
+      <p>
+        Transformar cada frame do Figma em componente enche o projeto de peças que não se repetem nem mudam.
+        <strong>Como sair:</strong> só vira componente o que se repete ou tem variantes; o resto fica no template de quem o
+        usa.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="21-do-prototipo-ao-componente" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Você construiu cada peça à mão. Muitas equipes começam de componentes prontos, com botões,
+      menus e janelas já acessíveis. A última parada da trilha compara as bibliotecas mais usadas: o
+      <vm-see-chapter [number]="22" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
