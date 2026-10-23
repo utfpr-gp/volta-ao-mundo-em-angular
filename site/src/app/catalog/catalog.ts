@@ -431,6 +431,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Busque os países numa API de verdade com o HttpClient, trate os erros de rede e salve o seu passaporte num json-server local.',
     minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '30-rxjs',

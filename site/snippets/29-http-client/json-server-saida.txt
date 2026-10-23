@@ -1,0 +1,11 @@
+JSON Server started on PORT :3000
+Press CTRL-C to stop
+Watching db.json...
+
+♡⸜(˶˃ ᵕ ˂˶)⸝♡
+
+Index:
+http://localhost:3000/
+
+Static files:
+Serving ./public directory if it exists

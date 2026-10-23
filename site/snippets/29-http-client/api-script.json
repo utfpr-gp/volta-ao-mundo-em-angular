@@ -1,0 +1,4 @@
+"scripts": {
+  "start": "ng serve",
+  "api": "json-server db.json"
+}

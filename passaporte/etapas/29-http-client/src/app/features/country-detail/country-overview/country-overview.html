@@ -1,0 +1,19 @@
+@if (country(); as country) {
+  <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
+    <dt class="font-bold">Capital</dt>
+    <dd>{{ country.capital }}</dd>
+    <dt class="font-bold">População</dt>
+    <dd>{{ country.population | number }} habitantes</dd>
+    <dt class="font-bold">Código</dt>
+    <dd>{{ country.code }}</dd>
+    <dt class="font-bold">Situação</dt>
+    <dd>{{ country.visited ? 'Visitado' : 'Ainda não visitado' }}</dd>
+  </dl>
+  <button
+    type="button"
+    class="mt-4 rounded-full border border-line px-4 py-1.5 font-bold"
+    (click)="passport.toggleVisited(country.code)"
+  >
+    {{ country.visited ? 'Desmarcar' : 'Marcar como visitado' }}
+  </button>
+}

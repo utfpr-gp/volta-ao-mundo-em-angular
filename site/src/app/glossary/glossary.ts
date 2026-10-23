@@ -22,6 +22,12 @@ export const GLOSSARY = {
       'A primeira versão do Angular, de 2010, escrita em JavaScript. Foi reescrita do zero em 2016 e não recebe mais atualizações desde 2021. Exemplos com ng-controller e $scope são dela.',
     chapter: 1,
   },
+  api: {
+    term: 'API',
+    definition:
+      'Um endereço na internet que entrega dados para programas, e não páginas para pessoas. O app pede, por exemplo, /api/paises.json, e recebe os países em JSON.',
+    chapter: 29,
+  },
   'arrow-function': {
     term: 'Arrow function',
     definition: 'Um jeito curto de escrever uma função com a seta =>, como (c) => c.name. Aparece em todo lugar no Angular, dentro de filter, map e computed.',
@@ -187,6 +193,12 @@ export const GLOSSARY = {
     definition:
       'O gerenciador de pacotes que vem com o Node.js. Baixa e instala códigos prontos, como as partes do Angular, a partir do package.json.',
     chapter: 2,
+  },
+  observable: {
+    term: 'Observable',
+    definition:
+      'Um valor que vai chegar depois, como a resposta de uma requisição. Nada acontece até alguém se inscrever nele com subscribe; o RxJS é a biblioteca dos Observables.',
+    chapter: 29,
   },
   opinativo: {
     term: 'Opinativo',

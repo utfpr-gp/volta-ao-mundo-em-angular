@@ -131,13 +131,10 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Capítulo 11 (`@for`):** armadilha do `*ngFor` antigo com a mensagem real do compilador
   (`NG8103: The *ngFor directive was used in the template, but neither the NgFor directive nor the CommonModule was imported...`),
   e o aviso de que `*ngIf`/`*ngFor` estão obsoletos desde a versão 20. Não citar `*ngFor` antes desse capítulo.
-- **Capítulo 29 (`HttpClient`):** uma caixa curta de "primeiro contato com Observable", ligada ao capítulo 30.
 - **Capítulo 39 (interceptors):** deixar claro que interceptors só veem requisições do `HttpClient`; o cliente do
   Supabase usa `fetch` e põe o token sozinho.
 - **Em todo capítulo:** no máximo duas ou três analogias; termo novo vai ao glossário; partes de curiosidade vão para
   `<vm-deep-dive>`; terminar com "E agora?" apontando a próxima parada.
-- **Capítulo 28 (services):** o livro de carimbos (capítulo 21) mora dentro da `CountryList` só porque é ela que guarda
-  os países, e o placar tem uma contagem separada da lista; o capítulo 28 promete resolver os dois com um service.
 - **Bibliotecas externas:** antes de citar a API de uma biblioteca, montar um projeto de teste à parte, rodar o build e
   conferir licença e tamanho (`Initial total`). Foi assim que apareceram a chave de licença do PrimeNG 22 e o choque do
   daisyUI com o `--color-primary` do Passaporte.
@@ -145,3 +142,16 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   conviver (a extração falha). Use nomes como `card.ts` e `card-template.html`.
 - **Capturas de tela:** o Chrome headless segue o tema do sistema; para o modo claro, passe
   `--blink-settings=preferredColorScheme=1`.
+- **Angular 22 mudou o que os tutoriais ensinam:** `ng generate service` gera `@Service()` (atalho para
+  `@Injectable({ providedIn: 'root' })`, só com `inject()`); o `HttpClient` já vem disponível sem `provideHttpClient()`,
+  e o `fetch` é o padrão (`withFetch()` está obsoleto); rotas filhas herdam parâmetros por padrão. Conferir no código do
+  Angular (`node_modules/@angular/*/types`) antes de afirmar qualquer detalhe de API.
+- **API de países do livro:** `site/public/api/paises.json`, gerada por `scripts/build-countries-api.mjs` (Wikidata CC0 +
+  nomes do CLDR). A REST Countries v3.1 foi desativada e a v5 pede chave; não usar APIs que exijam chave no navegador.
+- **Etapas a partir da 29:** o `Passport` faz requisições ao nascer. Todo spec que monta uma tela com ele usa
+  `provideHttpClientTesting()` e `startPassport()` (de `src/testing/passport-testing.ts`); sem isso, o teste vai à rede de
+  verdade. Para rodar o app: `npm run api` (json-server) e `ng serve`.
+- **Capítulo 30 (RxJS):** resolver a busca na lista de 195 países e o `saveNote`, que hoje faz um PUT a cada letra
+  (`debounceTime`); o capítulo 29 promete os dois.
+- **Capítulo 41 (resolvers):** o título da página do país mostra o código quando os países ainda não chegaram da API;
+  um resolver espera os dados antes de abrir a tela.

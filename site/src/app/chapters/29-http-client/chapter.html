@@ -1,0 +1,218 @@
+<vm-chapter-page slug="29-http-client">
+  <vm-view kind="mission" title="O mundo inteiro">
+    <p class="lead">
+      Até aqui, o Passaporte conhecia seis países, escritos à mão num arquivo. Neste capítulo, ele busca os 195 numa
+      <vm-term name="api">API</vm-term>, com nome, capital e população, e passa a guardar o que você marca num servidor que
+      roda no seu computador: feche o navegador, abra de novo, e os carimbos continuam lá.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-29/lista.png"
+      width="1100"
+      height="800"
+      alt="O Passaporte com o placar em 3 de 195 países e a lista começando em ordem alfabética: Afeganistão, África do Sul, Albânia, Alemanha, Andorra, Angola, Antígua e Barbuda, cada um com bandeira, capital e o botão Visitar."
+    />
+    <p>
+      Ao final do capítulo, você vai saber buscar e enviar dados com o <code>HttpClient</code>, mostrar na tela que algo está
+      carregando ou deu errado, e rodar um servidor de mentirinha com o json-server.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O correio">
+    <vm-analogy emoji="📮" title="Mandar uma carta e esperar a resposta">
+      <p>
+        Quem manda uma carta não fica parado na frente da caixa de correio. Põe a carta, volta para a vida, e trata da
+        resposta quando ela chega: pode ser a resposta esperada, pode ser um "destinatário desconhecido", e pode não chegar
+        nunca.
+      </p>
+      <p>
+        Uma requisição <strong>HTTP</strong> é essa carta. O app pede os países à API e continua funcionando; quando a
+        resposta chega, o service a guarda, e a tela acompanha. E, como no correio, o código precisa saber o que fazer quando
+        a resposta é um erro.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O HttpClient por dentro">
+    <h3>A API de países</h3>
+    <p>
+      O livro publica, junto com as páginas, uma API com os 195 países: os 193 da ONU e os 2 observadores, o Vaticano e a
+      Palestina. É um endereço que devolve <vm-term name="json">JSON</vm-term>:
+    </p>
+    <p><code>https://utfpr-gp.github.io/volta-ao-mundo-em-angular/api/paises.json</code></p>
+    <vm-code snippet="29/api-amostra" caption="o começo da resposta" />
+    <p>
+      Abra o endereço no navegador e veja a lista inteira. Os nomes estão em português do Brasil, e as capitais e a população
+      vêm da Wikidata, uma base de dados livre.
+    </p>
+
+    <h3>Buscar com get</h3>
+    <vm-code snippet="29/etapa/src/app/core/passport.ts" caption="core/passport.ts" />
+    <p>
+      O service pede o <code>HttpClient</code> com <code>inject()</code>, como pedia o Router. No Angular 22, ele já está
+      disponível para o app inteiro: não é preciso configurar nada no <code>app.config.ts</code>.
+    </p>
+    <ul>
+      <li>
+        <code>this.http.get&lt;ApiCountry[]&gt;(COUNTRIES_URL)</code> prepara um GET. O tipo entre
+        <code>&lt;&gt;</code> diz ao TypeScript o formato da resposta; ele confia em você, e não confere.
+      </li>
+      <li>
+        <code>{{ '.subscribe({ next, error })' }}</code> faz a requisição sair e diz o que fazer com a resposta: no
+        <code>next</code>, a resposta chegou; no <code>error</code>, algo deu errado.
+      </li>
+      <li>
+        O <code>status</code> é um signal com três valores: <code>'carregando'</code>, <code>'pronto'</code> e
+        <code>'erro'</code>. A tela olha para ele e decide o que mostrar.
+      </li>
+    </ul>
+
+    <vm-deep-dive title="Primeiro contato com Observable">
+      <p>
+        O <code>get</code> não devolve os países: devolve um <vm-term name="observable">Observable</vm-term>, a promessa de
+        um valor que vai chegar. Diferente de uma <vm-term name="promise">Promise</vm-term>, um Observable não faz nada
+        sozinho: a requisição só sai quando alguém se inscreve com <code>subscribe</code>. Os Observables são o assunto do
+        <vm-see-chapter [number]="30" />, e o <vm-see-chapter [number]="31" /> mostra como transformar um deles em signal.
+      </p>
+    </vm-deep-dive>
+
+    <h3>Mostrar o carregando e o erro</h3>
+    <p>A lista olha o <code>status</code> do service com um <code>&#64;switch</code>:</p>
+    <vm-code snippet="29/etapa/src/app/features/countries/country-list/country-list.html" caption="country-list.html" />
+    <p>
+      O botão "Tentar de novo" chama o <code>load()</code>, que refaz as requisições. Uma internet que caiu por um instante
+      não deve exigir que a pessoa recarregue a página.
+    </p>
+
+    <vm-request-sim />
+
+    <h3>Salvar com put no json-server</h3>
+    <p>
+      Os países vêm da API do livro, que só lê. O que é seu, os países visitados e as anotações, precisa de um lugar que
+      aceite escrita. O <strong>json-server</strong> cria uma API de verdade a partir de um arquivo JSON, no seu computador:
+    </p>
+    <vm-code snippet="29/db" caption="db.json, na pasta do projeto" />
+    <vm-code snippet="29/json-server-saida" caption="saída do npm run api" />
+    <p>
+      Com ele ligado, <code>GET http://localhost:3000/passport</code> devolve o objeto <code>passport</code>, e um
+      <code>PUT</code> no mesmo endereço troca o objeto inteiro e grava no <code>db.json</code>. É isso que o
+      <code>save()</code> do service faz a cada mudança.
+    </p>
+    <p>
+      Repare que o service continua funcionando se o json-server estiver desligado: o que você marca fica na memória, e um
+      aviso no topo da tela conta que não está sendo salvo.
+    </p>
+
+    <vm-deep-dive title="E o provideHttpClient dos tutoriais?">
+      <vm-code snippet="29/antigo" caption="app.config.ts (versões antigas)" />
+      <p>
+        Até pouco tempo atrás, o <code>HttpClient</code> só existia depois do <code>provideHttpClient()</code>, e o
+        <code>withFetch()</code> trocava o mecanismo antigo do navegador pelo <code>fetch</code>. No Angular 22, o
+        <code>HttpClient</code> já está disponível, e o <code>fetch</code> já é o padrão. O
+        <code>provideHttpClient()</code> continua existindo para configurar o cliente, como no
+        <vm-see-chapter [number]="39" />, com os interceptors.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="Por que o livro tem a própria API de países?">
+      <p>
+        Durante anos, os tutoriais usaram a REST Countries, uma API gratuita e aberta. Quando este capítulo foi escrito, a
+        versão que todos usavam já tinha sido desativada, e a nova pedia cadastro e uma chave secreta. Num app que roda no
+        navegador, a chave fica visível para quem abrir o código, e não serve para um projeto de estudo.
+      </p>
+      <p>
+        É a lição mais importante sobre APIs de terceiros: elas mudam, e o seu app depende delas. Antes de adotar uma, veja
+        quem a mantém, se há limite de uso, se pede chave, e tenha um plano para quando ela mudar.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O Passaporte na internet">
+    <vm-steps label="Buscar os países e salvar o passaporte">
+      <ng-template vmStep="O json-server">
+        <vm-code snippet="29/instalar" caption="terminal" />
+        <p>Crie o <code>db.json</code> na pasta do projeto, ao lado do <code>package.json</code>, e acrescente o script:</p>
+        <vm-code snippet="29/api-script" caption="package.json" />
+        <p>Num terminal separado, rode <code>npm run api</code> e deixe-o ligado, junto com o <code>ng serve</code>.</p>
+      </ng-template>
+      <ng-template vmStep="O modelo">
+        <p>O país ganha a população e se divide em dois: o que a API entrega, e o que o Passaporte acrescenta.</p>
+        <vm-code snippet="29/etapa/src/app/core/country.ts" caption="core/country.ts" />
+        <p>No <code>countries.ts</code>, apague o array <code>COUNTRIES</code>: os países agora vêm da API. O <code>CLIMATES</code> fica.</p>
+      </ng-template>
+      <ng-template vmStep="O service">
+        <p>Troque o <code>passport.ts</code> pelo da seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="As telas">
+        <p>
+          Na lista, acrescente o <code>&#64;switch</code> do carregando e do erro. No <code>app.html</code>, o aviso de que o
+          passaporte não está sendo salvo:
+        </p>
+        <vm-code snippet="29/etapa/src/app/app.html" caption="app.html" />
+        <p>
+          Na página do país, mostre "Carregando o país…" enquanto o <code>status</code> for <code>'carregando'</code>, e a
+          população na visão geral, com o pipe <code>number</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> a lista mostra os 195 países, em ordem alfabética. Marque a Islândia, feche o
+          navegador e abra de novo: ela continua marcada, e o <code>db.json</code> mudou. Agora pare o
+          <code>npm run api</code> e recarregue: o aviso amarelo aparece.
+        </p>
+        <img
+          class="not-prose my-4 w-full rounded-2xl border border-line"
+          src="imagens/capitulo-29/sem-servidor.png"
+          width="1100"
+          height="420"
+          alt="O Passaporte com uma faixa amarela no topo: Não foi possível salvar o passaporte, o servidor local está ligado? O placar mostra Nenhum país ainda."
+        />
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Cartas que não chegam">
+    <vm-pitfall title="Esquecer o subscribe" where="O que aparece na tela" message="(Carregando os países… para sempre, e a aba Network vazia)">
+      <vm-code snippet="29/sem-subscribe" caption="passport.ts" />
+      <p>
+        Sem ninguém inscrito, o Observable não faz a requisição. Não há erro: só não acontece nada. <strong>Como sair:</strong>
+        o <code>.subscribe(...)</code>, com o que fazer na resposta.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Uma API que não deixa" where="O que aparece no console do navegador" message="Access to fetch at 'https://example.com/' from origin 'http://localhost:4200' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.">
+      <p>
+        Por segurança, o navegador só entrega a resposta de outro endereço se o servidor disser que aceita, com o cabeçalho
+        <code>Access-Control-Allow-Origin</code>. Isso se chama <strong>CORS</strong>. A API do livro e o json-server dizem que
+        aceitam; muitos sites, não. <strong>Como sair:</strong> o problema é do servidor, e não do seu código. Use uma API
+        feita para ser chamada do navegador.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O endereço errado" where="O que o HttpClient entrega no error" message="Http failure response for https://utfpr-gp.github.io/volta-ao-mundo-em-angular/api/pais.json: 404 Not Found">
+      <p>
+        O <code>pais.json</code>, em vez de <code>paises.json</code>, não existe, e o servidor responde 404. Graças ao
+        <code>error</code>, a tela mostra "Não foi possível carregar os países". <strong>Como sair:</strong> abra o endereço no
+        navegador; se ele não abrir lá, não vai abrir no app.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Um PUT a cada letra" where="O que aparece na aba Network" message="(escreva uma anotação de 30 letras: 30 requisições PUT)">
+      <p>
+        O <code>saveNote</code> salva a cada letra digitada. Funciona, mas é desperdício: o servidor recebe trinta pedidos
+        para guardar uma frase. <strong>Como sair:</strong> esperar a pessoa parar de digitar antes de salvar. É exatamente o
+        que o <code>debounceTime</code> do RxJS faz, no próximo capítulo.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="29-http-client" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Com 195 países, achar a Islândia na lista dá trabalho, e as anotações estão salvando a cada
+      letra. Os dois problemas se resolvem com o RxJS: o <vm-see-chapter [number]="30" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
