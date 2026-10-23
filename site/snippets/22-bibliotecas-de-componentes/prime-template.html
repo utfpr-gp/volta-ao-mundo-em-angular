@@ -1,0 +1,9 @@
+<p-card header="🇯🇵 Japão" subheader="Tóquio">
+  <p>123 milhões de habitantes</p>
+  <ng-template #footer>
+    <div class="actions">
+      <p-button label="Detalhes" variant="outlined" />
+      <p-button [label]="visited() ? 'Visitado ✓' : 'Visitar'" (onClick)="visited.update((v) => !v)" />
+    </div>
+  </ng-template>
+</p-card>

@@ -1,0 +1,13 @@
+<div class="card card-border bg-base-100">
+  <div class="card-body">
+    <h2 class="card-title">🇯🇵 Japão</h2>
+    <p class="text-base-content/70">Tóquio</p>
+    <p>123 milhões de habitantes</p>
+    <div class="card-actions justify-end">
+      <button type="button" class="btn btn-outline">Detalhes</button>
+      <button type="button" class="btn btn-primary" (click)="visited.update((v) => !v)">
+        {{ visited() ? 'Visitado ✓' : 'Visitar' }}
+      </button>
+    </div>
+  </div>
+</div>

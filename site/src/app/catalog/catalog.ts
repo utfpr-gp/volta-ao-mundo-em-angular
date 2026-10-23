@@ -350,8 +350,10 @@ const ENTRIES: ChapterEntry[] = [
     question: 'Como usar componentes prontos com Angular Material, PrimeNG, daisyUI e Spartan?',
     shortTitle: 'Componentes prontos',
     description:
-      'Compare Angular Material, PrimeNG, daisyUI, Spartan e Angular Aria fazendo o mesmo cartão de país em cada um, com o código lado a lado.',
+      'Compare Angular Material, PrimeNG, daisyUI, Spartan e Angular Aria com o mesmo cartão de país: o código testado, o tamanho e a licença de cada um.',
     minutes: 45,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Navegação
   {

@@ -1,0 +1,15 @@
+<section hlmCard>
+  <div hlmCardHeader>
+    <h3 hlmCardTitle>🇯🇵 Japão</h3>
+    <p hlmCardDescription>Tóquio</p>
+  </div>
+  <div hlmCardContent>
+    <p>123 milhões de habitantes</p>
+  </div>
+  <div hlmCardFooter class="justify-end gap-2">
+    <button hlmBtn variant="outline">Detalhes</button>
+    <button hlmBtn (click)="visited.update((v) => !v)">
+      {{ visited() ? 'Visitado ✓' : 'Visitar' }}
+    </button>
+  </div>
+</section>

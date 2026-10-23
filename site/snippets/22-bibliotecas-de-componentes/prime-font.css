@@ -1,0 +1,4 @@
+/* O PrimeNG não escolhe a fonte da página: isso fica com você. */
+body {
+  font-family: system-ui, sans-serif;
+}
