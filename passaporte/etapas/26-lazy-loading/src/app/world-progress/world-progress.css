@@ -1,0 +1,51 @@
+.progress {
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.big {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.bar {
+  height: 0.6rem;
+  margin: 0.75rem 0;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--color-highlight);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-highlight);
+  color: var(--color-primary);
+  font-weight: 800;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--color-on-primary-muted);
+  border: 1px solid var(--color-on-primary-muted);
+}
+
+.level {
+  margin: 0 0 0.75rem;
+  color: var(--color-highlight);
+  font-weight: 700;
+}

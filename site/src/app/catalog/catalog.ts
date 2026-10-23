@@ -397,6 +397,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Deixe o primeiro carregamento mais leve baixando cada tela só quando a pessoa chega nela, com lazy loading e loadComponent.',
     minutes: 20,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '27-organizacao-por-funcionalidades',

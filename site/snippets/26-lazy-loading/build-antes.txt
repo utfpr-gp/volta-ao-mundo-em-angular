@@ -1,0 +1,4 @@
+Initial chunk files | Names         |  Raw size | Estimated transfer size
+main-UK3SYYXG.js    | main          | 277.44 kB |                76.10 kB
+styles-QPRCSAGQ.css | styles        |  14.14 kB |                 3.18 kB
+                    | Initial total | 291.58 kB |                79.28 kB

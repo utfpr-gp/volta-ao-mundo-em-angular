@@ -115,6 +115,12 @@ export const GLOSSARY = {
       'Uma estrutura pronta que organiza a aplicação e chama o seu código na hora certa. Você escreve as peças; o framework monta e faz funcionar.',
     chapter: 1,
   },
+  'lazy-loading': {
+    term: 'Lazy loading',
+    definition:
+      'Carregamento sob demanda: o código de uma tela fica num arquivo separado, o chunk, e o navegador só o baixa quando alguém abre a tela.',
+    chapter: 26,
+  },
   lts: {
     term: 'LTS (suporte de longo prazo)',
     definition:

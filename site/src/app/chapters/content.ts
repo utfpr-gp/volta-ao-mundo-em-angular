@@ -23,6 +23,7 @@ import { CHAPTER_22 } from './22-bibliotecas-de-componentes/content';
 import { CHAPTER_23 } from './23-router/content';
 import { CHAPTER_24 } from './24-parametros-de-rota/content';
 import { CHAPTER_25 } from './25-rotas-filhas/content';
+import { CHAPTER_26 } from './26-lazy-loading/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -52,4 +53,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '23-router': CHAPTER_23,
   '24-parametros-de-rota': CHAPTER_24,
   '25-rotas-filhas': CHAPTER_25,
+  '26-lazy-loading': CHAPTER_26,
 };
