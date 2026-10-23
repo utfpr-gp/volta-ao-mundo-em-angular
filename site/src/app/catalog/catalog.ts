@@ -308,6 +308,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Acesse um elemento do template ou um componente filho com viewChild(), por exemplo para dar foco a um campo, e saiba quando evitar.',
     minutes: 20,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '19-ciclo-de-vida',

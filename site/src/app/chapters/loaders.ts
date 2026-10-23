@@ -20,4 +20,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '15-input-e-output': () => import('./15-input-e-output/chapter').then((m) => m.Chapter15),
   '16-model': () => import('./16-model/chapter').then((m) => m.Chapter16),
   '17-ng-content': () => import('./17-ng-content/chapter').then((m) => m.Chapter17),
+  '18-view-child': () => import('./18-view-child/chapter').then((m) => m.Chapter18),
 };
