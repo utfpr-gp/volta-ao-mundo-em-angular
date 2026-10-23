@@ -1,0 +1,10 @@
+<label class="flex flex-col gap-2 font-bold">
+  O que fazer em {{ country()?.name }}
+  <textarea
+    rows="4"
+    class="rounded-lg border border-line bg-surface p-2 font-normal text-ink"
+    [value]="note()"
+    (input)="note.set($any($event.target).value)"
+  ></textarea>
+</label>
+<p class="mt-1 text-sm text-ink-muted">{{ note().length }} letras</p>
