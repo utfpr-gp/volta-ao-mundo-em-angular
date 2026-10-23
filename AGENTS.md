@@ -136,3 +136,12 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   Supabase usa `fetch` e põe o token sozinho.
 - **Em todo capítulo:** no máximo duas ou três analogias; termo novo vai ao glossário; partes de curiosidade vão para
   `<vm-deep-dive>`; terminar com "E agora?" apontando a próxima parada.
+- **Capítulo 28 (services):** o livro de carimbos (capítulo 21) mora dentro da `CountryList` só porque é ela que guarda
+  os países, e o placar tem uma contagem separada da lista; o capítulo 28 promete resolver os dois com um service.
+- **Bibliotecas externas:** antes de citar a API de uma biblioteca, montar um projeto de teste à parte, rodar o build e
+  conferir licença e tamanho (`Initial total`). Foi assim que apareceram a chave de licença do PrimeNG 22 e o choque do
+  daisyUI com o `--color-primary` do Passaporte.
+- **Trechos de código:** a chave ignora a extensão; `card.ts` e `card.html` na mesma pasta de `site/snippets` não podem
+  conviver (a extração falha). Use nomes como `card.ts` e `card-template.html`.
+- **Capturas de tela:** o Chrome headless segue o tema do sistema; para o modo claro, passe
+  `--blink-settings=preferredColorScheme=1`.
