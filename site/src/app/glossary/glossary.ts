@@ -147,6 +147,11 @@ export const GLOSSARY = {
       'Um formato de texto para trocar dados, com chaves e valores, como {"nome": "Brasil"}. É o que o servidor costuma devolver para uma SPA.',
     chapter: 1,
   },
+  model: {
+    term: 'Model',
+    definition: 'Um input que o componente filho também pode mudar, declarado com model(). Com [(nome)] no pai, o valor fica sincronizado nos dois sentidos.',
+    chapter: 16,
+  },
   nodejs: {
     term: 'Node.js',
     definition:

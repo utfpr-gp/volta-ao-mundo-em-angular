@@ -1,0 +1,5 @@
+<!-- a forma curta… -->
+<app-star-rating [(rating)]="rating" />
+
+<!-- …é o mesmo que escrever as duas metades -->
+<app-star-rating [rating]="rating()" (ratingChange)="rating.set($event)" />

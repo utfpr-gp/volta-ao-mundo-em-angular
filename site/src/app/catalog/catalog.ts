@@ -285,7 +285,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'model()',
     description:
       'Crie as estrelas de nota do Passaporte com model() e entenda como um valor fica sincronizado entre o componente pai e o filho.',
-    minutes: 20,
+    minutes: 25,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '17-ng-content',

@@ -1,0 +1,35 @@
+<section>
+  <h2 class="text-2xl font-extrabold text-ink">Países</h2>
+
+  <div class="mt-3 flex gap-2">
+    @for (option of filters; track option.value) {
+      <button
+        type="button"
+        class="rounded-full border border-ink-muted px-4 py-1.5 font-bold"
+        [class.text-ink]="filter() !== option.value"
+        [class.bg-highlight]="filter() === option.value"
+        [class.border-highlight]="filter() === option.value"
+        [class.text-primary]="filter() === option.value"
+        (click)="filter.set(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+
+  <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+    @for (country of visible(); track country.code; let i = $index) {
+      <li>
+        <app-country-card
+          [country]="country"
+          [position]="i + 1"
+          (toggled)="toggleVisited($event)"
+          (removed)="remove($event)"
+        />
+      </li>
+    } @empty {
+      <li class="rounded-card border border-dashed border-line p-4 text-center text-ink-muted sm:col-span-2">Nenhum país aqui ainda.</li>
+    }
+  </ul>
+  <p class="mt-3 text-ink-muted">{{ visible().length }} de {{ countries().length }} países</p>
+</section>
