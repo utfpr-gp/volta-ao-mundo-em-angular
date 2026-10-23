@@ -1,0 +1,7 @@
+@if (climate(); as climate) {
+  <p class="text-sm font-bold uppercase tracking-wider text-ink-muted">Clima de {{ country()?.capital }}</p>
+  <p class="mt-1 text-2xl font-extrabold">{{ climate.kind }}</p>
+  <p class="mt-1 text-ink-muted">Média do ano: cerca de {{ climate.average }} °C</p>
+} @else {
+  <p class="text-ink-muted">Ainda não temos o clima de {{ country()?.capital }}.</p>
+}
