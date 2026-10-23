@@ -200,6 +200,12 @@ export const GLOSSARY = {
       'Um valor que vai chegar depois, como a resposta de uma requisição. Nada acontece até alguém se inscrever nele com subscribe; o RxJS é a biblioteca dos Observables.',
     chapter: 29,
   },
+  operador: {
+    term: 'Operador (RxJS)',
+    definition:
+      'Uma função que entra no pipe de um Observable e faz uma coisa com os valores que passam: map transforma, filter barra, debounceTime espera, switchMap troca por outra requisição.',
+    chapter: 30,
+  },
   opinativo: {
     term: 'Opinativo',
     definition:
@@ -292,6 +298,12 @@ export const GLOSSARY = {
     term: 'Tailwind CSS',
     definition: 'Uma biblioteca de CSS com classes pequenas e prontas, como p-4 e rounded-xl, que você junta direto no HTML para montar o visual.',
     chapter: 13,
+  },
+  subject: {
+    term: 'Subject',
+    definition:
+      'Um Observable em que você mesmo põe os valores, com next(). Serve de porta de entrada para uma esteira do RxJS, como a das letras digitadas numa busca.',
+    chapter: 30,
   },
   'template-string': {
     term: 'Template string',

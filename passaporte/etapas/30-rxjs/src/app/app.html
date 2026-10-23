@@ -1,0 +1,10 @@
+<app-header />
+@if (passport.saveFailed()) {
+  <p role="status" class="bg-highlight px-4 py-2 text-center text-sm font-bold text-primary">
+    ⚠ Não foi possível salvar o passaporte: o servidor local está ligado? O que você marcar agora some ao recarregar.
+  </p>
+}
+<main class="mx-auto max-w-6xl p-4 sm:p-6">
+  <router-outlet />
+</main>
+<app-footer />
