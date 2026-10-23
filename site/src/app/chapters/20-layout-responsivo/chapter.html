@@ -1,0 +1,231 @@
+<vm-chapter-page slug="20-layout-responsivo">
+  <vm-view kind="mission" title="Um app, todas as telas">
+    <p class="lead">
+      Até aqui, o Passaporte era uma pilha: um bloco embaixo do outro, em qualquer tela. No celular, ótimo; no computador,
+      uma faixa estreita com muito espaço sobrando. Neste capítulo, o Passaporte aprende a se reorganizar conforme a largura
+      da tela.
+    </p>
+    <div class="not-prose my-6 grid items-start gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
+      <img
+        class="w-full rounded-2xl border border-line shadow-sm"
+        src="imagens/capitulo-20/celular.png"
+        width="390"
+        height="800"
+        alt="O Passaporte num celular: cabeçalho com o botão Menu, e o placar, o país em destaque e a lista de países empilhados numa coluna só."
+      />
+      <img
+        class="w-full rounded-2xl border border-line shadow-sm"
+        src="imagens/capitulo-20/computador.png"
+        width="1280"
+        height="800"
+        alt="O mesmo Passaporte num computador: links no cabeçalho, placar e país em destaque numa coluna à esquerda, e a lista de países ocupando a coluna da direita."
+      />
+    </div>
+    <p>
+      É o mesmo código nas duas imagens. Ao final do capítulo, você vai saber montar um layout pensando primeiro no celular,
+      usar os prefixos do Tailwind para mudar o que precisa nas telas maiores e transformar o menu num botão.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="Primeiro a mala de mão">
+    <vm-analogy emoji="🧳" title="A mala pequena e a mala grande">
+      <p>
+        Quem arruma primeiro a mala de mão escolhe o essencial, porque não cabe muita coisa. Se depois a viagem ganhar uma mala
+        grande, é só acrescentar: o essencial já está lá. O caminho contrário é sofrido: arrumar a mala grande e depois tentar
+        espremer tudo na pequena. Sempre sobra alguma coisa para fora.
+      </p>
+      <p>
+        O celular é a mala de mão. Desenhar <strong>mobile-first</strong> é montar primeiro a tela pequena, com o essencial, e
+        depois acrescentar o que muda quando a tela cresce: mais colunas, links à vista, a bandeira ao lado do texto.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Layout responsivo por dentro">
+    <h3>Sem prefixo é o celular</h3>
+    <p>
+      No Tailwind, uma classe sem prefixo vale para todas as larguras, a partir da menor. Os prefixos <code>sm:</code>,
+      <code>md:</code>, <code>lg:</code> e <code>xl:</code> são os <vm-term name="breakpoint">breakpoints</vm-term>: a classe
+      com prefixo passa a valer quando a tela alcança aquela largura, e continua valendo daí para cima.
+    </p>
+    <table>
+      <thead>
+        <tr><th>Prefixo</th><th>Vale a partir de</th><th>Telas típicas</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>(nenhum)</td><td>0 px</td><td>todas, começando pelo celular</td></tr>
+        <tr><td><code>sm:</code></td><td>640 px</td><td>celular deitado</td></tr>
+        <tr><td><code>md:</code></td><td>768 px</td><td>tablet</td></tr>
+        <tr><td><code>lg:</code></td><td>1024 px</td><td>notebook</td></tr>
+        <tr><td><code>xl:</code></td><td>1280 px</td><td>monitor</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Então <code>grid md:grid-cols-2</code> se lê assim: "uma grade; a partir de 768 px, com duas colunas". Esse jeito de
+      ler é o <vm-term name="mobile-first">mobile-first</vm-term>: o celular é o ponto de partida, e cada prefixo é uma
+      mudança para as telas maiores.
+    </p>
+    <p>
+      Tudo isso depende de uma linha que o Angular CLI já põe no <code>src/index.html</code> quando cria o projeto. Ela diz
+      ao celular que use a largura real da tela, em vez de fingir que é um computador e encolher a página:
+    </p>
+    <vm-code snippet="20/etapa/src/index.html" caption="src/index.html" />
+
+    <h3>Grid para a página, flexbox para a linha</h3>
+    <p>O layout do Passaporte agora mora no componente raiz:</p>
+    <vm-code snippet="20/etapa/src/app/app.html" caption="app.html" />
+    <p>Leia as classes do <code>&lt;main&gt;</code> em partes:</p>
+    <ul>
+      <li><code>mx-auto max-w-6xl</code>: no máximo 1152 px de largura, centralizado. Num monitor grande, o conteúdo não se espalha até as bordas.</li>
+      <li><code>p-4 sm:p-6</code>: espaço interno de 16 px no celular, de 24 px a partir de 640 px.</li>
+      <li><code>grid gap-6</code>: uma grade, com 24 px entre os blocos. Sem colunas declaradas, é uma coluna só.</li>
+      <li>
+        <code>md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]</code>: a partir de 768 px, duas colunas, na proporção 2 para 3.
+        Os colchetes deixam escrever um valor que o Tailwind não tem pronto; o <code>_</code> faz o papel do espaço.
+      </li>
+    </ul>
+    <p>
+      O placar e o destaque ficam juntos num <code>&lt;aside&gt;</code> (um conteúdo de apoio, ao lado do principal), com
+      <code>flex flex-col gap-6</code>: um embaixo do outro, com espaço entre eles. A regra prática: <strong>grid</strong>
+      para a página, que tem linhas e colunas; <strong>flexbox</strong> para enfileirar coisas numa direção só, como os itens
+      de um cartão.
+    </p>
+
+    <vm-viewport-lab />
+
+    <h3>O menu que vira botão</h3>
+    <p>
+      No celular, não cabem os links do cabeçalho ao lado do nome do app. A solução comum é um botão que abre o menu. O estado
+      "aberto ou fechado" é um signal, como os do <vm-see-chapter [number]="9" />:
+    </p>
+    <vm-code snippet="20/etapa/src/app/header/header.ts" caption="header.ts" />
+    <vm-code snippet="20/etapa/src/app/header/header.html" caption="header.html" />
+    <p>
+      Repare nos dois pares de classes. O botão tem <code>md:hidden</code>: aparece no celular e some a partir de 768 px. Os
+      links lado a lado têm <code>hidden md:flex</code>: escondidos no celular, visíveis a partir de 768 px. O menu do
+      celular fica num <code>&#64;if</code> e também tem <code>md:hidden</code>, para não ficar sobrando se alguém abrir o
+      menu e depois alargar a janela.
+    </p>
+    <p>
+      O <code>aria-expanded</code> conta aos leitores de tela se o menu está aberto, e o <code>aria-controls</code> diz qual
+      elemento o botão controla. Quem não enxerga a tela também precisa saber o que o botão faz.
+    </p>
+
+    <h3>Media query no CSS do componente</h3>
+    <p>
+      Os prefixos do Tailwind são atalhos para as <strong>media queries</strong> do CSS. Nos componentes com CSS próprio, você
+      escreve a media query direto, com a mesma lógica mobile-first: o estilo fora dela é o do celular, e o
+      <code>min-width</code> diz a partir de que largura a mudança vale.
+    </p>
+    <vm-code snippet="20/etapa/src/app/featured-country/featured-country.css" caption="featured-country.css" />
+    <p>
+      O <code>64rem</code> é a mesma largura do <code>lg:</code>: 64 vezes o tamanho da fonte padrão, de 16 px, dá 1024 px.
+      Usar <code>rem</code> nas media queries faz o layout respeitar quem aumentou a fonte do navegador.
+    </p>
+
+    <vm-deep-dive title="E se o cartão tivesse que olhar para o espaço dele, e não para a tela?">
+      <p>
+        Repare que o país em destaque mora na coluna estreita: entre 768 px e 1023 px, a tela é larga, mas o cartão é
+        estreito. As media queries só sabem a largura da tela. As <strong>container queries</strong> perguntam a largura do
+        elemento pai, e o Tailwind 4 já as traz:
+      </p>
+      <vm-code snippet="20/container-query" caption="com container queries" />
+      <p>
+        Para um componente que pode aparecer em lugares de larguras diferentes, como um cartão reaproveitado, é o caminho mais
+        robusto. Para o layout da página, as media queries continuam sendo o natural.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O Passaporte em todas as telas">
+    <vm-steps label="Deixar o Passaporte responsivo">
+      <ng-template vmStep="A página">
+        <p>
+          Troque o <code>app.html</code> pelo da seção anterior. O <code>app.css</code> não é mais necessário: apague o arquivo
+          e a linha <code>styleUrl</code> do <code>app.ts</code>.
+        </p>
+        <p>
+          Os blocos agora são separados pelo <code>gap</code> da grade. Tire o <code>margin-bottom</code> do
+          <code>.progress</code>, no <code>world-progress.css</code>, senão o espaço fica dobrado.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O menu">
+        <p>
+          No <code>header.ts</code>, crie o signal <code>menuOpen</code>. No <code>header.html</code>, acrescente o botão, as
+          classes <code>hidden md:flex</code> nos links e o menu do celular, como na seção anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Os cartões">
+        <p>
+          No <code>featured-country.css</code>, faça o cartão começar em coluna e virar linha a partir de <code>64rem</code>.
+          Tire também o <code>margin-bottom</code> do <code>.featured</code>. Na lista, a grade ganha mais um prefixo:
+        </p>
+        <vm-code snippet="20/etapa/src/app/country-list/country-list.html" caption="country-list.html" />
+        <p>
+          Com <code>sm:grid-cols-2 md:grid-cols-1</code>, a lista tem duas colunas quando ocupa a tela inteira, entre 640 px e
+          767 px, e volta a uma quando passa a dividir a tela com o placar.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Testar">
+        <p>
+          No Chrome, abra as ferramentas com <kbd>F12</kbd> e aperte <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd>: a
+          página passa a ser mostrada como num celular, e dá para escolher o aparelho ou arrastar a largura.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> num celular, tudo numa coluna e o botão "☰ Menu" no cabeçalho; clique nele e
+          os links aparecem. Alargue até passar de 768 px: o botão some, os links aparecem lado a lado, e a lista vai para a
+          direita do placar.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Telas que não se ajeitam">
+    <vm-pitfall title="Pensar do computador para o celular" where="O que aparece na tela" message="(o botão ☰ aparece no computador e some no celular)">
+      <vm-code snippet="20/desktop-first" caption="header.html" />
+      <p>
+        Quem pensa "o <code>md:</code> é o celular" escreve tudo ao contrário. O prefixo diz "a partir deste tamanho", e não
+        "só neste tamanho". <strong>Como sair:</strong> escreva primeiro as classes do celular, sem prefixo, e depois
+        acrescente com prefixo só o que muda nas telas maiores.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Um campo que vaza do cartão" where="O que aparece na tela" message="(no celular, o campo de anotação passa da borda do cartão)">
+      <p>
+        Aconteceu de verdade no Passaporte, antes deste capítulo. Num <code>display: flex</code>, os filhos não encolhem
+        abaixo da largura do próprio conteúdo, e um <code>&lt;input&gt;</code> já nasce com uns 20 caracteres de largura.
+        <strong>Como sair:</strong> dê <code>min-width: 0</code> ao filho do flex (no Tailwind, <code>min-w-0</code>), ou
+        empilhe os itens no celular, como fizemos.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Largura fixa" where="O que aparece na tela" message="(no celular, a página inteira rola para o lado)">
+      <vm-code snippet="20/fixed-width" caption="uma seção qualquer" />
+      <p>
+        Um elemento de 500 px numa tela de 390 px empurra a página para fora da tela. <strong>Como sair:</strong> deixe o
+        elemento ocupar a largura disponível (<code>w-full</code>) e limite só o máximo (<code>max-w-...</code>).
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Sem a linha do viewport" where="O que aparece na tela" message="(no celular, a página aparece minúscula, como um computador encolhido)">
+      <p>
+        Sem o <code>&lt;meta name="viewport"&gt;</code>, o celular finge ter uma tela de computador e encolhe tudo, e nenhum
+        prefixo funciona como esperado. O Angular CLI já põe essa linha; o problema aparece quando alguém a apaga ou copia um
+        <code>index.html</code> antigo. <strong>Como sair:</strong> devolva a linha ao <code>&lt;head&gt;</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="20-layout-responsivo" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O layout ficou bom, mas foi pensado direto no código. Em equipes, a tela costuma nascer antes,
+      num protótipo do Figma. A próxima parada ensina a ler um protótipo e tirar dele os componentes: o
+      <vm-see-chapter [number]="21" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
