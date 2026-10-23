@@ -17,6 +17,7 @@ import { CHAPTER_16 } from './16-model/content';
 import { CHAPTER_17 } from './17-ng-content/content';
 import { CHAPTER_18 } from './18-view-child/content';
 import { CHAPTER_19 } from './19-ciclo-de-vida/content';
+import { CHAPTER_20 } from './20-layout-responsivo/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -40,4 +41,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '17-ng-content': CHAPTER_17,
   '18-view-child': CHAPTER_18,
   '19-ciclo-de-vida': CHAPTER_19,
+  '20-layout-responsivo': CHAPTER_20,
 };

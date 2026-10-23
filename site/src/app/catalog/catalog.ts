@@ -330,6 +330,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Monte o layout do Passaporte pensando primeiro no celular, com grid e flexbox no Tailwind, e faça a tela crescer bem até o desktop.',
     minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '21-do-prototipo-ao-componente',

@@ -32,6 +32,12 @@ export const GLOSSARY = {
     definition: 'Um jeito de pensar telas em cinco níveis, inspirado na química: átomos, moléculas, organismos, templates e páginas. Criado pelo designer Brad Frost.',
     chapter: 6,
   },
+  breakpoint: {
+    term: 'Breakpoint',
+    definition:
+      'A largura de tela a partir da qual o layout muda. No Tailwind, sm vale a partir de 640 px, md de 768 px, lg de 1024 px e xl de 1280 px.',
+    chapter: 20,
+  },
   binding: {
     term: 'Binding',
     definition: 'A ligação entre um dado da classe e um lugar do template. Quando o dado muda, a tela acompanha; no event binding, o caminho é da tela para a classe.',
@@ -146,6 +152,12 @@ export const GLOSSARY = {
     definition:
       'Um formato de texto para trocar dados, com chaves e valores, como {"nome": "Brasil"}. É o que o servidor costuma devolver para uma SPA.',
     chapter: 1,
+  },
+  'mobile-first': {
+    term: 'Mobile-first',
+    definition:
+      'Desenhar a tela primeiro para o celular e depois acrescentar o que muda nas telas maiores. No Tailwind, a classe sem prefixo vale para o celular, e md:, lg: acrescentam mudanças.',
+    chapter: 20,
   },
   model: {
     term: 'Model',

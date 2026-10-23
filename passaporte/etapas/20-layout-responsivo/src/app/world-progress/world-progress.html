@@ -1,0 +1,24 @@
+<section class="progress">
+  @if (visitedCount() === 0) {
+    <p class="big">Nenhum país ainda</p>
+    <p>Todo passaporte começa vazio. Que tal marcar o primeiro?</p>
+  } @else {
+    <p class="big">{{ visitedCount() }} de {{ totalCountries }} países</p>
+    <p>{{ share() | percent: '1.0-2' }} do mundo · faltam {{ remaining() }}</p>
+  }
+  <div class="bar"><div class="fill" [style.width.%]="percent()"></div></div>
+
+  <p class="level">
+    @switch (level()) {
+      @case ('airport') { ✈️ Nível: no aeroporto }
+      @case ('backpacker') { 🎒 Nível: mochileiro }
+      @case ('traveler') { 🧳 Nível: viajante }
+      @default { 🌍 Nível: explorador do mundo }
+    }
+  </p>
+
+  <div class="actions">
+    <button type="button" (click)="visitOneMore()">＋ Visitei mais um</button>
+    <button type="button" class="secondary" (click)="undo()">Desfazer</button>
+  </div>
+</section>
