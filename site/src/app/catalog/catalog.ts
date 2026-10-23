@@ -386,6 +386,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Divida a página do país em abas de visão geral, clima e anotações com rotas filhas, cada uma com o seu próprio endereço.',
     minutes: 25,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '26-lazy-loading',

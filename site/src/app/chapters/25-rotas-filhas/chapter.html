@@ -1,0 +1,162 @@
+<vm-chapter-page slug="25-rotas-filhas">
+  <vm-view kind="mission" title="Abas com endereço">
+    <p class="lead">
+      A página de cada país ganha três abas: visão geral, clima e anotações. E cada aba tem o seu endereço, como
+      <code>/paises/JP/clima</code>: dá para guardar nos favoritos, mandar para alguém, e o botão de voltar do navegador
+      funciona.
+    </p>
+    <figure class="not-prose my-6 overflow-hidden rounded-2xl border border-line">
+      <img class="w-full" src="imagens/capitulo-25/clima.png" width="1000" height="450" alt="A página do Japão com três abas, Visão geral, Clima e Anotações. A aba Clima está sublinhada em dourado e mostra: clima de Tóquio, subtropical úmido, média do ano de cerca de 16 °C." />
+      <figcaption class="border-t border-line bg-surface-raised px-3 py-2 font-mono text-sm text-ink">localhost:4200/paises/JP/clima</figcaption>
+    </figure>
+    <p>
+      Ao final do capítulo, você vai saber aninhar rotas, pôr um outlet dentro de um componente e fazer links relativos.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O terminal dentro do aeroporto">
+    <vm-analogy emoji="🛄" title="Aeroporto, terminal, portão">
+      <p>
+        "Aeroporto de Guarulhos, terminal 3, portão 12": cada parte do endereço fica dentro da anterior. Trocar de portão não
+        tira você do terminal; trocar de terminal não tira você do aeroporto.
+      </p>
+      <p>
+        As rotas filhas funcionam assim. <code>/paises/JP</code> é o terminal, a página do país; <code>clima</code> é o
+        portão, uma rota dentro dela. Trocar de aba troca só o portão: a página do país continua de pé.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Rotas filhas por dentro">
+    <h3>Rotas dentro de uma rota</h3>
+    <vm-code snippet="25/etapa/src/app/app.routes.ts" caption="app.routes.ts" />
+    <p>
+      A rota <code>paises/:code</code> ganhou <code>children</code>: as rotas filhas. O endereço das filhas continua o da mãe:
+      <code>clima</code>, dentro de <code>paises/:code</code>, combina com <code>/paises/JP/clima</code>. A filha vazia,
+      com <code>redirectTo</code>, leva <code>/paises/JP</code> direto para a visão geral.
+    </p>
+
+    <h3>Um outlet dentro do componente</h3>
+    <p>
+      O componente da rota mãe precisa de um lugar para mostrar as filhas: um segundo <code>&lt;router-outlet&gt;</code>,
+      agora dentro do <code>CountryPage</code>. O do App mostra a página do país; o do <code>CountryPage</code> mostra a aba.
+    </p>
+    <vm-code snippet="25/etapa/src/app/pages/country-page/country-page.html" caption="country-page.html" />
+
+    <vm-nested-sim />
+
+    <h3>Links relativos</h3>
+    <vm-code snippet="25/etapa/src/app/pages/country-page/country-page.ts" caption="country-page.ts" />
+    <p>
+      Os links das abas não começam com barra: <code>routerLink="clima"</code> é <strong>relativo</strong> à rota do
+      componente onde está o link. Dentro da página do Japão, vira <code>/paises/JP/clima</code>; na de Portugal,
+      <code>/paises/PT/clima</code>. Com barra, seria a partir da raiz do app.
+    </p>
+    <p>
+      A aba ativa usa o <code>aria-current</code> que o <code>ariaCurrentWhenActive</code> põe no link: a classe
+      <code>aria-[current=page]:border-highlight</code> só vale quando ele existe. Assim, a borda dourada não briga com a
+      <code>border-transparent</code> das outras abas, a mesma briga de classes do <vm-see-chapter [number]="21" />.
+    </p>
+
+    <h3>As filhas também recebem o código</h3>
+    <p>
+      Cada aba precisa saber de que país se trata, e o <code>:code</code> está na rota mãe. No Angular 22, as rotas filhas
+      <strong>herdam</strong> os parâmetros da mãe, e o <code>withComponentInputBinding()</code> entrega o código ao input da
+      aba, como entregava à página:
+    </p>
+    <vm-code snippet="25/etapa/src/app/pages/country-page/country-weather/country-weather.ts" caption="country-weather.ts" />
+    <p>
+      O clima de cada capital, um texto fixo por enquanto, foi para o <code>countries.ts</code>, ao lado dos países:
+    </p>
+    <vm-code snippet="25/etapa/src/app/countries.ts" caption="countries.ts" />
+
+    <vm-deep-dive title="E o paramsInheritanceStrategy dos tutoriais?">
+      <p>
+        Até pouco tempo atrás, as filhas só herdavam os parâmetros da mãe em casos especiais, e os tutoriais mandavam ligar a
+        herança assim:
+      </p>
+      <vm-code snippet="25/old-config" caption="app.config.ts (versões antigas)" />
+      <p>
+        No Angular 22, <code>'always'</code> já é o padrão, e essa linha não é mais necessária. Se aparecer num projeto,
+        não atrapalha.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="As abas do país">
+    <vm-steps label="Dividir a página do país em abas">
+      <ng-template vmStep="As abas">
+        <vm-code snippet="25/ng-generate" caption="terminal" />
+        <p>
+          Apague os <code>.css</code> e as linhas <code>styleUrl</code>. Cada aba tem um input <code>code</code> e um
+          <code>computed</code> com o país, como a página tinha. A visão geral mostra capital, código e situação:
+        </p>
+        <vm-code snippet="25/etapa/src/app/pages/country-page/country-overview/country-overview.html" caption="country-overview.html" />
+      </ng-template>
+      <ng-template vmStep="O clima e as anotações">
+        <p>Acrescente o <code>CLIMATES</code> ao <code>countries.ts</code> e escreva a aba do clima:</p>
+        <vm-code snippet="25/etapa/src/app/pages/country-page/country-weather/country-weather.html" caption="country-weather.html" />
+        <p>A aba de anotações guarda o texto num signal:</p>
+        <vm-code snippet="25/etapa/src/app/pages/country-page/country-notes/country-notes.html" caption="country-notes.html" />
+      </ng-template>
+      <ng-template vmStep="As rotas">
+        <p>Acrescente o <code>children</code> à rota <code>paises/:code</code>, como na seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="A página do país">
+        <p>
+          No <code>CountryPage</code>, importe <code>RouterLinkActive</code> e <code>RouterOutlet</code>, crie a lista de abas e
+          troque o template pelo da seção anterior.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> abra o Japão na lista: o endereço vira <code>/paises/JP/visao-geral</code>.
+          Clique em "Clima" e depois em "Anotações", e use o botão de voltar do navegador: ele volta de aba em aba.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Abas que se perdem">
+    <vm-pitfall title="Sem o outlet de dentro" where="O que aparece na tela" message="(o endereço muda, as abas aparecem, mas o conteúdo não)">
+      <p>
+        As rotas filhas estão certas, mas o <code>CountryPage</code> não tem onde mostrá-las. <strong>Como sair:</strong> um
+        <code>&lt;router-outlet /&gt;</code> no template da rota mãe, e o <code>RouterOutlet</code> no <code>imports</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Link da aba com barra" where="O que aparece na tela" message="(a aba leva para a página 404)">
+      <vm-code snippet="25/absolute-link" caption="country-page.html" />
+      <p>
+        Com barra, o link é absoluto: <code>/clima</code> não existe. <strong>Como sair:</strong> nos links entre filhas, use
+        o caminho relativo, sem barra.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Sem a filha vazia" where="O que aparece na tela" message="(em /paises/JP, as abas aparecem, mas a área delas fica vazia)">
+      <vm-code snippet="25/no-redirect" caption="app.routes.ts" />
+      <p>
+        O endereço combina com a rota mãe, mas nenhuma filha combina com o "resto vazio". <strong>Como sair:</strong> uma
+        filha com <code>path: ''</code> e <code>redirectTo</code> para a aba inicial.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="A anotação sumiu" where="O que aparece na tela" message="(escreva uma anotação, vá ao clima, volte: o texto sumiu)">
+      <p>
+        Cada troca de aba destrói o componente da aba anterior, e o signal da anotação vai junto. Não é erro do Router: é
+        onde o dado mora. <strong>Como sair:</strong> o dado precisa morar fora da aba. É o assunto do
+        <vm-see-chapter [number]="28" />, com os services.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="25-rotas-filhas" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Hoje, o navegador baixa todas as telas logo que o app abre, até as que a pessoa nunca vai
+      visitar. A próxima parada baixa cada tela só quando ela é aberta: o <vm-see-chapter [number]="26" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
