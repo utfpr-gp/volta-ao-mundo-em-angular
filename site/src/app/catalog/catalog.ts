@@ -341,6 +341,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Leia uma tela do Figma, encontre nela os átomos, as moléculas e os organismos, e tire dela os tokens e os componentes do app.',
     minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '22-bibliotecas-de-componentes',

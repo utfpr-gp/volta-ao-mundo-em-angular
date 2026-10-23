@@ -1,0 +1,8 @@
+<!-- border-line e border-stamp ao mesmo tempo: qual cor vence? -->
+<span
+  class="rounded-full border-2 border-dashed border-line text-ink-muted"
+  [class.border-stamp]="stamped()"
+  [class.text-stamp]="stamped()"
+>
+  {{ code() }}
+</span>
