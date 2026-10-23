@@ -1,0 +1,158 @@
+<vm-chapter-page slug="15-input-e-output">
+  <vm-view kind="mission" title="O cartão que conversa com a lista">
+    <p class="lead">
+      No capítulo 6, ficou uma promessa: um componente <code>CountryCard</code> usado várias vezes, cada uma com um país
+      diferente. Agora ele existe. A lista entrega o país ao cartão, e o cartão avisa a lista quando alguém clica em
+      "Visitar" ou em remover.
+    </p>
+    <div class="not-prose my-6 grid gap-2 sm:grid-cols-2" aria-hidden="true">
+      <div class="flex items-center gap-3 rounded-xl border border-line bg-surface-raised px-4 py-3 text-ink">
+        <span class="text-ink-muted">1</span><span class="text-2xl">🇧🇷</span>
+        <span><strong class="block">Brasil</strong><span class="text-sm text-ink-muted">Brasília</span></span>
+        <span class="ml-auto rounded-full border border-line px-3 py-1 text-sm font-bold">Visitado ✓</span>
+      </div>
+      <div class="flex items-center gap-3 rounded-xl border border-line bg-surface-raised px-4 py-3 text-ink">
+        <span class="text-ink-muted">2</span><span class="text-2xl">🇯🇵</span>
+        <span><strong class="block">Japão</strong><span class="text-sm text-ink-muted">Tóquio</span></span>
+        <span class="ml-auto rounded-full border border-line px-3 py-1 text-sm font-bold">Visitar</span>
+      </div>
+    </div>
+    <p>
+      Por fora, quase nada muda. Por dentro, é a primeira vez que dois componentes do Passaporte trocam dados. Ao final do
+      capítulo, você vai saber passar dados de pai para filho e avisar o pai do que aconteceu no filho.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O pedido e o aviso">
+    <vm-analogy emoji="🍽️" title="A cozinha e o garçom">
+      <p>
+        A cozinha entrega o prato ao garçom, e o garçom leva à mesa. Se o cliente pedir para trocar o prato, o garçom não vai
+        para o fogão cozinhar outro: ele avisa a cozinha, e a cozinha decide o que fazer e manda o prato novo.
+      </p>
+      <p>
+        A lista é a cozinha, dona dos dados. O cartão é o garçom: recebe o país pronto pelo <code>input()</code> e, quando
+        algo acontece, avisa pelo <code>output()</code>. Quem muda os dados é sempre o dono deles.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Inputs e outputs por dentro">
+    <h3>O filho: o que ele recebe e o que ele avisa</h3>
+    <vm-code snippet="15/etapa/src/app/country-card/country-card.ts" caption="country-card.ts" />
+    <p>
+      <code>input.required&lt;Country&gt;()</code> declara um <vm-term name="input">input</vm-term> obrigatório: o cartão não
+      faz sentido sem um país. <code>input(0)</code> declara um opcional, com valor padrão. Um input é um signal só de leitura:
+      no template, você lê com parênteses, <code ngNonBindable>{{ country().name }}</code>, e o cartão nunca muda o valor; só
+      quem passa o valor pode mudá-lo.
+    </p>
+    <p>
+      <code>output&lt;string&gt;()</code> declara um <vm-term name="output">output</vm-term>: um evento que o componente pode
+      disparar, levando um dado do tipo indicado. O template do cartão dispara com <code>.emit(...)</code>:
+    </p>
+    <vm-code snippet="15/etapa/src/app/country-card/country-card.html" caption="country-card.html" />
+
+    <h3>O pai: como ele usa o filho</h3>
+    <vm-code snippet="15/usage" caption="country-list.html (o cartão na lista)" />
+    <p>
+      Repare que é tudo o que você já sabe. <code>[country]="country"</code> é um property binding, como o
+      <code>[src]</code> do capítulo 7, agora numa propriedade do seu componente. <code>(toggled)="toggleVisited($event)"</code>
+      é um event binding, como o <code>(click)</code> do capítulo 8; o <code>$event</code> é o que o filho mandou no
+      <code>emit</code>, aqui o código do país.
+    </p>
+    <vm-code snippet="15/etapa/src/app/country-list/country-list.ts" caption="country-list.ts" />
+    <p>
+      O <code>toggleVisited</code> segue a regra dos signals: cria um array novo, trocando só o país clicado por uma cópia com
+      <code>visited</code> invertido. O cartão recebe esse país novo pelo input, e a tela acompanha.
+    </p>
+
+    <vm-tree-flow />
+
+    <vm-deep-dive title="E os @Input e @Output dos tutoriais?">
+      <p>
+        Antes dos signals, inputs e outputs eram declarados com decorators: <code>&#64;Input() country!: Country;</code> e
+        <code>&#64;Output() toggled = new EventEmitter&lt;string&gt;();</code>. Ainda funcionam, mas o jeito atual é
+        <code>input()</code> e <code>output()</code>: o input vira um signal, combina com <code>computed</code> e não precisa
+        do <code>!</code> para enganar o TypeScript. O próprio Angular tem uma migração automática do jeito antigo para o novo.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O CountryCard">
+    <vm-steps label="Criar o cartão e ligar à lista">
+      <ng-template vmStep="Gerar">
+        <vm-code snippet="15/ng-generate" caption="terminal" />
+        <p>O cartão vai usar só classes do Tailwind; apague o <code>country-card.css</code> e a linha <code>styleUrl</code>.</p>
+      </ng-template>
+      <ng-template vmStep="O cartão">
+        <p>Escreva a classe e o template do cartão da seção anterior. Ele importa o <code>FlagPipe</code> do capítulo 12.</p>
+      </ng-template>
+      <ng-template vmStep="A lista">
+        <p>
+          Na <code>CountryList</code>, troque o <code>FlagPipe</code> do <code>imports</code> pelo <code>CountryCard</code>,
+          acrescente o método <code>toggleVisited</code>, e, no template, troque todo o conteúdo do <code>&lt;li&gt;</code> pelo
+          cartão:
+        </p>
+        <vm-code snippet="15/etapa/src/app/country-list/country-list.html" caption="country-list.html" />
+        <p>
+          <strong>O que muda na tela:</strong> cada país ganha o botão "Visitar". Clique no do Japão e veja-o virar "Visitado
+          ✓"; troque o filtro para "Visitados" e confira que o Japão entrou na lista.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Conversas que não chegam">
+    <vm-pitfall
+      title="Esquecer um input obrigatório"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG8008: Required input 'country' from component CountryCard must be specified."
+    >
+      <p>
+        Você usou <code>&lt;app-country-card /&gt;</code> sem o <code>[country]</code>. Como o input é
+        <code>required</code>, o Angular não deixa: o cartão não teria o que mostrar. <strong>Como sair:</strong> passe o valor.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Ler o input sem parênteses"
+      where="O aviso que o Angular mostra"
+      message="▲ [WARNING] NG8109: NG8109: country is a function and should be invoked: country()."
+    >
+      <p>
+        Um input é um signal: <code ngNonBindable>{{ country.name }}</code> não funciona.
+        <strong>Como sair:</strong> <code ngNonBindable>{{ country().name }}</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Tentar mudar o input dentro do filho"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2339: Property 'set' does not exist on type 'InputSignal<Country>'."
+    >
+      <p>
+        O cartão tentou fazer <code>this.country.set(...)</code>. Um input só pode ser mudado por quem o passa: o filho só lê.
+        <strong>Como sair:</strong> avise o pai com um output, e deixe o pai mudar os dados.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Output com o nome errado no pai" where="O que aparece" message="(o clique não faz nada, sem erro)">
+      <p>
+        Com <code>(toggle)="..."</code> no pai, mas o output chamado <code>toggled</code> no filho, o Angular escuta um evento
+        que nunca acontece. Não há erro, porque poderia ser um evento comum do navegador. <strong>Como sair:</strong> use o
+        nome exato do output.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="15-input-e-output" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Às vezes o filho precisa mudar um valor do pai e ficar sincronizado com ele, como um controle
+      de nota em estrelas. Para isso existe o <code>model()</code>, no <vm-see-chapter [number]="16" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

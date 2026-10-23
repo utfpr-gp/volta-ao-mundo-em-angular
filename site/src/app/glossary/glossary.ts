@@ -120,6 +120,11 @@ export const GLOSSARY = {
     definition: 'Um tipo que recebe outro tipo como parâmetro, entre < >. Array<string> é um array de textos; signal<number> é um signal de número.',
     chapter: 4,
   },
+  input: {
+    term: 'Input',
+    definition: 'O que um componente filho recebe do pai, declarado com input(). É um signal só de leitura: o filho lê e quem passa o valor é o pai.',
+    chapter: 15,
+  },
   inferencia: {
     term: 'Inferência de tipos',
     definition: 'Quando o TypeScript deduz o tipo sozinho, pelo valor inicial: em let capital = \'Brasília\', ele já sabe que capital é uma string.',
@@ -159,6 +164,11 @@ export const GLOSSARY = {
     definition:
       'Diz-se de um framework que já decide muita coisa por você: estrutura de pastas, linguagem, forma de testar. Menos liberdade, mais projetos parecidos entre si.',
     chapter: 1,
+  },
+  output: {
+    term: 'Output',
+    definition: 'Um aviso que o componente filho dispara para o pai, declarado com output() e disparado com emit(). O pai escuta com (nome)="...".',
+    chapter: 15,
   },
   pacote: {
     term: 'Pacote',

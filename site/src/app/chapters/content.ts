@@ -12,6 +12,7 @@ import { CHAPTER_11 } from './11-for-e-track/content';
 import { CHAPTER_12 } from './12-pipes/content';
 import { CHAPTER_13 } from './13-estilos-e-tailwind/content';
 import { CHAPTER_14 } from './14-design-tokens/content';
+import { CHAPTER_15 } from './15-input-e-output/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -30,4 +31,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '12-pipes': CHAPTER_12,
   '13-estilos-e-tailwind': CHAPTER_13,
   '14-design-tokens': CHAPTER_14,
+  '15-input-e-output': CHAPTER_15,
 };

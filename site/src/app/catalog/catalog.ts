@@ -274,7 +274,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'input() e output()',
     description:
       'Faça os componentes conversarem: dados descem do pai para o filho com input() e eventos sobem do filho para o pai com output().',
-    minutes: 30,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '16-model',
