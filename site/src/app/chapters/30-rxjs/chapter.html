@@ -1,0 +1,187 @@
+<vm-chapter-page slug="30-rxjs">
+  <vm-view kind="mission" title="Achar a Islândia">
+    <p class="lead">
+      Com 195 países, achar a Islândia na lista exige rolar bastante. Neste capítulo, a lista ganha uma busca que responde
+      enquanto você digita, mas só quando você dá uma pausa. E a anotação de viagem para de mandar uma requisição a cada letra.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-30/busca.png"
+      width="1100"
+      height="640"
+      alt="A lista de países com o campo Buscar país preenchido com isl, e um único resultado: Islândia, capital Reykjavík. No rodapé, 1 de 195 países."
+    />
+    <p>
+      As duas coisas se resolvem com o <strong>RxJS</strong>, a biblioteca de Observables que o Angular usa por dentro e que
+      você conheceu no <vm-see-chapter [number]="29" />. Ao final do capítulo, você vai saber montar uma esteira com
+      <code>pipe</code> e os operadores essenciais: <code>map</code>, <code>filter</code>, <code>debounceTime</code>,
+      <code>distinctUntilChanged</code>, <code>switchMap</code> e <code>catchError</code>.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A esteira da bagagem">
+    <vm-analogy emoji="🛄" title="A esteira do aeroporto">
+      <p>
+        A bagagem sai do avião e passa por uma esteira com várias estações: uma confere a etiqueta, outra separa o que é de
+        conexão, outra espera juntar todas as malas do voo antes de liberar. Cada estação faz uma coisa só, e a ordem
+        importa.
+      </p>
+      <p>
+        Um <vm-term name="observable">Observable</vm-term> é a esteira, e os valores são as malas: as letras digitadas, as
+        respostas de uma API. O <code>pipe</code> monta as estações, e cada estação é um
+        <vm-term name="operador">operador</vm-term>.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O RxJS por dentro">
+    <h3>A primeira esteira</h3>
+    <vm-code snippet="30/primeiro" caption="um exemplo para rodar com o Node" />
+    <vm-code snippet="30/primeiro-saida" caption="saída" />
+    <p>
+      O <code>of</code> cria uma esteira com quatro valores. O <code>filter</code> barra os ímpares, o <code>map</code>
+      multiplica, e o <code>subscribe</code>, como no capítulo anterior, liga a esteira e recebe o que chega ao fim. Repare
+      que são os mesmos nomes do <code>filter</code> e do <code>map</code> dos arrays, do
+      <vm-see-chapter [number]="3" />, só que para valores que chegam ao longo do tempo.
+    </p>
+
+    <h3>A busca: uma letra de cada vez</h3>
+    <vm-code snippet="30/etapa/src/app/features/countries/country-list/country-list.ts" caption="country-list.ts" />
+    <p>
+      O <code>typed</code> é um <vm-term name="subject">Subject</vm-term>: um Observable em que você mesmo põe os valores,
+      com <code>next</code>. O campo de busca põe cada versão do texto nele, a cada tecla:
+    </p>
+    <vm-code snippet="30/etapa/src/app/features/countries/country-list/country-list.html" caption="country-list.html" />
+    <p>E o texto atravessa as estações, nesta ordem:</p>
+    <ol>
+      <li><code>map(simplify)</code>: tira os acentos e põe em minúsculas, para "japao" achar o Japão.</li>
+      <li><code>filter((text) => text.length !== 1)</code>: uma letra só ainda não é busca; o vazio passa, para limpar.</li>
+      <li><code>debounceTime(300)</code>: segura o valor e só deixa passar depois de 300 ms sem nenhum outro chegar.</li>
+      <li><code>distinctUntilChanged()</code>: se o termo for igual ao anterior, não passa.</li>
+      <li>
+        <code>takeUntilDestroyed()</code>: desliga a esteira quando o componente for destruído, como o
+        <code>DestroyRef</code> do <vm-see-chapter [number]="19" />.
+      </li>
+    </ol>
+    <p>
+      No fim, o termo vai para um signal, e o <code>visible</code>, um <code>computed</code>, filtra a lista com ele. O RxJS
+      cuida do tempo; o signal cuida da tela.
+    </p>
+
+    <vm-marble-sim />
+
+    <h3>A anotação: salvar depois da pausa</h3>
+    <p>No service, a anotação passa pela mesma ideia:</p>
+    <vm-code snippet="30/etapa/src/app/core/passport.ts" caption="core/passport.ts" />
+    <ul>
+      <li><code>debounceTime(500)</code>: salva meio segundo depois da última letra, em vez de a cada letra.</li>
+      <li>
+        <code>switchMap(() => this.put())</code>: troca cada valor por uma requisição. Se um PUT ainda estiver a caminho
+        quando outro começar, o <code>switchMap</code> <strong>cancela</strong> o antigo: só a versão mais nova importa.
+      </li>
+      <li>
+        <code>catchError(...)</code>: dentro do <code>switchMap</code>, segura o erro de um PUT, avisa que não salvou e
+        devolve <code>EMPTY</code>, uma esteira vazia. Sem ele, o primeiro erro desligaria a esteira para sempre.
+      </li>
+    </ul>
+    <p>
+      E por que não há <code>takeUntilDestroyed</code> aqui? Porque o service vive enquanto o app estiver aberto: a esteira
+      dele nunca precisa ser desligada.
+    </p>
+
+    <vm-deep-dive title="switchMap, mergeMap, concatMap, exhaustMap">
+      <p>
+        Os quatro trocam cada valor por outra esteira, como uma requisição, e diferem no que fazem quando chega um valor novo
+        antes de a anterior terminar. O <code>switchMap</code> cancela a anterior: ideal para buscas. O
+        <code>mergeMap</code> deixa todas correrem juntas, e as respostas podem chegar fora de ordem. O
+        <code>concatMap</code> faz uma fila. O <code>exhaustMap</code> ignora os novos até a atual terminar: bom para um
+        botão de "Enviar" que alguém aperta várias vezes.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="RxJS ou signals?">
+      <p>
+        Os dois convivem, e cada um brilha num lugar. Signals guardam um valor que a tela mostra agora. O RxJS descreve o que
+        acontece <strong>ao longo do tempo</strong>: esperar uma pausa, cancelar uma requisição velha, tentar de novo. Na
+        busca, o RxJS decide quando o termo vale, e um signal o guarda. O <vm-see-chapter [number]="31" /> mostra a ponte
+        oficial entre os dois.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A busca e a anotação">
+    <vm-steps label="Usar o RxJS no Passaporte">
+      <ng-template vmStep="A busca">
+        <p>
+          No <code>country-list.ts</code>, acrescente a função <code>simplify</code>, o <code>typed</code>, o signal
+          <code>term</code> e a esteira no constructor, e inclua o termo no <code>visible</code>. No template, o campo de
+          busca, antes dos filtros.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A anotação">
+        <p>
+          No <code>passport.ts</code>, crie o <code>noteEdits</code>, monte a esteira no constructor e troque o
+          <code>this.save()</code> do <code>saveNote</code> por <code>this.noteEdits.next()</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> digite "isl" na busca: a lista espera você parar e mostra só a Islândia.
+          Digite "JAPAO", sem acento: o Japão aparece. Escreva uma anotação com a aba Network aberta: um PUT só, meio segundo
+          depois da última letra.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Esteiras que travam">
+    <vm-pitfall title="Um erro que desliga tudo" where="O que aparece na tela" message="(depois de uma falha, nenhuma anotação é salva, nem com o servidor de volta)">
+      <vm-code snippet="30/sem-catcherror" caption="passport.ts" />
+      <p>
+        Um erro que chega ao <code>subscribe</code> encerra a inscrição: a esteira para, e o <code>noteEdits</code> continua
+        recebendo letras que não vão a lugar nenhum. <strong>Como sair:</strong> o <code>catchError</code> dentro do
+        <code>switchMap</code>, para o erro morrer ali e a esteira de fora continuar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="takeUntilDestroyed fora do lugar"
+      where="O que aparece no console do navegador"
+      message="NG0203: takeUntilDestroyed() can only be used within an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`."
+    >
+      <vm-code snippet="30/ngoninit" caption="country-list.ts" />
+      <p>
+        O <code>takeUntilDestroyed()</code> pergunta ao Angular qual é o componente, como o <code>inject()</code>, e no
+        <code>ngOnInit</code> já é tarde. <strong>Como sair:</strong> monte a esteira no constructor, ou passe o
+        <code>DestroyRef</code>: <code>takeUntilDestroyed(this.destroyRef)</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Operadores do jeito antigo" where="O que o Angular mostra no terminal" message="✘ [ERROR] TS2339: Property 'debounceTime' does not exist on type 'Subject<string>'.">
+      <vm-code snippet="30/encadeado" caption="country-list.ts" />
+      <p>
+        Até o RxJS 5, os operadores eram chamados direto no Observable, e muitos tutoriais antigos ainda mostram assim.
+        <strong>Como sair:</strong> importe o operador de <code>'rxjs'</code> e use dentro do <code>pipe(...)</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Esquecer de desligar" where="O que aparece na tela" message="(nada, por enquanto: a esteira continua viva depois que a lista some)">
+      <p>
+        Sem o <code>takeUntilDestroyed</code>, o componente é destruído, mas a inscrição continua na memória, como o relógio
+        sem limpeza do <vm-see-chapter [number]="19" />. <strong>Como sair:</strong> todo <code>subscribe</code> num componente
+        precisa de um jeito de terminar.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="30-rxjs" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte usa <code>subscribe</code> em vários lugares, com signals para guardar o
+      resultado. Há uma ponte pronta entre os dois mundos, que dispensa boa parte disso: o
+      <vm-see-chapter [number]="31" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

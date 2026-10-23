@@ -442,6 +442,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Observables, pipe, map, filter, debounceTime e switchMap: o RxJS essencial para fazer uma busca que responde enquanto você digita.',
     minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '31-to-signal',

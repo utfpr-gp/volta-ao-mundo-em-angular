@@ -27,6 +27,7 @@ import { CHAPTER_26 } from './26-lazy-loading/content';
 import { CHAPTER_27 } from './27-organizacao-por-funcionalidades/content';
 import { CHAPTER_28 } from './28-services-e-inject/content';
 import { CHAPTER_29 } from './29-http-client/content';
+import { CHAPTER_30 } from './30-rxjs/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -60,4 +61,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '27-organizacao-por-funcionalidades': CHAPTER_27,
   '28-services-e-inject': CHAPTER_28,
   '29-http-client': CHAPTER_29,
+  '30-rxjs': CHAPTER_30,
 };
