@@ -1,0 +1,111 @@
+<vm-chapter-page slug="19-ciclo-de-vida">
+  <vm-view kind="mission" title="Um relógio que sabe quando parar">
+    <p class="lead">
+      Ao marcar o Japão como visitado, aparece a hora local de Tóquio, atualizada a cada segundo. Ao desmarcar, o relógio
+      some, e, o mais importante, para de trabalhar.
+    </p>
+    <div class="not-prose my-6 rounded-2xl border-2 border-highlight bg-surface-raised p-5" aria-hidden="true">
+      <p class="font-extrabold text-stamp">🛂 Carimbado! Você já esteve aqui.</p>
+      <p class="mt-2 text-sm text-ink-muted">🕒 Agora em Tóquio: <strong class="text-ink">21:00:02</strong></p>
+    </div>
+    <p>
+      Um componente nasce quando aparece, vive enquanto está na tela e é destruído quando sai. Ao final do capítulo, você vai
+      saber rodar código em cada um desses momentos e, principalmente, limpar o que o componente ligou.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="Apagar a luz ao sair">
+    <vm-analogy emoji="💡" title="O quarto de hotel">
+      <p>
+        Quando você entra num quarto de hotel, acende a luz e liga o ar. Quando sai, o certo é desligar tudo: senão, o ar
+        continua gelando um quarto vazio, e a conta chega para alguém.
+      </p>
+      <p>
+        Um componente que liga um temporizador ao nascer precisa desligá-lo ao ser destruído. Se não desligar, o temporizador
+        continua rodando para um componente que nem existe mais.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O ciclo de vida por dentro">
+    <h3>Os momentos que importam</h3>
+    <ol>
+      <li><strong>Criação:</strong> o <code>constructor</code> roda quando o Angular cria o componente. Os inputs ainda não chegaram.</li>
+      <li><strong>Inicialização:</strong> o <code>ngOnInit</code> roda uma vez, logo depois, já com os inputs preenchidos. É o lugar para começar trabalhos que dependem deles.</li>
+      <li><strong>Destruição:</strong> quando o componente sai da tela, por exemplo porque um <code>&#64;if</code> ficou falso, o Angular avisa quem se registrou no <code>DestroyRef</code> (ou chama o <code>ngOnDestroy</code>). É a hora de desligar o que foi ligado.</li>
+    </ol>
+    <vm-code snippet="19/etapa/src/app/local-clock/local-clock.ts" caption="local-clock.ts" />
+    <p>
+      O relógio usa <code>implements OnInit</code>, uma interface que obriga a classe a ter o método <code>ngOnInit</code>.
+      O <code>inject(DestroyRef)</code> pede ao Angular o "aviso de destruição" deste componente; você vai ver o
+      <code>inject</code> com calma no <vm-see-chapter [number]="28" />. E o <code>onDestroy</code> registra o que fazer
+      quando o componente sair: aqui, o <code>clearInterval</code>.
+    </p>
+
+    <vm-lifecycle-lab />
+
+    <h3>Depois que aparece na tela: <code>afterNextRender</code></h3>
+    <p>
+      Às vezes você precisa que o componente já esteja desenhado, por exemplo para medir o tamanho de um elemento. O
+      <code>afterNextRender</code> roda uma vez, depois que a tela foi atualizada:
+    </p>
+    <vm-code snippet="19/after-render" caption="trecho de um componente" />
+
+    <vm-deep-dive title="E os outros ganchos (ngOnChanges, ngAfterViewInit…)?">
+      <p>
+        O Angular tem outros ganchos de ciclo de vida, que você vai encontrar em código mais antigo: <code>ngOnChanges</code>
+        (quando um input muda), <code>ngAfterViewInit</code> (depois que a view do componente existe) e outros. Com signals,
+        boa parte deles deixou de ser necessária: para reagir a um input que muda, um <code>computed</code> resolve; para
+        rodar algo depois da tela pronta, o <code>afterNextRender</code>.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O relógio local">
+    <vm-steps label="Criar o relógio com ciclo de vida">
+      <ng-template vmStep="Gerar">
+        <vm-code snippet="19/ng-generate" caption="terminal" />
+        <p>O relógio tem um template curto; escreva-o direto no decorator, com <code>template</code>, e apague os arquivos <code>.html</code> e <code>.css</code>.</p>
+      </ng-template>
+      <ng-template vmStep="O relógio">
+        <p>Escreva a classe da seção anterior. O <code>Intl.DateTimeFormat</code> com <code>timeZone</code> é do próprio JavaScript e formata a hora no fuso de qualquer cidade.</p>
+      </ng-template>
+      <ng-template vmStep="Usar no destaque">
+        <p>No objeto <code>country</code> do <code>FeaturedCountry</code>, acrescente <code>timeZone: 'Asia/Tokyo'</code>. Importe o <code>LocalClock</code> e, dentro do <code>&#64;if (visited())</code>, ponha:</p>
+        <vm-code snippet="19/etapa/src/app/featured-country/featured-country.html" caption="featured-country.html" />
+        <p><strong>O que muda na tela:</strong> marque o Japão como visitado e veja os segundos passarem; desmarque e o relógio some.</p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Luzes acesas em quartos vazios">
+    <vm-pitfall title="Esquecer de limpar o intervalo" where="O que acontece" message="(nenhum erro: o temporizador continua rodando depois que o componente some)">
+      <vm-code snippet="19/leak" caption="local-clock.ts (com o problema)" />
+      <p>
+        Cada vez que o relógio aparece, um intervalo novo é ligado, e nenhum é desligado. Depois de mostrar e esconder dez
+        vezes, há dez intervalos trabalhando à toa. É um <strong>vazamento de memória</strong>: invisível no começo, lento
+        depois. Experimente no simulador com a opção "esquecer de limpar". <strong>Como sair:</strong> registre o
+        <code>clearInterval</code> no <code>DestroyRef</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Usar input no constructor" where="O que acontece" message="(o input ainda não tem valor; com input.required, ler cedo demais é erro)">
+      <p>
+        No <code>constructor</code>, os inputs ainda não chegaram do pai. <strong>Como sair:</strong> comece o trabalho que
+        depende de inputs no <code>ngOnInit</code>, ou use um <code>computed</code>, que lê o input só quando precisa.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="19-ciclo-de-vida" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte tem muitas peças. A próxima parada organiza a tela para funcionar bem do celular
+      ao computador: o <vm-see-chapter [number]="20" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

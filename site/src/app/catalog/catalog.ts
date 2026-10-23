@@ -319,6 +319,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Entenda o ciclo de vida de um componente e rode código quando ele nasce e quando some, com ngOnInit, DestroyRef e afterNextRender.',
     minutes: 25,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '20-layout-responsivo',
