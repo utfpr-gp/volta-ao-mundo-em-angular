@@ -375,6 +375,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Abra a página de um país pelo código na URL, como /paises/BR, recebendo o parâmetro direto num input(), e navegue por código até um destino sorteado.',
     minutes: 25,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '25-rotas-filhas',

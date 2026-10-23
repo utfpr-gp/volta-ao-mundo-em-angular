@@ -26,4 +26,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '21-do-prototipo-ao-componente': () => import('./21-do-prototipo-ao-componente/chapter').then((m) => m.Chapter21),
   '22-bibliotecas-de-componentes': () => import('./22-bibliotecas-de-componentes/chapter').then((m) => m.Chapter22),
   '23-router': () => import('./23-router/chapter').then((m) => m.Chapter23),
+  '24-parametros-de-rota': () => import('./24-parametros-de-rota/chapter').then((m) => m.Chapter24),
 };

@@ -21,6 +21,7 @@ import { CHAPTER_20 } from './20-layout-responsivo/content';
 import { CHAPTER_21 } from './21-do-prototipo-ao-componente/content';
 import { CHAPTER_22 } from './22-bibliotecas-de-componentes/content';
 import { CHAPTER_23 } from './23-router/content';
+import { CHAPTER_24 } from './24-parametros-de-rota/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -48,4 +49,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '21-do-prototipo-ao-componente': CHAPTER_21,
   '22-bibliotecas-de-componentes': CHAPTER_22,
   '23-router': CHAPTER_23,
+  '24-parametros-de-rota': CHAPTER_24,
 };
