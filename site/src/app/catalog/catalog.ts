@@ -453,6 +453,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Ligue o mundo do RxJS ao mundo dos signals com toSignal() e toObservable(), e use o resultado de uma requisição direto no template.',
     minutes: 20,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '32-resource-e-http-resource',

@@ -1,0 +1,156 @@
+<vm-chapter-page slug="31-to-signal">
+  <vm-view kind="mission" title="Menos encanamento">
+    <p class="lead">
+      O Passaporte tem dois mundos: os signals, que guardam o que a tela mostra, e os Observables do RxJS, que cuidam do que
+      acontece ao longo do tempo. Até aqui, a ligação entre eles era feita à mão: um <code>subscribe</code>, um
+      <code>set</code>, e alguém para lembrar de desligar. Neste capítulo, o Angular faz essa ligação por você.
+    </p>
+    <p>
+      Por fora, nada muda: a busca e o relógio do país em destaque funcionam igual. Por dentro, o relógio perde o
+      <code>ngOnInit</code>, o <code>setInterval</code> e o <code>DestroyRef</code>, e a busca perde o <code>Subject</code> e
+      o <code>subscribe</code>. Ao final do capítulo, você vai saber transformar um Observable em signal com
+      <code>toSignal()</code>, e um signal em Observable com <code>toObservable()</code>.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A casa de câmbio">
+    <vm-analogy emoji="💱" title="Trocar de moeda na fronteira">
+      <p>
+        Ao cruzar a fronteira, você troca reais por euros na casa de câmbio: o dinheiro é o mesmo, só muda a forma de usar.
+        Ninguém precisa de um amigo do outro lado para fazer a conversão à mão.
+      </p>
+      <p>
+        O <code>toSignal()</code> e o <code>toObservable()</code> são a casa de câmbio entre os dois mundos. O valor é o
+        mesmo; o que muda é o jeito de usar: com signals, você lê com parênteses no template; com Observables, você usa os
+        operadores do RxJS.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="A ponte por dentro">
+    <h3>toSignal: de Observable para signal</h3>
+    <p>O relógio do capítulo 19 ligava e desligava um intervalo à mão:</p>
+    <vm-code snippet="30/etapa/src/app/shared/local-clock/local-clock.ts" caption="local-clock.ts, antes" />
+    <p>Com o <code>toSignal()</code>, o mesmo relógio fica assim:</p>
+    <vm-code snippet="31/etapa/src/app/shared/local-clock/local-clock.ts" caption="local-clock.ts, depois" />
+    <ul>
+      <li>
+        O <code>interval(1000)</code> do RxJS é um Observable que bate a cada segundo, e o <code>map</code> troca cada batida
+        pela hora atual.
+      </li>
+      <li>
+        O <code>toSignal()</code> se inscreve no Observable e guarda o último valor num signal. Quando o componente é
+        destruído, ele mesmo cancela a inscrição: nada de <code>DestroyRef</code>.
+      </li>
+      <li>
+        O <code>initialValue</code> diz o valor do signal antes do primeiro valor chegar. Sem ele, o signal começa como
+        <code>undefined</code>.
+      </li>
+      <li>E a hora formatada virou um <code>computed</code>, que depende do <code>now</code> e do fuso.</li>
+    </ul>
+
+    <h3>toObservable: de signal para Observable</h3>
+    <p>
+      Na busca, o caminho é de ida e volta. O campo escreve num signal; o signal vira Observable para passar pela esteira do
+      RxJS; e o resultado volta a ser signal para a tela:
+    </p>
+    <vm-code snippet="31/etapa/src/app/features/countries/country-list/country-list.ts" caption="country-list.ts" />
+    <p>
+      Sumiram o <code>Subject</code>, o <code>subscribe</code>, o <code>set</code> e o <code>takeUntilDestroyed</code>. O
+      template escreve no signal, como em qualquer campo:
+    </p>
+    <vm-code snippet="31/etapa/src/app/features/countries/country-list/country-list.html" caption="country-list.html" />
+
+    <vm-bridge-sim />
+
+    <h3>Um detalhe do toObservable</h3>
+    <p>
+      O <code>toObservable()</code> não entrega cada mudança no mesmo instante: ele espera o Angular olhar os signals, no
+      próximo ciclo. Se o signal mudar três vezes antes disso, só o último valor chega:
+    </p>
+    <vm-code snippet="31/tres-sets" caption="três mudanças seguidas" />
+    <p>
+      Para uma busca, é o que se quer: valores que nem chegaram a aparecer na tela não precisam passar pela esteira. Mas
+      saiba que ele não é um registro de todas as mudanças.
+    </p>
+
+    <vm-deep-dive title="Quando continuar com subscribe">
+      <p>
+        O <code>toSignal()</code> serve quando o resultado vai para a tela. Quando um Observable dispara uma
+        <strong>ação</strong>, como o PUT da anotação no service, o <code>subscribe</code> continua sendo o caminho: não há
+        valor para mostrar, só algo para fazer. E para buscar dados numa API, com carregando e erro, o
+        <vm-see-chapter [number]="32" /> mostra uma ferramenta feita para isso.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A ponte no Passaporte">
+    <vm-steps label="Trocar o encanamento pela ponte">
+      <ng-template vmStep="O relógio">
+        <p>
+          No <code>local-clock.ts</code>, apague o <code>OnInit</code>, o <code>DestroyRef</code> e o <code>tick()</code>, e
+          escreva o <code>now</code> com <code>toSignal</code> e o <code>time</code> com <code>computed</code>, como na seção
+          anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A busca">
+        <p>
+          No <code>country-list.ts</code>, troque o <code>Subject</code> pelo signal <code>searchText</code>, e o constructor
+          com <code>subscribe</code> pelo <code>term</code> com <code>toSignal(toObservable(...))</code>. No template, o campo
+          lê e escreve no <code>searchText</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> nada, e é esse o teste. A busca continua esperando a pausa, e o relógio do
+          Japão continua batendo. O código ficou menor, e não há mais nenhum <code>subscribe</code> para esquecer de desligar.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Pontes que não fecham">
+    <vm-pitfall
+      title="Esquecer o initialValue"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'."
+    >
+      <vm-code snippet="31/sem-initial" caption="country-list.ts" />
+      <p>
+        Sem valor inicial, o signal vale <code>undefined</code> até a primeira emissão, e o TypeScript não deixa passar.
+        <strong>Como sair:</strong> dê um <code>initialValue</code>, ou trate o <code>undefined</code> onde o valor é usado.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="toSignal dentro de um computed"
+      where="O que aparece no console do navegador"
+      message="NG0602: toSignal() cannot be called from within a reactive context. Invoking `toSignal` causes new subscriptions every time. Consider moving `toSignal` outside of the reactive context and read the signal value where needed."
+    >
+      <vm-code snippet="31/no-computed" caption="country-list.ts" />
+      <p>
+        Cada vez que o <code>computed</code> rodasse, um <code>toSignal</code> novo se inscreveria de novo. O Angular barra.
+        <strong>Como sair:</strong> crie o <code>toSignal</code> uma vez, num campo da classe, e leia o signal dentro do
+        <code>computed</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="toSignal num método" where="O que aparece no console do navegador" message="NG0203: toSignal() can only be used within an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`.">
+      <p>
+        Como o <code>takeUntilDestroyed</code>, o <code>toSignal</code> precisa saber de qual componente é, para cancelar a
+        inscrição na hora certa. <strong>Como sair:</strong> crie-o num campo da classe ou no constructor.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="31-to-signal" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O service do Passaporte ainda busca os países com <code>subscribe</code> e controla o
+      carregando e o erro à mão, com um signal de status. O Angular tem uma ferramenta que faz tudo isso sozinha: o
+      <vm-see-chapter [number]="32" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
