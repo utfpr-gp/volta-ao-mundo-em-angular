@@ -1,0 +1,179 @@
+<vm-chapter-page slug="24-parametros-de-rota">
+  <vm-view kind="mission" title="Uma página para cada país">
+    <p class="lead">
+      O Passaporte tem seis países, e cada um ganha a sua página: <code>/paises/JP</code> para o Japão,
+      <code>/paises/PT</code> para Portugal. Não são seis componentes nem seis rotas: é uma rota só, que lê o código do país
+      direto do endereço.
+    </p>
+    <figure class="not-prose my-6 overflow-hidden rounded-2xl border border-line">
+      <img class="w-full" src="imagens/capitulo-24/japao.png" width="1000" height="470" alt="A página do Japão no Passaporte: link para voltar a todos os países, bandeira grande, o nome Japão, a capital Tóquio e o botão Sortear outro destino." />
+      <figcaption class="border-t border-line bg-surface-raised px-3 py-2 font-mono text-sm text-ink">localhost:4200/paises/JP</figcaption>
+    </figure>
+    <p>
+      Na lista, o nome de cada país vira um link para a página dele. E um botão sorteia outro destino e leva até ele. Ao final
+      do capítulo, você vai saber criar rotas com parâmetros, receber o parâmetro num <code>input()</code> e navegar pelo
+      código.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O formulário com um espaço em branco">
+    <vm-analogy emoji="🛂" title="O formulário da imigração">
+      <p>
+        No aeroporto, todo viajante preenche o mesmo formulário. Ele já vem impresso, e só um espaço fica em branco: "número
+        do passaporte". Ninguém imprime um formulário diferente para cada pessoa.
+      </p>
+      <p>
+        A rota <code>paises/:code</code> é esse formulário. A parte <code>paises</code> é o que já vem impresso; o
+        <code>:code</code> é o espaço em branco, preenchido pelo endereço. E o mesmo componente atende todos os países.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Parâmetros de rota por dentro">
+    <h3>Uma rota com espaço em branco</h3>
+    <vm-code snippet="24/etapa/src/app/app.routes.ts" caption="app.routes.ts" />
+    <p>
+      Os dois-pontos marcam um <strong>parâmetro</strong>: <code>paises/:code</code> combina com <code>/paises/JP</code>,
+      <code>/paises/PT</code>, e com qualquer outro valor nesse lugar. Repare que <code>paises</code> e
+      <code>paises/:code</code> são rotas diferentes: a primeira só combina com o endereço exato <code>/paises</code>.
+    </p>
+    <p>
+      O <code>title</code> também pode ser uma função. Ela recebe a rota e devolve o título; aqui, procura o país pelo código
+      para a aba mostrar "Japão · Passaporte".
+    </p>
+
+    <h3>Do endereço direto para o input</h3>
+    <p>Uma opção do Router, ligada no <code>app.config.ts</code>, entrega os parâmetros da rota aos inputs do componente:</p>
+    <vm-code snippet="24/etapa/src/app/app.config.ts" caption="app.config.ts" />
+    <p>
+      Com o <code>withComponentInputBinding()</code>, basta o componente ter um input com o mesmo nome do parâmetro. O
+      <code>:code</code> da rota chega no <code>code</code> do componente:
+    </p>
+    <vm-code snippet="24/etapa/src/app/pages/country-page/country-page.ts" caption="country-page.ts" />
+    <p>
+      Os países, que antes estavam dentro da lista, foram para um arquivo próprio, para a página também poder procurar
+      neles:
+    </p>
+    <vm-code snippet="24/etapa/src/app/countries.ts" caption="countries.ts" />
+
+    <h3>O mesmo componente, outro país</h3>
+    <p>
+      Indo de <code>/paises/JP</code> para <code>/paises/PT</code>, a rota é a mesma, e o Router <strong>não cria outro
+      componente</strong>: ele só muda o valor do input. Por isso o país vem de um <code>computed</code>: quando o
+      <code>code</code> muda, o país acompanha. Um valor copiado uma vez só, no <code>ngOnInit</code>, ficaria para trás (veja
+      as armadilhas).
+    </p>
+
+    <vm-param-sim />
+
+    <h3>A tela do país</h3>
+    <vm-code snippet="24/etapa/src/app/pages/country-page/country-page.html" caption="country-page.html" />
+    <p>
+      O <code>&#64;if</code> tem uma forma nova aqui: <code>country(); as country</code>. O <code>as</code> dá um nome ao valor
+      que acabou de ser conferido, e dentro do bloco você usa <code>country.name</code> sem os parênteses:
+    </p>
+    <vm-code snippet="24/if-as" caption="o @if com as" />
+    <p>
+      Se o código não existir, como em <code>/paises/XX</code>, a rota combina do mesmo jeito, mas o país não é encontrado, e
+      o <code>&#64;else</code> avisa.
+    </p>
+
+    <h3>Navegar pelo código</h3>
+    <p>
+      O botão de sorteio não sabe para onde vai antes do clique, então não dá para ser um link. Ele pede ao
+      <code>Router</code>, com <code>inject(Router)</code>, para navegar. O <code>navigate</code> recebe os pedaços do endereço
+      numa lista: <code>['/paises', 'JP']</code> vira <code>/paises/JP</code>. A regra: use link quando o destino é um lugar
+      conhecido; navegue pelo código quando o destino depende de uma ação.
+    </p>
+    <p>E, na lista, o nome de cada país virou um link, montado com a mesma lista de pedaços:</p>
+    <vm-code snippet="24/etapa/src/app/country-card/country-card.html" caption="country-card.html" />
+
+    <vm-deep-dive title="Por que o link Países continua em destaque na página do Japão?">
+      <p>
+        Por padrão, o <code>routerLinkActive</code> considera o link ativo quando o endereço atual começa com o dele:
+        <code>/paises/JP</code> começa com <code>/paises</code>. É o que se espera de um menu. Para exigir o endereço exato, use
+        <code>[routerLinkActiveOptions]="{{ '{' }} exact: true {{ '}' }}"</code>.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="E se a página marcar o país como visitado?">
+      <p>
+        Por enquanto, a página mostra os dados fixos do país. Quem guarda o "visitado" é a lista, e a página não tem como
+        falar com ela. No <vm-see-chapter [number]="28" />, os países passam para um service, e qualquer tela poderá ler e
+        mudar o que for preciso.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A página do país">
+    <vm-steps label="Criar a página do país">
+      <ng-template vmStep="Os países">
+        <p>
+          Crie o <code>src/app/countries.ts</code> da seção anterior, com o array que estava no <code>country-list.ts</code>.
+          Na lista, troque o array por <code>signal&lt;Country[]&gt;(COUNTRIES)</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A página">
+        <vm-code snippet="24/ng-generate" caption="terminal" />
+        <p>Apague o <code>.css</code> e a linha <code>styleUrl</code>, e escreva a classe e o template da seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="A rota">
+        <p>
+          No <code>app.config.ts</code>, acrescente o <code>withComponentInputBinding()</code>. No <code>app.routes.ts</code>,
+          acrescente a rota <code>paises/:code</code> e a função <code>countryTitle</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O link na lista">
+        <p>
+          No <code>country-card.html</code>, envolva o nome num link, e importe o <code>RouterLink</code> no
+          <code>country-card.ts</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> clique em "Japão" na lista: a página do Japão abre, e a aba diz "Japão ·
+          Passaporte". Clique em "Sortear outro destino" algumas vezes e veja o endereço mudar. Experimente
+          <code>/paises/xx</code> na barra de endereço.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Parâmetros que não chegam">
+    <vm-pitfall
+      title="Esquecer o withComponentInputBinding"
+      where="O que aparece no console do navegador"
+      message='NG0950: Input "code" is required but no value is available yet.'
+    >
+      <p>
+        Sem essa opção, o Router não entrega o parâmetro ao input, e o input obrigatório fica sem valor. A tela fica em branco.
+        <strong>Como sair:</strong> <code>provideRouter(routes, withComponentInputBinding())</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Nomes diferentes" where="O que aparece no console do navegador" message='NG0950: Input "code" is required but no value is available yet.'>
+      <vm-code snippet="24/param-name" caption="app.routes.ts e country-page.ts" />
+      <p>
+        O parâmetro só chega ao input de mesmo nome. <strong>Como sair:</strong> use o mesmo nome nos dois lugares.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Ler o parâmetro uma vez só" where="O que aparece na tela" message="(o endereço muda para /paises/PT, mas a tela continua no Japão)">
+      <vm-code snippet="24/copy-once" caption="country-page.ts" />
+      <p>
+        O componente não é recriado quando só o parâmetro muda, então o <code>ngOnInit</code> não roda de novo.
+        <strong>Como sair:</strong> derive o que depende do parâmetro com <code>computed</code>, lendo o input.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="24-parametros-de-rota" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> A página de um país ainda é uma tela só. A próxima parada divide em abas, cada uma com o seu
+      endereço, como <code>/paises/JP/clima</code>: o <vm-see-chapter [number]="25" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
