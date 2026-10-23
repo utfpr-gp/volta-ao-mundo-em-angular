@@ -1,0 +1,173 @@
+<vm-chapter-page slug="26-lazy-loading">
+  <vm-view kind="mission" title="Baixar só o que vai ser usado">
+    <p class="lead">
+      Hoje, quem abre o Passaporte baixa o app inteiro de uma vez: a lista, a página do país com as três abas, a página Sobre
+      e até a página 404, que quase ninguém vê. Neste capítulo, cada tela vira um arquivo separado, baixado só quando alguém
+      a abre.
+    </p>
+    <p>
+      Por fora, nada muda. A diferença aparece na saída do <code>ng build</code>: o arquivo principal emagrece, e surgem os
+      arquivos de cada tela. Ao final, você vai saber usar <code>loadComponent</code> e <code>loadChildren</code>, ler a saída
+      do build e decidir quando vale a pena.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A mala despachada">
+    <vm-analogy emoji="🧳" title="Levar tudo ou pedir quando precisar">
+      <p>
+        Há quem viaje com a casa inteira na mala, e há quem leve o básico e compre o resto no destino, só se precisar. O
+        segundo embarca mais leve e mais rápido; o preço é parar numa loja quando algo faltar.
+      </p>
+      <p>
+        O <vm-term name="lazy-loading">lazy loading</vm-term> é viajar leve. O app abre só com o básico, e cada tela é buscada
+        quando a pessoa chega nela. A "parada na loja" é um arquivo pequeno, baixado em uma fração de segundo.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Lazy loading por dentro">
+    <h3>Antes: um arquivo só</h3>
+    <p>Esta é a saída do <code>ng build</code> do Passaporte do capítulo anterior:</p>
+    <vm-code snippet="26/build-antes" caption="saída do ng build" />
+    <p>
+      O <code>main</code> tem tudo: o Angular, os componentes, todas as telas. O motivo está no <code>app.routes.ts</code>:
+      cada <code>import</code> no topo do arquivo diz ao build "isto precisa estar pronto desde o começo".
+    </p>
+
+    <h3>loadComponent: a tela vira uma função</h3>
+    <vm-code snippet="26/etapa/src/app/app.routes.ts" caption="app.routes.ts" />
+    <p>
+      Em vez de <code>component: AboutPage</code>, a rota tem <code>loadComponent</code>: uma função que importa o arquivo
+      <strong>na hora</strong>. O <code>import(...)</code> com parênteses é o import dinâmico do JavaScript: ele devolve uma
+      <vm-term name="promise">Promise</vm-term>, e o <code>.then</code> pega a classe de dentro do módulo. O Router só chama a
+      função quando alguém navega para a rota.
+    </p>
+    <p>
+      Repare que o <code>app.routes.ts</code> não tem mais nenhum <code>import</code> de página no topo. Se tivesse, o build
+      poria a página no <code>main</code> de novo.
+    </p>
+
+    <h3>loadChildren: um grupo de rotas</h3>
+    <p>
+      A página do país tem três abas. Em vez de carregar cada uma, as rotas dela foram para um arquivo próprio, e o
+      <code>loadChildren</code> carrega o grupo inteiro:
+    </p>
+    <vm-code snippet="26/etapa/src/app/pages/country-page/country.routes.ts" caption="pages/country-page/country.routes.ts" />
+    <p>
+      O <code>:code</code> continua na rota de cima, em <code>app.routes.ts</code>; aqui, a rota da página tem
+      <code>path: ''</code>, e as abas continuam filhas dela. Como as filhas herdam os parâmetros, o código chega a todas.
+    </p>
+
+    <h3>Depois: um arquivo por tela</h3>
+    <vm-code snippet="26/build-depois" caption="saída do ng build" />
+    <p>
+      O <code>main</code> perdeu cerca de 20 kB, e surgiram os <strong>chunks</strong>: um para a lista, um para a página do
+      país com as abas, um para a página Sobre e um para a 404. O chunk sem nome é o <code>countries.ts</code>: a lista e a
+      página do país o usam, e o build o separou para ser baixado uma vez só.
+    </p>
+
+    <vm-chunk-sim />
+
+    <h3>Vale a pena?</h3>
+    <p>
+      No simulador, compare o total ao abrir o app nos dois modos: quase o mesmo. A primeira tela é baixada logo de cara, de
+      um jeito ou de outro, e o Angular em si é a maior parte do <code>main</code>. O ganho aparece nas telas que a pessoa
+      <strong>não</strong> abre. Num app com dezenas de telas, como uma área de administração que só poucos usam, a diferença
+      é grande; no Passaporte de hoje, é pequena. Mesmo assim, o hábito vale: o app cresce, e cada tela nova já nasce separada.
+    </p>
+
+    <vm-deep-dive title="E dá para não escrever o .then?">
+      <p>Dá, se a classe for o export padrão do arquivo:</p>
+      <vm-code snippet="26/default-export" caption="export default" />
+      <p>O Angular entende o export padrão sozinho. É uma questão de gosto; este livro usa o <code>.then</code>, que deixa explícito o nome da classe.</p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="E pré-carregar as telas depois que o app abre?">
+      <p>
+        Com o <code>withPreloading(PreloadAllModules)</code>, o app abre só com o básico e, logo depois, baixa as outras telas
+        em segundo plano. A primeira tela continua rápida, e as próximas já estão prontas quando a pessoa clicar. No simulador,
+        é o terceiro modo.
+      </p>
+      <vm-code snippet="26/preloading" caption="app.config.ts" />
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O Passaporte sob demanda">
+    <vm-steps label="Carregar as telas sob demanda">
+      <ng-template vmStep="Medir antes">
+        <p>Rode o <code>ng build</code> e anote o <code>Initial total</code>.</p>
+      </ng-template>
+      <ng-template vmStep="As rotas do país">
+        <p>
+          Crie o <code>pages/country-page/country.routes.ts</code> da seção anterior, com o <code>countryTitle</code>, e tire
+          dele o <code>:code</code>: a rota da página fica com <code>path: ''</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="As rotas do app">
+        <p>
+          No <code>app.routes.ts</code>, troque cada <code>component</code> por <code>loadComponent</code>, use o
+          <code>loadChildren</code> na rota <code>paises/:code</code> e apague os imports das páginas no topo.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Medir depois">
+        <p>
+          Rode o <code>ng build</code> de novo e compare: o <code>main</code> menor e a lista de <code>Lazy chunk files</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> nada, e é esse o objetivo. Abra as ferramentas do Chrome com
+          <kbd>F12</kbd>, vá à aba Network, recarregue na lista e clique no Japão: um arquivo <code>chunk-...js</code> aparece
+          na hora do clique.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Telas que não chegam">
+    <vm-pitfall
+      title="O nome da classe errado"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2551: Property 'Aboutpage' does not exist on type 'typeof import(&quot;…/pages/about-page/about-page&quot;)'. Did you mean 'AboutPage'?"
+    >
+      <p>
+        O <code>.then((m) => m.Aboutpage)</code> procura um export que não existe. O TypeScript confere e ainda sugere o nome
+        certo. <strong>Como sair:</strong> use o nome exato da classe exportada.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O caminho errado" where="O que o Angular mostra no terminal" message='✘ [ERROR] Could not resolve "./pages/about/about-page"'>
+      <p>
+        O caminho do <code>import(...)</code> é relativo ao arquivo onde ele está, e não tem a extensão <code>.ts</code>.
+        <strong>Como sair:</strong> confira as pastas; no VS Code, comece a digitar o caminho e deixe o editor completar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="A versão nova foi publicada com a aba aberta"
+      where="O que aparece no console do navegador"
+      message="TypeError: Failed to fetch dynamically imported module: https://…/chunk-E7GwE2eo.js"
+    >
+      <p>
+        Cada build dá nomes novos aos chunks. Quem estava com o app aberto antes da publicação ainda tem o <code>main</code>
+        antigo, que pede chunks que não existem mais, e a tela não abre. Aconteceu com este livro. <strong>Como sair:</strong>
+        quando a navegação falha por esse motivo, recarregue a página, e a versão nova chega:
+      </p>
+      <vm-code snippet="26/chunk-reload" caption="app.config.ts" />
+      <p>
+        Este livro faz assim, com um cuidado a mais: recarrega uma vez só por endereço, para não entrar em laço se o arquivo
+        realmente não existir.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="26-lazy-loading" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte já tem páginas, abas, rotas em arquivos separados, e a pasta
+      <code>src/app</code> começa a ficar cheia. A próxima parada arruma a casa: o <vm-see-chapter [number]="27" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

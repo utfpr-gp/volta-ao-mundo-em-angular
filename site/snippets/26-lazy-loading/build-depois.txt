@@ -1,0 +1,11 @@
+Initial chunk files | Names          |  Raw size | Estimated transfer size
+main-BBMCUBRV.js    | main           | 257.99 kB |                71.05 kB
+styles-QPRCSAGQ.css | styles         |  14.14 kB |                 3.18 kB
+                    | Initial total  | 272.13 kB |                74.23 kB
+
+Lazy chunk files    | Names          |  Raw size | Estimated transfer size
+chunk-kjhDAdi_.js   | countries-page |  16.34 kB |                 4.67 kB
+chunk-C_FFErLl.js   | country-routes |   5.29 kB |                 1.97 kB
+chunk-l30ZMQkY.js   | -              | 973 bytes |               973 bytes
+chunk-kipf7z2_.js   | not-found-page | 884 bytes |               884 bytes
+chunk-CQzPmliI.js   | about-page     | 811 bytes |               811 bytes
