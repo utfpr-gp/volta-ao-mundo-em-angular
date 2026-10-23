@@ -420,6 +420,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Tire a lógica de dentro dos componentes, coloque-a num service e compartilhe o mesmo estado entre telas usando o inject().',
     minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '29-http-client',

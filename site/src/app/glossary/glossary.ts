@@ -147,6 +147,12 @@ export const GLOSSARY = {
     definition: 'As chaves duplas {{ }} no template: avaliam uma expressão da classe e mostram o resultado como texto.',
     chapter: 7,
   },
+  'injecao-de-dependencia': {
+    term: 'Injeção de dependência',
+    definition:
+      'O jeito do Angular de entregar a um componente aquilo de que ele depende, como um service: em vez de criar com new, o componente pede com inject(), e o Angular entrega o objeto certo.',
+    chapter: 28,
+  },
   interface: {
     term: 'Interface',
     definition:
@@ -240,6 +246,12 @@ export const GLOSSARY = {
     definition:
       'O computador, em algum lugar da internet, que guarda o site e os dados e responde aos pedidos que o navegador faz.',
     chapter: 1,
+  },
+  service: {
+    term: 'Service',
+    definition:
+      'Uma classe que guarda dados ou lógica para o app inteiro, fora dos componentes. Os componentes pedem o service com inject() e recebem todos o mesmo objeto.',
+    chapter: 28,
   },
   signal: {
     term: 'Signal',

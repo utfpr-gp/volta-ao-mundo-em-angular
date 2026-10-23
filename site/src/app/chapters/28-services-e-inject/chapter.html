@@ -1,0 +1,212 @@
+<vm-chapter-page slug="28-services-e-inject">
+  <vm-view kind="mission" title="Um passaporte só">
+    <p class="lead">
+      O Passaporte tem um problema que vem se arrastando: cada tela guarda a sua própria versão dos dados. O placar conta 2
+      países, a lista tem 3 visitados, a página do país não sabe de nada, e a anotação some quando a aba troca. Neste
+      capítulo, os dados ganham uma casa só, e todas as telas leem e mudam o mesmo passaporte.
+    </p>
+    <div class="not-prose my-6 grid gap-3 sm:grid-cols-2">
+      <figure class="overflow-hidden rounded-2xl border border-line">
+        <img class="w-full" src="imagens/capitulo-28/visao-geral.png" width="1000" height="460" alt="A página do Japão, aba Visão geral, com a situação Ainda não visitado e o botão Marcar como visitado." />
+        <figcaption class="border-t border-line bg-surface-raised px-3 py-2 font-mono text-sm text-ink">/paises/JP</figcaption>
+      </figure>
+      <figure class="overflow-hidden rounded-2xl border border-line">
+        <img class="w-full" src="imagens/capitulo-28/passaporte.png" width="1000" height="360" alt="A página Meu passaporte, com o link em destaque no cabeçalho e seis carimbos em linha: Brasil, Portugal e Argentina carimbados; Japão, Itália e Canadá vazios. No rodapé, 3 de 6 carimbos." />
+        <figcaption class="border-t border-line bg-surface-raised px-3 py-2 font-mono text-sm text-ink">/passaporte</figcaption>
+      </figure>
+    </div>
+    <p>
+      Marque o Japão na página dele, e a lista, o placar e o livro de carimbos acompanham. E o livro de carimbos, que morava
+      dentro da lista, ganhou a sua página: o link "Meu passaporte" voltou ao cabeçalho. Ao final do capítulo, você vai saber
+      criar um service, pedi-lo com <code>inject()</code> e decidir o que fica nele e o que fica no componente.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O cartório">
+    <vm-analogy emoji="🏛️" title="O registro oficial">
+      <p>
+        Se cada pessoa anotasse num caderno próprio quem nasceu e quem casou, os cadernos logo discordariam. Por isso existe o
+        cartório: um registro só, que todo mundo consulta. Ninguém risca o livro do cartório; quem quer registrar algo pede ao
+        escrivão, e ele faz do jeito certo.
+      </p>
+      <p>
+        O <vm-term name="service">service</vm-term> é o cartório do app. Os componentes não guardam cópias: consultam o
+        service. E não mexem nos dados direto: pedem ao service, com métodos como <code>toggleVisited</code>.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Services por dentro">
+    <h3>Criar o service</h3>
+    <vm-code snippet="28/ng-generate" caption="terminal" />
+    <p>No Angular 22, o CLI gera isto:</p>
+    <vm-code snippet="28/gerado" caption="core/passport.ts, como o CLI gera" />
+    <p>
+      O <code>&#64;Service()</code> marca a classe como um service e a deixa disponível para o app inteiro, num objeto só,
+      criado na primeira vez que alguém pede. O service fica no <code>core</code>, porque é do app inteiro, como no
+      <vm-see-chapter [number]="27" />. Preenchido, ele fica assim:
+    </p>
+    <vm-code snippet="28/etapa/src/app/core/passport.ts" caption="core/passport.ts" />
+    <ul>
+      <li>
+        O estado mora em signals <strong>privados</strong>. Para fora, o <code>asReadonly()</code> entrega uma versão só de
+        leitura: os componentes leem, mas não conseguem dar <code>set</code>.
+      </li>
+      <li>
+        Quem quer mudar algo chama um método: <code>toggleVisited</code>, <code>remove</code>, <code>saveNote</code>. Toda
+        mudança passa por um lugar só, e fica fácil achar quem mudou o quê.
+      </li>
+      <li>
+        O <code>visitedCount</code> é um <code>computed</code>, e o <code>find</code> lê um signal: quem os usa num template ou
+        num <code>computed</code> acompanha as mudanças, como no <vm-see-chapter [number]="9" />.
+      </li>
+    </ul>
+
+    <h3>Pedir o service com inject()</h3>
+    <p>
+      O componente não cria o service com <code>new</code>: ele <strong>pede</strong> ao Angular, com <code>inject()</code>, e
+      recebe o objeto que já existe. Essa entrega se chama <vm-term name="injecao-de-dependencia">injeção de
+      dependência</vm-term>. Você já usou <code>inject(Router)</code> no <vm-see-chapter [number]="24" />: o Router também é
+      um service.
+    </p>
+    <vm-code snippet="28/etapa/src/app/features/countries/country-list/country-list.ts" caption="country-list.ts" />
+    <p>
+      A lista perdeu o array, o <code>toggleVisited</code> e o <code>remove</code>: agora só lê do passaporte e repassa os
+      pedidos. O template chama o service direto:
+    </p>
+    <vm-code snippet="28/etapa/src/app/features/countries/country-list/country-list.html" caption="country-list.html" />
+
+    <vm-service-sim />
+
+    <h3>Todas as telas, o mesmo passaporte</h3>
+    <p>O placar deixou de ter uma contagem própria. O número vem do passaporte:</p>
+    <vm-code snippet="28/etapa/src/app/features/countries/world-progress/world-progress.ts" caption="world-progress.ts" />
+    <p>
+      Os botões "Visitei mais um" e "Desfazer" saíram: eram um contador de mentirinha, que não sabia quais países eram. No
+      lugar, um link leva aos carimbos. E a aba de anotações guarda o texto no passaporte, e não mais nela mesma:
+    </p>
+    <vm-code snippet="28/etapa/src/app/features/country-detail/country-notes/country-notes.ts" caption="country-notes.ts" />
+    <p>
+      Troque de aba e volte: a anotação continua lá. A aba ainda é destruída, como no <vm-see-chapter [number]="25" />, mas o
+      dado não morava nela.
+    </p>
+
+    <h3>inject() também funciona numa função</h3>
+    <p>
+      O título da página do país vinha de uma função que procurava num array fixo. Agora ela pergunta ao passaporte: se um
+      país for removido, a aba diz "País não encontrado".
+    </p>
+    <vm-code snippet="28/etapa/src/app/features/country-detail/country.routes.ts" caption="country.routes.ts" />
+    <p>
+      O <code>inject()</code> funciona em lugares onde o Angular está montando algo: na inicialização dos campos de um
+      componente ou service, no constructor, e em funções que o próprio Angular chama, como essa, do título da rota.
+    </p>
+
+    <vm-deep-dive title="E o @Injectable dos tutoriais?">
+      <p>Antes do <code>&#64;Service()</code>, um service era escrito assim, e muitos projetos e tutoriais ainda usam:</p>
+      <vm-code snippet="28/injectable" caption="passport.ts, com @Injectable" />
+      <p>
+        O <code>&#64;Service()</code> é um atalho para <code>&#64;Injectable({{ '{' }} providedIn: 'root' {{ '}' }})</code>: o mesmo
+        service, disponível para o app inteiro. A diferença: o <code>&#64;Service</code> só aceita
+        <code>inject()</code>; receber dependências pelo constructor, como acima, exige o <code>&#64;Injectable</code>. Os dois
+        convivem no mesmo projeto.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O passaporte no Passaporte">
+    <vm-steps label="Criar o service e ligar as telas a ele">
+      <ng-template vmStep="O service">
+        <vm-code snippet="28/ng-generate" caption="terminal" />
+        <p>
+          Escreva o <code>Passport</code> da seção anterior. No <code>countries.ts</code>, apague a função
+          <code>findCountry</code>: quem procura países agora é o service.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A lista e o placar">
+        <p>
+          Na lista, troque o array por <code>inject(Passport)</code>, apague o <code>toggleVisited</code> e o
+          <code>remove</code>, e chame o service no template. No placar, a contagem vem do service; troque os botões pelo link
+          <code>routerLink="/passaporte"</code>.
+        </p>
+        <p>
+          No destaque, o <code>visited</code> vira um <code>computed</code> que lê o Japão no passaporte, e o
+          <code>toggleVisited</code> chama o service.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A página do país">
+        <p>
+          Nas abas e na página, troque o <code>findCountry</code> por <code>this.passport.find(...)</code>. Na visão geral,
+          acrescente o botão:
+        </p>
+        <vm-code snippet="28/etapa/src/app/features/country-detail/country-overview/country-overview.html" caption="country-overview.html" />
+      </ng-template>
+      <ng-template vmStep="Meu passaporte">
+        <p>
+          Crie a feature <code>passport</code> e mova para ela as pastas <code>stamp</code>, <code>stamp-card</code> e
+          <code>stamp-book</code>: agora é só ela que as usa. Gere a página, tire o livro de carimbos da lista, e acrescente a
+          rota <code>passaporte</code> e o link no cabeçalho.
+        </p>
+        <vm-code snippet="28/etapa/src/app/features/passport/passport-page/passport-page.ts" caption="passport-page.ts" />
+        <p>
+          <strong>O que muda na tela:</strong> abra o Japão, clique em "Marcar como visitado", e volte à lista: o Japão está
+          marcado, o placar diz 4 de 195, e "Meu passaporte" mostra o carimbo JP. Escreva uma anotação, troque de aba e volte:
+          ela continua lá.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Cópias que não conversam">
+    <vm-pitfall title="Criar o service com new" where="O que aparece na tela" message="(o Japão marcado na lista não aparece marcado no placar)">
+      <vm-code snippet="28/new-instance" caption="country-list.ts" />
+      <p>
+        O <code>new</code> cria um passaporte novo, só daquela tela. Não dá erro: cada tela fica com o seu, e eles não
+        conversam. É o segundo modo do simulador. <strong>Como sair:</strong> peça com <code>inject(Passport)</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O service nos providers do componente" where="O que aparece na tela" message="(a lista e o placar voltam a discordar)">
+      <vm-code snippet="28/providers" caption="country-list.ts" />
+      <p>
+        O <code>providers</code> do componente pede um objeto só para ele e os filhos dele, separado do resto do app. Às vezes
+        é o que se quer, como um formulário com estado próprio; para um dado do app inteiro, não. <strong>Como sair:</strong>
+        tire o service do <code>providers</code>; o <code>&#64;Service()</code> já o deixa disponível para todos.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="inject() dentro de um método"
+      where="O que aparece no console do navegador"
+      message="NG0203: The `_Passport` token injection failed. `inject()` function must be called from an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`."
+    >
+      <vm-code snippet="28/inject-in-method" caption="featured-country.ts" />
+      <p>
+        No clique, o Angular não está montando nada, e o <code>inject()</code> não sabe a quem entregar. <strong>Como
+        sair:</strong> peça o service num campo da classe, <code>private readonly passport = inject(Passport)</code>, e use o
+        campo no método.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Mudar o estado por fora" where="O que o Angular mostra no terminal" message="✘ [ERROR] TS2339: Property 'set' does not exist on type 'Signal<Country[]>'.">
+      <vm-code snippet="28/readonly" caption="country-list.ts" />
+      <p>
+        É o <code>asReadonly()</code> funcionando: o erro protege o passaporte de mudanças que não passam pelos métodos dele.
+        <strong>Como sair:</strong> se a mudança faz sentido, crie um método no service, como <code>clear()</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="28-services-e-inject" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O passaporte começa sempre com os mesmos seis países, escritos à mão. Existem quase duzentos,
+      e há APIs que os entregam prontos, com capital, população e bandeira. A próxima parada busca os países na internet: o
+      <vm-see-chapter [number]="29" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

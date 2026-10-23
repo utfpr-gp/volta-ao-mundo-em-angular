@@ -31,4 +31,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '26-lazy-loading': () => import('./26-lazy-loading/chapter').then((m) => m.Chapter26),
   '27-organizacao-por-funcionalidades': () =>
     import('./27-organizacao-por-funcionalidades/chapter').then((m) => m.Chapter27),
+  '28-services-e-inject': () => import('./28-services-e-inject/chapter').then((m) => m.Chapter28),
 };
