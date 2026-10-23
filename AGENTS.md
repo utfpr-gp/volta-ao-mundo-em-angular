@@ -151,7 +151,13 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Etapas a partir da 29:** o `Passport` faz requisições ao nascer. Todo spec que monta uma tela com ele usa
   `provideHttpClientTesting()` e `startPassport()` (de `src/testing/passport-testing.ts`); sem isso, o teste vai à rede de
   verdade. Para rodar o app: `npm run api` (json-server) e `ng serve`.
-- **Capítulo 30 (RxJS):** resolver a busca na lista de 195 países e o `saveNote`, que hoje faz um PUT a cada letra
-  (`debounceTime`); o capítulo 29 promete os dois.
 - **Capítulo 41 (resolvers):** o título da página do país mostra o código quando os países ainda não chegaram da API;
   um resolver espera os dados antes de abrir a tela.
+- **Testar httpResource e effects:** os resources só pedem dados quando o Angular roda os efeitos. Sequência nos specs:
+  `TestBed.tick()`, `HttpTestingController` (`expectOne`/`flush`) e `await ApplicationRef.whenStable()`. Não chamar
+  `whenStable()` com requisição pendente (trava). `vi.useFakeTimers()` não se dá bem com `toObservable`/effects: usar o
+  relógio de verdade com esperas curtas.
+- **APIs externas em uso:** a API de países do livro (com coordenadas das capitais) e a Open-Meteo para o tempo (sem chave,
+  com CORS; exige citar a fonte, "Dados: Open-Meteo").
+- **Capturas com interação:** `node scripts/capturar-tela.mjs <url> <saida.png> <largura> <altura> "js;;wait:600"` roda
+  passos em JavaScript (digitar, clicar, esperar) no Chrome headless e captura a tela, sem Puppeteer.

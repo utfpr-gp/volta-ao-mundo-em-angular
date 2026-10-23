@@ -99,6 +99,12 @@ export const GLOSSARY = {
     definition: 'Um atalho do JavaScript para tirar valores de dentro de um objeto ou array e criar variáveis com eles numa linha, como const { name } = country.',
     chapter: 3,
   },
+  effect: {
+    term: 'Effect',
+    definition:
+      'Código que o Angular roda de novo sempre que um signal lido dentro dele muda. Serve para efeitos colaterais, como gravar no navegador; para calcular um valor a partir de outro, use computed.',
+    chapter: 33,
+  },
   encapsulamento: {
     term: 'Encapsulamento de estilos',
     definition: 'O jeito como o Angular faz o CSS de um componente valer só para ele: marca os elementos com um atributo único e limita as regras a esse atributo.',
