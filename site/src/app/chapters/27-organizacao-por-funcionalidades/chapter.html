@@ -1,0 +1,168 @@
+<vm-chapter-page slug="27-organizacao-por-funcionalidades">
+  <vm-view kind="mission" title="Arrumar a casa">
+    <p class="lead">
+      A pasta <code>src/app</code> do Passaporte já tem mais de vinte pastas lado a lado: cabeçalho, cartões, abas, pipe,
+      páginas. Achar alguma coisa virou garimpo. Neste capítulo, nada muda na tela: o que muda é onde cada arquivo mora.
+    </p>
+    <vm-code snippet="27/arvore" caption="a pasta src/app depois deste capítulo" />
+    <p>
+      Ao final do capítulo, você vai saber separar o projeto em <code>core</code>, <code>shared</code> e
+      <code>features</code>, e seguir a regra que impede o projeto de virar um nó: uma funcionalidade não importa outra.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="Os cômodos da casa">
+    <vm-analogy emoji="🏠" title="Uma casa bem dividida">
+      <p>
+        Numa casa, cada cômodo tem as suas coisas: as panelas ficam na cozinha, a toalha no banheiro. O que é da casa toda,
+        como o quadro de luz e a caixa d'água, fica num lugar só. E o que todo mundo usa, como a tesoura e a fita adesiva,
+        mora numa gaveta comum, e não emprestado de um quarto.
+      </p>
+      <p>
+        No projeto, cada <strong>feature</strong> é um cômodo: as peças de uma funcionalidade ficam juntas. O
+        <strong>core</strong> é o quadro de luz: o que o app tem uma vez só. O <strong>shared</strong> é a gaveta comum: peças
+        genéricas, que qualquer cômodo pode usar.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="A organização por dentro">
+    <h3>As três pastas</h3>
+    <table>
+      <thead>
+        <tr><th>Pasta</th><th>O que mora nela</th><th>No Passaporte</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>core</code></td>
+          <td>O que o app tem uma vez só e o que é do app inteiro</td>
+          <td>Cabeçalho, rodapé, página 404, os países e o modelo <code>Country</code>, o idioma</td>
+        </tr>
+        <tr>
+          <td><code>shared</code></td>
+          <td>Peças genéricas, que não sabem nada do assunto do app</td>
+          <td><code>FlagPipe</code>, <code>Panel</code>, <code>StarRating</code>, <code>LocalClock</code></td>
+        </tr>
+        <tr>
+          <td><code>features</code></td>
+          <td>Uma pasta por funcionalidade, com tudo o que só ela usa</td>
+          <td>A lista de países, a página do país, a página Sobre</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Repare que a lista de países ficou com o cartão, o placar, o destaque e o livro de carimbos: só ela usa essas peças. E
+      a página do país levou junto as abas e o arquivo de rotas do <vm-see-chapter [number]="26" />.
+    </p>
+
+    <h3>A regra: uma feature não importa outra</h3>
+    <ul>
+      <li>Uma feature pode importar do <code>core</code>, do <code>shared</code> e dela mesma.</li>
+      <li>Uma feature <strong>nunca</strong> importa de outra feature.</li>
+      <li>O <code>shared</code> não importa de <code>core</code> nem de <code>features</code>: ele não sabe que o app existe.</li>
+    </ul>
+    <p>Veja os imports da lista, depois da mudança:</p>
+    <vm-code snippet="27/etapa/src/app/features/countries/country-list/country-list.ts" caption="features/countries/country-list/country-list.ts" />
+    <p>
+      O motivo da regra: se a página do país importasse o cartão da lista, mudar o cartão poderia quebrar a página do país, e
+      apagar a lista, um dia, arrastaria a outra junto. Com a regra, cada feature pode mudar, crescer ou sumir sem mexer nas
+      outras. E o lazy loading agradece: cada feature vira um chunk limpo.
+    </p>
+    <p>
+      E quando duas features precisam da mesma peça? Ela sobe: se é genérica, para o <code>shared</code>; se é do app, para o
+      <code>core</code>. Foi o que aconteceu com o <code>countries.ts</code>, que a lista e a página do país leem.
+    </p>
+
+    <vm-folder-sorter />
+
+    <h3>As rotas apontam para as features</h3>
+    <vm-code snippet="27/etapa/src/app/app.routes.ts" caption="app.routes.ts" />
+    <p>
+      O arquivo de rotas fica na raiz e é o único que conhece todas as features. Como cada uma é carregada sob demanda, elas
+      só se encontram aqui, e nunca uma dentro da outra.
+    </p>
+
+    <vm-deep-dive title="Dá para o computador vigiar a regra?">
+      <p>
+        Dá. O ESLint tem a regra <code>no-restricted-imports</code>, que barra imports por caminho, e há ferramentas feitas
+        para isso, como o <code>eslint-plugin-boundaries</code> e o <code>enforce-module-boundaries</code> do Nx. Num projeto
+        pequeno, a revisão de código dá conta; quando a equipe cresce, deixar a máquina vigiar evita discussão.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="E os nomes core e shared são obrigatórios?">
+      <p>
+        Não. O Angular não exige nenhuma estrutura de pastas; <code>core</code>, <code>shared</code> e <code>features</code>
+        são um costume muito comum, e o guia de estilo do Angular recomenda organizar por funcionalidade, e não por tipo de
+        arquivo. O que importa é a ideia: cada coisa num cômodo, e cômodos que não dependem uns dos outros.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A mudança">
+    <vm-steps label="Reorganizar o Passaporte">
+      <ng-template vmStep="As pastas">
+        <p>
+          Crie <code>core</code>, <code>shared</code> e <code>features</code> dentro de <code>src/app</code>, e as três
+          features: <code>countries</code>, <code>country-detail</code> e <code>about</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Mover pelo VS Code">
+        <p>
+          Arraste cada pasta para o lugar da árvore do começo do capítulo <strong>pelo explorador de arquivos do VS
+          Code</strong>. Quando ele perguntar se deve atualizar os imports, aceite: o editor corrige os caminhos em todos os
+          arquivos que importam o que mudou de lugar.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Conferir">
+        <p>
+          Rode o <code>ng build</code> e o <code>ng test</code>. Se algum caminho ficou errado, o build aponta o arquivo e a
+          linha.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> nada. O Passaporte continua igual, e os testes continuam passando. A mudança é
+          para quem lê o código.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Nós no projeto">
+    <vm-pitfall title="Uma feature emprestando de outra" where="O que aparece no código" message="(funciona, e é justamente por isso que é perigoso)">
+      <vm-code snippet="27/feature-import" caption="features/country-detail/country-page.ts" />
+      <p>
+        O Angular não reclama: o import é válido. O problema aparece meses depois, quando alguém muda o cartão da lista e a
+        página do país quebra. <strong>Como sair:</strong> se duas features precisam da peça, ela sobe para o
+        <code>shared</code> ou para o <code>core</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Mover arquivos pelo terminal" where="O que o Angular mostra no terminal" message="✘ [ERROR] TS2307: Cannot find module '../country' or its corresponding type declarations.">
+      <p>
+        Um <code>mv</code> no terminal muda o arquivo de lugar, mas não corrige quem o importa. <strong>Como sair:</strong> mova
+        pelo VS Code, que atualiza os imports, ou corrija os caminhos que o build apontar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O shared que sabe demais" where="O que aparece no código" message="(um componente do shared importando o Country do core)">
+      <p>
+        Um componente que recebe um <code>Country</code> já não é genérico: ele só serve para países. <strong>Como sair:</strong>
+        se ele é do assunto do app, o lugar é uma feature; se é genérico de verdade, ele recebe dados simples, como o
+        <code>Panel</code>, que recebe só conteúdo projetado.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="27-organizacao-por-funcionalidades" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Você terminou a trilha Navegação. Os países ainda moram num arquivo fixo e na memória da
+      lista, e várias telas precisam deles. A próxima trilha começa dando a eles uma casa de verdade: o
+      <vm-see-chapter [number]="28" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

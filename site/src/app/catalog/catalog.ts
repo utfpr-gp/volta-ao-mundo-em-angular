@@ -408,6 +408,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Organize o código em core, shared e features, e siga a regra de que uma funcionalidade não importa outra, para o projeto crescer sem nó.',
     minutes: 25,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Dados
   {

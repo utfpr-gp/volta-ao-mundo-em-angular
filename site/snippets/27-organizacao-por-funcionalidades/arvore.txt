@@ -1,0 +1,35 @@
+src/app/
+├── app.config.ts
+├── app.routes.ts
+├── app.ts
+├── core/
+│   ├── countries.ts
+│   ├── country.ts
+│   ├── locale.ts
+│   ├── layout/
+│   │   ├── footer/
+│   │   └── header/
+│   └── not-found-page/
+├── features/
+│   ├── about/
+│   │   └── about-page/
+│   ├── countries/
+│   │   ├── countries-page/
+│   │   ├── country-card/
+│   │   ├── country-list/
+│   │   ├── featured-country/
+│   │   ├── stamp/
+│   │   ├── stamp-book/
+│   │   ├── stamp-card/
+│   │   └── world-progress/
+│   └── country-detail/
+│       ├── country-page.ts
+│       ├── country.routes.ts
+│       ├── country-notes/
+│       ├── country-overview/
+│       └── country-weather/
+└── shared/
+    ├── flag-pipe.ts
+    ├── local-clock/
+    ├── panel/
+    └── star-rating/
