@@ -35,4 +35,6 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '29-http-client': () => import('./29-http-client/chapter').then((m) => m.Chapter29),
   '30-rxjs': () => import('./30-rxjs/chapter').then((m) => m.Chapter30),
   '31-to-signal': () => import('./31-to-signal/chapter').then((m) => m.Chapter31),
+  '32-resource-e-http-resource': () =>
+    import('./32-resource-e-http-resource/chapter').then((m) => m.Chapter32),
 };
