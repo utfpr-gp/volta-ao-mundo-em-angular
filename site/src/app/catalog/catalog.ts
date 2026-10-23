@@ -362,8 +362,10 @@ const ENTRIES: ChapterEntry[] = [
     question: 'Como navegar entre telas com o Router?',
     shortTitle: 'Router',
     description:
-      'Crie as telas do Passaporte e navegue entre elas com o Router do Angular, sem recarregar a página, com links e navegação por código.',
+      'Crie as telas do Passaporte e navegue entre elas com o Router, sem recarregar a página: links, título por tela e uma página para endereços que não existem.',
     minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '24-parametros-de-rota',
@@ -371,7 +373,7 @@ const ENTRIES: ChapterEntry[] = [
     question: 'Como receber parâmetros da URL com `input()`?',
     shortTitle: 'Parâmetros de rota',
     description:
-      'Abra a página de um país a partir do código na URL, como /paises/BR, recebendo o parâmetro da rota direto num input() do componente.',
+      'Abra a página de um país pelo código na URL, como /paises/BR, recebendo o parâmetro direto num input(), e navegue por código até um destino sorteado.',
     minutes: 25,
   },
   {

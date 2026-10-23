@@ -1,0 +1,181 @@
+<vm-chapter-page slug="23-router">
+  <vm-view kind="mission" title="Mais de uma tela">
+    <p class="lead">
+      Até aqui, o Passaporte era uma tela só, e os links do cabeçalho não levavam a lugar nenhum. Neste capítulo, ele ganha
+      telas de verdade, cada uma com o seu endereço: <code>/paises</code>, <code>/sobre</code> e uma página para quem
+      digitar um endereço que não existe.
+    </p>
+    <div class="not-prose my-6 grid gap-3 sm:grid-cols-2">
+      <figure class="overflow-hidden rounded-2xl border border-line">
+        <img class="w-full" src="imagens/capitulo-23/sobre.png" width="1000" height="430" alt="A página Sobre do Passaporte, com o link Sobre em destaque no cabeçalho e um cartão explicando o app." />
+        <figcaption class="border-t border-line bg-surface-raised px-3 py-2 font-mono text-sm text-ink">localhost:4200/sobre</figcaption>
+      </figure>
+      <figure class="overflow-hidden rounded-2xl border border-line">
+        <img class="w-full" src="imagens/capitulo-23/paizes.png" width="1000" height="430" alt="A página de endereço inexistente: uma bússola, o título Esta página não existe e o botão Ver os países." />
+        <figcaption class="border-t border-line bg-surface-raised px-3 py-2 font-mono text-sm text-ink">localhost:4200/paizes</figcaption>
+      </figure>
+    </div>
+    <p>
+      E tudo isso sem recarregar a página. Ao final do capítulo, você vai saber criar rotas, ligar links a elas, destacar o
+      link da página atual e dar um título a cada tela.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O painel de embarque">
+    <vm-analogy emoji="🛫" title="O painel do aeroporto">
+      <p>
+        No aeroporto, você não procura o avião andando pela pista: olha o painel, acha o seu voo e vai ao portão indicado. O
+        painel é uma lista de regras, "voo tal, portão tal", lida de cima para baixo.
+      </p>
+      <p>
+        O <strong>Router</strong> é esse painel. Cada <vm-term name="rota">rota</vm-term> diz "endereço tal, componente tal".
+        Quando o endereço muda, o Router procura a regra e mostra o componente no portão, que no Angular se chama
+        <code>&lt;router-outlet&gt;</code>.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O Router por dentro">
+    <h3>As rotas</h3>
+    <p>
+      O projeto criado pelo Angular CLI já vem com o Router ligado: o <code>app.config.ts</code> tem o
+      <code>provideRouter(routes)</code>, e o arquivo <code>app.routes.ts</code> tem uma lista vazia. É nela que entram as
+      rotas:
+    </p>
+    <vm-code snippet="23/etapa/src/app/app.routes.ts" caption="app.routes.ts" />
+    <ul>
+      <li><code>path</code> é o endereço, sem a barra do começo. <code>component</code> é o que aparece nele.</li>
+      <li><code>title</code> é o título da aba do navegador naquela tela.</li>
+      <li>
+        A rota vazia, <code>''</code>, é a página inicial. Aqui ela só redireciona para <code>paises</code>. O
+        <code>pathMatch: 'full'</code> diz que o endereço inteiro precisa ser vazio; sem ele, todo endereço começaria com
+        "nada" e seria redirecionado.
+      </li>
+      <li>
+        A rota <code>**</code> é o coringa: combina com qualquer endereço. Por isso vem por último, para pegar só o que
+        sobrou.
+      </li>
+    </ul>
+
+    <h3>O portão: o router-outlet</h3>
+    <p>O componente raiz agora só tem o que é igual em toda tela, e o lugar onde as telas aparecem:</p>
+    <vm-code snippet="23/etapa/src/app/app.html" caption="app.html" />
+    <p>
+      O conteúdo que estava aqui, o placar, o destaque e a lista, mudou para um componente de página, o
+      <code>CountriesPage</code>. Ao entrar em <code>/paises</code>, o Router cria esse componente e o põe logo depois do
+      <code>&lt;router-outlet&gt;</code>; ao sair, destrói.
+    </p>
+
+    <vm-router-sim />
+
+    <h3>Links que não recarregam</h3>
+    <p>
+      Um <code>&lt;a href&gt;</code> comum pede a página de novo ao servidor, e o app inteiro recomeça. O
+      <code>routerLink</code> avisa o Router, que troca só o conteúdo do outlet: é isso que faz um
+      <vm-term name="spa">SPA</vm-term>, como no <vm-see-chapter [number]="1" />.
+    </p>
+    <vm-code snippet="23/etapa/src/app/header/header.ts" caption="header.ts" />
+    <vm-code snippet="23/etapa/src/app/header/header.html" caption="header.html" />
+    <ul>
+      <li><code>[routerLink]</code> leva ao endereço. O <code>href</code> do link é preenchido sozinho.</li>
+      <li><code>routerLinkActive</code> acrescenta as classes quando o link é o da página atual: o link fica em negrito.</li>
+      <li>
+        <code>ariaCurrentWhenActive="page"</code> põe <code>aria-current="page"</code> no link atual, e o leitor de tela
+        avisa "página atual".
+      </li>
+      <li>No menu do celular, o clique também fecha o menu, para a nova tela não aparecer escondida atrás dele.</li>
+    </ul>
+    <p>
+      O link "Meu passaporte" saiu do cabeçalho por enquanto. Ele volta quando a lista de países puder ser lida de qualquer
+      tela, no <vm-see-chapter [number]="28" />.
+    </p>
+
+    <vm-deep-dive title="E se eu recarregar a página em /sobre?">
+      <p>
+        No <code>ng serve</code>, funciona: o servidor de desenvolvimento devolve o <code>index.html</code> para qualquer
+        endereço, e o Router faz o resto. Num servidor de verdade, o endereço <code>/sobre</code> não é um arquivo, e o
+        servidor responde 404 se não for configurado para devolver o <code>index.html</code>. Isso fica para o
+        <vm-see-chapter [number]="48" />.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="As telas do Passaporte">
+    <vm-steps label="Criar as telas e as rotas">
+      <ng-template vmStep="As páginas">
+        <vm-code snippet="23/ng-generate" caption="terminal" />
+        <p>
+          Apague os arquivos <code>.css</code> e as linhas <code>styleUrl</code>. Mova o <code>&lt;main&gt;</code> do
+          <code>app.html</code> para o <code>countries-page.html</code>, trocando o <code>&lt;main&gt;</code> por um
+          <code>&lt;div&gt;</code> com as mesmas classes de grade, e os imports de <code>WorldProgress</code>,
+          <code>FeaturedCountry</code> e <code>CountryList</code> para o <code>countries-page.ts</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A página 404">
+        <p>A página de endereço inexistente leva de volta aos países com um <code>routerLink</code>, e por isso importa o <code>RouterLink</code>:</p>
+        <vm-code snippet="23/etapa/src/app/pages/not-found-page/not-found-page.html" caption="not-found-page.html" />
+        <p>Escreva também a página Sobre, com o texto que quiser.</p>
+      </ng-template>
+      <ng-template vmStep="As rotas">
+        <p>Preencha o <code>app.routes.ts</code> e troque o <code>app.html</code> como na seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="O cabeçalho">
+        <p>No <code>header.ts</code>, importe <code>RouterLink</code> e <code>RouterLinkActive</code> e crie a lista de links; no template, troque os links fixos pelo <code>&#64;for</code>.</p>
+        <p>
+          <strong>O que muda na tela:</strong> clique em "Sobre": a tela troca, o link fica em negrito e o título da aba
+          muda, sem a página piscar. Digite <code>localhost:4200/paizes</code> na barra de endereço: aparece a página 404.
+          E <code>localhost:4200</code> leva direto para <code>/paises</code>.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Desvios de rota">
+    <vm-pitfall
+      title="Esquecer de importar o RouterLink"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG8002: Can't bind to 'routerLink' since it isn't a known property of 'a'."
+    >
+      <p>
+        O <code>[routerLink]</code> é uma diretiva, e todo componente que a usa precisa importá-la.
+        <strong>Como sair:</strong> acrescente <code>RouterLink</code> ao <code>imports</code> do componente.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Link com href" where="O que aparece na tela" message="(a página pisca e os países marcados voltam ao começo)">
+      <vm-code snippet="23/href" caption="header.html" />
+      <p>
+        Com <code>href</code>, o navegador recarrega tudo, e o que estava só na memória, como os países marcados, se perde.
+        No simulador, ligue a opção do <code>href</code> e veja o contador de recarregamentos. <strong>Como sair:</strong> nos
+        links internos, use <code>routerLink</code>; o <code>href</code> fica para sites de fora.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O coringa em primeiro lugar" where="O que aparece na tela" message="(todo endereço mostra a página 404)">
+      <vm-code snippet="23/wildcard-first" caption="app.routes.ts" />
+      <p>
+        O Router fica com a primeira rota que combina, e o <code>**</code> combina com tudo. <strong>Como sair:</strong> o
+        coringa vai sempre por último.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Sem o router-outlet" where="O que aparece na tela" message="(o endereço muda, mas a tela fica vazia, sem erro)">
+      <p>
+        As rotas estão certas, mas não há onde mostrar os componentes. <strong>Como sair:</strong> ponha um
+        <code>&lt;router-outlet /&gt;</code> no componente raiz e importe o <code>RouterOutlet</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="23-router" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Cada país merece a sua própria página, como <code>/paises/JP</code>. A próxima parada lê o
+      código do país direto do endereço: o <vm-see-chapter [number]="24" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
