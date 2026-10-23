@@ -1,0 +1,165 @@
+<vm-chapter-page slug="12-pipes">
+  <vm-view kind="mission" title="Números com cara de gente">
+    <p class="lead">
+      Desde o capítulo 7, a população do Japão aparece como <code>123000000</code>. Difícil de ler, e nada brasileiro. Neste
+      capítulo, o Passaporte aprende a formatar:
+    </p>
+    <div class="not-prose my-6 grid gap-2 rounded-2xl border border-line bg-surface-raised p-5 text-ink sm:grid-cols-2" aria-hidden="true">
+      <p><span class="text-ink-muted line-through">123000000</span> → <strong>123.000.000</strong> habitantes</p>
+      <p><span class="text-ink-muted line-through">1.0256…%</span> → <strong>1,03%</strong> do mundo</p>
+      <p><span class="text-ink-muted line-through">Tóquio</span> → <strong>TÓQUIO</strong></p>
+      <p><span class="text-ink-muted line-through">BR</span> → <strong>🇧🇷</strong>, por um pipe feito por você</p>
+    </div>
+    <p>
+      Tudo isso com uma barra vertical no template, e sem mudar os dados da classe. Ao final do capítulo, você vai usar os
+      pipes prontos do Angular no formato brasileiro e criar o seu próprio pipe.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O filtro do café">
+    <vm-analogy emoji="☕" title="A água que passa pelo filtro">
+      <p>
+        A água entra no filtro de um jeito e sai de outro, com cor e sabor de café. O filtro não muda a água que ficou na
+        chaleira; só a que passa por ele. E dá para trocar o filtro sem mexer na chaleira.
+      </p>
+      <p>
+        Um <strong>pipe</strong> é o filtro do template: o valor da classe entra, e sai do jeito certo para a tela. O valor
+        original continua igual na classe, e o nome "pipe", cano em inglês, vem do símbolo que usamos, a barra vertical
+        <code>|</code>.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Pipes por dentro">
+    <h3>A barra vertical</h3>
+    <vm-code snippet="12/pipe-syntax" caption="trechos de templates" />
+    <p>
+      A forma é sempre a mesma: <code ngNonBindable>{{ valor | pipe }}</code>, e, se o pipe aceitar opções, elas vêm depois
+      de dois-pontos: <code ngNonBindable>{{ valor | pipe: opcao }}</code>. O valor da esquerda passa pelo
+      <vm-term name="pipe">pipe</vm-term>, e o resultado vai para a tela.
+    </p>
+
+    <h3>Os pipes prontos</h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Pipe</th>
+            <th>Para quê</th>
+            <th>Classe a importar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>number</code></td><td>números com separador de milhar e casas decimais</td><td><code>DecimalPipe</code></td></tr>
+          <tr><td><code>percent</code></td><td>uma fração como porcentagem: 0,05 vira 5%</td><td><code>PercentPipe</code></td></tr>
+          <tr><td><code>currency</code></td><td>dinheiro, como R$ 10,00</td><td><code>CurrencyPipe</code></td></tr>
+          <tr><td><code>date</code></td><td>datas e horas em vários formatos</td><td><code>DatePipe</code></td></tr>
+          <tr><td><code>uppercase</code>, <code>lowercase</code>, <code>titlecase</code></td><td>maiúsculas e minúsculas</td><td><code>UpperCasePipe</code>…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Assim como um componente, um pipe precisa estar no <code>imports</code> do componente que o usa. As opções do
+      <code>number</code> e do <code>percent</code> seguem o formato <code>'mínimo de inteiros.mínimo-máximo de decimais'</code>:
+      <code>'1.0-2'</code> quer dizer "pelo menos um dígito inteiro e de zero a duas casas decimais".
+    </p>
+
+    <vm-pipe-lab />
+
+    <h3>O formato brasileiro</h3>
+    <p>
+      Por padrão, o Angular formata em inglês dos Estados Unidos: <code>123,000,000</code> e <code>1.03%</code>. Para usar o
+      formato do Brasil, o app precisa de duas coisas: os dados do idioma, registrados com <code>registerLocaleData</code>, e
+      o idioma escolhido, com <code>LOCALE_ID</code>. No Passaporte, os dois ficam num arquivo só:
+    </p>
+    <vm-code snippet="12/etapa/src/app/locale.ts" caption="locale.ts" />
+    <vm-code snippet="12/etapa/src/app/app.config.ts" caption="app.config.ts" />
+
+    <h3>O seu próprio pipe</h3>
+    <p>
+      Quando nenhum pipe pronto serve, você cria um. Um pipe é uma classe com o decorator <code>&#64;Pipe</code> e um método
+      <code>transform</code>, que recebe o valor e devolve o resultado:
+    </p>
+    <vm-code snippet="12/etapa/src/app/flag-pipe.ts" caption="flag-pipe.ts" />
+    <p>
+      O truque das bandeiras: cada letra de A a Z tem um "símbolo indicador regional" no Unicode, e o par de símbolos de um
+      código de país é desenhado como a bandeira dele. Com o pipe, o Passaporte não precisa mais guardar a bandeira em cada
+      país: basta o código.
+    </p>
+
+    <vm-deep-dive title="Pipes puros: por que eles são rápidos">
+      <p>
+        Por padrão, todo pipe é <strong>puro</strong>: o Angular só chama o <code>transform</code> de novo quando o valor que
+        entra muda. Se o país continua o mesmo, a bandeira não é recalculada. Por isso, um pipe não deve depender de nada além
+        do que recebe; e é também por isso que, para listas e objetos, o Angular só percebe a mudança quando você entrega um
+        array ou objeto novo, o mesmo cuidado que os signals pedem.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O Passaporte formatado">
+    <vm-steps label="Usar e criar pipes">
+      <ng-template vmStep="O idioma">
+        <p>Crie o <code>locale.ts</code> e acrescente o <code>BRAZILIAN_LOCALE</code> aos providers do <code>app.config.ts</code>, como na seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="Pipes prontos">
+        <p>No país em destaque, importe os pipes e use-os no template:</p>
+        <vm-code snippet="12/etapa/src/app/featured-country/featured-country.ts" caption="featured-country.ts" />
+        <vm-code snippet="12/etapa/src/app/featured-country/featured-country.html" caption="featured-country.html" />
+        <p>
+          No placar, crie o computed <code>share</code> (a fração, sem multiplicar por 100) e mostre com
+          <code>share() | percent: '1.0-2'</code>; o <code>PercentPipe</code> já multiplica.
+        </p>
+        <p><strong>O que muda na tela:</strong> 123.000.000 habitantes, TÓQUIO, 1,03% do mundo, e a data na anotação salva.</p>
+      </ng-template>
+      <ng-template vmStep="Seu pipe">
+        <p>Gere o pipe com o CLI e escreva o <code>transform</code> da seção anterior:</p>
+        <vm-code snippet="12/ng-generate" caption="terminal" />
+        <p>
+          Tire a propriedade <code>flag</code> da interface <code>Country</code> e dos seis países, importe o
+          <code>FlagPipe</code> na <code>CountryList</code> e troque a bandeira no template por
+          <code ngNonBindable>{{ country.code | flag }}</code>.
+        </p>
+        <p><strong>O que muda na tela:</strong> nada, e esse é o mérito: as bandeiras continuam lá, agora calculadas.</p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Filtros entupidos">
+    <vm-pitfall
+      title="Usar um pipe sem importar"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG8004: No pipe found with name 'number'."
+    >
+      <p>
+        "Nenhum pipe encontrado com o nome number." O template usa <code>| number</code>, mas o <code>DecimalPipe</code> não
+        está no <code>imports</code> do componente. Repare que o nome no template (<code>number</code>) é diferente do nome da
+        classe (<code>DecimalPipe</code>). <strong>Como sair:</strong> importe a classe.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Formato brasileiro sem os dados do idioma"
+      where="O erro que aparece no console do navegador"
+      message="ERROR RuntimeError: NG02100: InvalidPipeArgument: 'NG0701: Missing locale data for the locale &quot;pt-BR&quot;.' for pipe 'DecimalPipe'"
+    >
+      <p>
+        O app pediu o formato <code>pt-BR</code> com o <code>LOCALE_ID</code>, mas ninguém registrou os dados desse idioma.
+        Esse erro só aparece com o app rodando, no console do navegador (tecla <kbd>F12</kbd>), e a tela fica incompleta.
+        <strong>Como sair:</strong> chame <code>registerLocaleData(localePt)</code>, como no <code>locale.ts</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="12-pipes" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte formata bem, mas cada componente tem cores escritas à mão no CSS. A próxima
+      parada organiza o estilo e traz o Tailwind: o <vm-see-chapter [number]="13" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

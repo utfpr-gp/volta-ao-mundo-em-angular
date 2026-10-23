@@ -1,0 +1,25 @@
+ul {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e7e1d3;
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.flag {
+  font-size: 1.75rem;
+}
+
+.capital {
+  margin-left: auto;
+  color: #5b6474;
+}

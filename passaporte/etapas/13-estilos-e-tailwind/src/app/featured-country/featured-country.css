@@ -1,0 +1,78 @@
+.featured {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background: #ffffff;
+  border: 2px solid #d99a1e;
+}
+
+img {
+  border-radius: 0.5rem;
+  border: 1px solid #e7e1d3;
+}
+
+.label {
+  margin: 0;
+  color: #8a5a0b;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+h2 {
+  margin: 0.25rem 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #12263a;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.note {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.note input {
+  padding: 0.5rem;
+  border: 1px solid #e7e1d3;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+
+.hint {
+  margin: 0.25rem 0 0;
+  color: #5b6474;
+  font-size: 0.875rem;
+}
+
+.saved {
+  margin: 0.5rem 0 0;
+  color: #17705a;
+  font-weight: 700;
+}
+
+.stamp {
+  margin: 0.5rem 0;
+  color: #c8102e;
+  font-weight: 800;
+}
+
+button.secondary {
+  background: transparent;
+  color: #12263a;
+  border: 1px solid #12263a;
+}

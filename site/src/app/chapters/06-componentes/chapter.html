@@ -1,0 +1,197 @@
+<vm-chapter-page slug="06-componentes">
+  <vm-view kind="mission" title="Uma tela, três peças">
+    <p class="lead">
+      No capítulo anterior, o Passaporte era um cartão só, dentro do componente <code>App</code>. Agora ele ganha cara de
+      app: um cabeçalho com menu, uma lista de países e um rodapé.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-06/tela-em-componentes.png"
+      width="900"
+      height="500"
+      alt="O Passaporte com um cabeçalho azul-marinho (logo e os links Países e Meu passaporte), uma lista com Brasil, Japão e Portugal, cada um com bandeira e capital, e um rodapé."
+    />
+    <p>
+      O mais importante não aparece na imagem: cada uma dessas três partes é um <strong>componente</strong> separado, criado
+      com o Angular CLI, com o seu próprio HTML, CSS e TypeScript. Ao final deste capítulo, você vai saber olhar para
+      qualquer tela e enxergar as peças dela, e montar o Passaporte com elas.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A química das interfaces">
+    <vm-analogy emoji="⚗️" title="Átomos, moléculas e organismos">
+      <p>
+        Na química, tudo é feito de <strong>átomos</strong>. Átomos se juntam em <strong>moléculas</strong>, e moléculas
+        formam <strong>organismos</strong> inteiros. Um átomo de oxigênio sozinho não faz muita coisa; junto com dois de
+        hidrogênio, vira água.
+      </p>
+      <p>
+        O designer Brad Frost percebeu que as telas funcionam do mesmo jeito e chamou a ideia de <strong>Atomic
+        Design</strong>. Uma bandeira é um átomo. Bandeira, nome e capital juntos formam uma molécula: o cartão de um país.
+        Vários cartões formam um organismo: a lista de países. E a tela inteira é a soma dos organismos.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Componentes por dentro">
+    <h3>O que é um componente, de novo</h3>
+    <p>
+      Você viu no <vm-see-chapter [number]="1" /> que um <vm-term name="componente">componente</vm-term> é um pedaço da tela
+      com três partes: a aparência (o template, em HTML), o estilo (o CSS) e o comportamento (a classe, em TypeScript). No
+      Angular, cada parte costuma ficar num arquivo, e os três ficam juntos numa pasta com o nome do componente.
+    </p>
+
+    <h3>Os cinco níveis do Atomic Design</h3>
+    <p>
+      O Atomic Design tem cinco níveis. Os três primeiros vêm da química; os dois últimos falam da tela pronta:
+    </p>
+    <ol>
+      <li><strong>Átomos:</strong> as peças que não dá para dividir mais, como uma bandeira, um nome, um botão, um link.</li>
+      <li><strong>Moléculas:</strong> átomos juntos com um propósito, como o cartão de um país ou um campo de busca com o botão.</li>
+      <li><strong>Organismos:</strong> partes inteiras da tela, como o cabeçalho, a lista de países e o rodapé.</li>
+      <li><strong>Template:</strong> o esqueleto da tela, com os organismos no lugar, mas ainda sem os dados.</li>
+      <li><strong>Página:</strong> o template com os dados de verdade. É o que a pessoa vê.</li>
+    </ol>
+    <p>Veja os cinco níveis na tela do Passaporte:</p>
+
+    <vm-atomic-builder />
+
+    <p>
+      Nem todo átomo precisa virar um componente Angular: uma bandeira pode ser só um <code>&lt;span&gt;</code>. O Atomic
+      Design é um jeito de <strong>pensar</strong> a tela; você decide quais peças valem um componente. Neste capítulo, os
+      três organismos viram componentes: <code>Header</code>, <code>CountryList</code> e <code>Footer</code>.
+    </p>
+
+    <h3>Como um componente usa outro</h3>
+    <p>Todo componente tem um <code>selector</code>: o nome da tag que o representa no HTML.</p>
+    <vm-code snippet="06/etapa/src/app/header/header.ts" caption="header/header.ts" />
+    <p>
+      Para usar o <code>Header</code> dentro do <code>App</code>, são dois passos: <strong>importar</strong> a classe no
+      <code>imports</code> do <code>App</code>, e <strong>escrever a tag</strong> <code>&lt;app-header /&gt;</code> no
+      template dele.
+    </p>
+    <vm-code snippet="06/etapa/src/app/app.ts" caption="app.ts" />
+    <vm-code snippet="06/etapa/src/app/app.html" caption="app.html" />
+    <p>
+      Cada tag vira o componente inteiro, com o HTML e o CSS dele. É assim que a árvore de componentes do capítulo 1 sai do
+      papel: o <code>App</code> é a raiz, e o <code>Header</code>, a <code>CountryList</code> e o <code>Footer</code> são os
+      filhos.
+    </p>
+
+    <h3>Cada componente com o seu estilo</h3>
+    <p>
+      O CSS de um componente só vale para ele. A classe <code>.card</code> do <code>country-list.css</code> não afeta nenhum
+      outro componente, mesmo que outro também tenha uma classe <code>.card</code>. Isso deixa você escrever nomes curtos
+      sem medo de conflito. O que vale para o app inteiro, como a fonte, fica no <code>src/styles.css</code>. Você vê estilos
+      com calma no <vm-see-chapter [number]="13" />.
+    </p>
+
+    <h3>Quando criar um componente novo?</h3>
+    <ul>
+      <li><strong>Ele se repete?</strong> O cartão de país aparece várias vezes: forte candidato.</li>
+      <li><strong>Ele tem um nome?</strong> Se você chama a parte de "o cabeçalho", ela provavelmente é um componente.</li>
+      <li><strong>O arquivo cresceu demais?</strong> Um template enorme fica mais fácil de entender dividido em partes.</li>
+    </ul>
+    <p>
+      Repare que os três cartões da lista ainda são HTML repetido dentro da <code>CountryList</code>. Para criar um único
+      componente <code>CountryCard</code> e usar três vezes, cada uma com um país diferente, ele precisa receber dados de
+      fora. Isso tem nome, <code>input()</code>, e fica para o <vm-see-chapter [number]="15" />.
+    </p>
+
+    <vm-deep-dive title="Standalone, e o que era o NgModule">
+      <p>
+        Até a versão 14, todo componente precisava ser declarado num <code>NgModule</code>, uma espécie de caixa que agrupava
+        componentes. Era mais uma peça para entender e manter. Os componentes <strong>standalone</strong>, padrão desde a
+        versão 19, dispensam essa caixa: cada componente diz, no próprio <code>imports</code>, o que usa.
+      </p>
+      <p>
+        É por isso que os componentes que o CLI gera hoje não têm <code>standalone: true</code> escrito: standalone já é o
+        padrão. Se você encontrar <code>NgModule</code> num tutorial, ele é de um Angular mais antigo.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="Monte o Passaporte em peças">
+    <p>Continue no projeto do capítulo anterior. Com o <code>ng serve</code> rodando num terminal, abra um segundo terminal na pasta <code>passaporte</code>.</p>
+    <vm-steps label="Criar os componentes">
+      <ng-template vmStep="Gerar">
+        <p>Peça ao CLI os três componentes:</p>
+        <vm-code snippet="06/ng-generate" caption="terminal" />
+        <p>Para cada um, o CLI cria uma pasta com quatro arquivos. A saída do primeiro:</p>
+        <vm-code snippet="06/ng-generate-output" caption="saída do ng generate component header" />
+        <p>
+          O <code>.spec.ts</code> é o teste do componente, que você aprende a usar no capítulo 42. Nada muda na tela ainda:
+          os componentes existem, mas ninguém os usa.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Cabeçalho">
+        <p>Troque o conteúdo de <code>header.html</code> e de <code>header.css</code>:</p>
+        <vm-code snippet="06/etapa/src/app/header/header.html" caption="header/header.html" />
+        <vm-code snippet="06/etapa/src/app/header/header.css" caption="header/header.css" />
+        <p>Os links ainda não levam a lugar nenhum; eles ganham destino no capítulo 23, sobre rotas.</p>
+      </ng-template>
+      <ng-template vmStep="Lista">
+        <vm-code snippet="06/etapa/src/app/country-list/country-list.html" caption="country-list/country-list.html" />
+        <vm-code snippet="06/etapa/src/app/country-list/country-list.css" caption="country-list/country-list.css" />
+      </ng-template>
+      <ng-template vmStep="Rodapé">
+        <vm-code snippet="06/etapa/src/app/footer/footer.html" caption="footer/footer.html" />
+        <vm-code snippet="06/etapa/src/app/footer/footer.css" caption="footer/footer.css" />
+      </ng-template>
+      <ng-template vmStep="Juntar no App">
+        <p>
+          No <code>app.ts</code>, importe os três componentes, como na seção anterior. No <code>app.html</code>, troque o
+          cartão do capítulo 5 pelas três tags, e mova para o <code>app.css</code> só o que é do <code>App</code>:
+        </p>
+        <vm-code snippet="06/etapa/src/app/app.css" caption="app.css" />
+        <p>Por fim, a fonte e o fundo do app inteiro vão para o estilo global:</p>
+        <vm-code snippet="06/etapa/src/styles.css" caption="src/styles.css" />
+        <p>
+          <strong>O que muda na tela:</strong> aparece o Passaporte da missão, com cabeçalho, lista e rodapé. Visualmente,
+          nada denuncia que são três componentes, e é assim que deve ser.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Peças que não se encaixam">
+    <vm-pitfall
+      title="Usar a tag sem importar o componente"
+      where="O que o Angular mostra no terminal do ng serve"
+      message="✘ [ERROR] NG8001: 'app-header' is not a known element:
+1. If 'app-header' is an Angular component, then verify that it is included in the '@Component.imports' of this component."
+    >
+      <p>
+        Você escreveu <code>&lt;app-header /&gt;</code> no template, mas esqueceu de pôr <code>Header</code> no
+        <code>imports</code> do componente. Para o Angular, <code>app-header</code> é uma tag desconhecida. O mesmo erro
+        aparece se você digitar o seletor errado, como <code>&lt;app-headers /&gt;</code>.
+        <strong>Como sair:</strong> acrescente a classe ao <code>imports</code> (e o <code>import</code> no topo do
+        arquivo), ou corrija o nome da tag para bater com o <code>selector</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Importar e não usar"
+      where="O aviso que o Angular mostra"
+      message="▲ [WARNING] NG8113: Footer is not used within the template of App"
+    >
+      <p>
+        É o contrário do anterior: o componente está no <code>imports</code>, mas a tag não aparece no template. É só um
+        aviso; o app funciona, mas o rodapé não aparece. <strong>Como sair:</strong> escreva <code>&lt;app-footer /&gt;</code>
+        no template ou, se não precisa mais dele, tire-o do <code>imports</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="06-componentes" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Os componentes ainda mostram textos fixos. A próxima parada leva dados da classe para a tela:
+      o <vm-see-chapter [number]="7" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

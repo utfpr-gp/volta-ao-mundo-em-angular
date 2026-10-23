@@ -1,0 +1,171 @@
+<vm-chapter-page slug="09-signals">
+  <vm-view kind="mission" title="O contador do mundo">
+    <p class="lead">
+      O Passaporte ganha um placar no topo: quantos países você visitou, que fatia do mundo isso representa e quantos
+      faltam. Cada clique em "Visitei mais um" atualiza os três números e a barra ao mesmo tempo.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-09/contador.png"
+      width="900"
+      height="330"
+      alt="Um painel azul-marinho com o texto 2 de 195 países, 1% do mundo, faltam 193, uma barra de progresso e os botões Visitei mais um e Desfazer."
+    />
+    <p>
+      Por trás do placar há uma ideia que é o coração do Angular moderno: os <strong>signals</strong>. Você guarda o número
+      de países num signal, calcula a porcentagem e o "faltam" a partir dele, e o Angular atualiza só o que depende do que
+      mudou.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A planilha, de novo">
+    <vm-analogy emoji="📊" title="Células e fórmulas">
+      <p>
+        Lembra da planilha do capítulo 1? Numa célula, você digita um número: 2. Em outra, escreve uma fórmula:
+        <code>=A1/195</code>. Quando você troca o 2 por 3, a fórmula se recalcula sozinha, e qualquer gráfico que use a
+        fórmula também muda.
+      </p>
+      <p>
+        Um <strong>signal</strong> é a célula com o número. Um <strong>computed</strong> é a célula com a fórmula. E a tela
+        é o gráfico, que acompanha tudo. Você nunca precisa dizer "agora atualize a porcentagem": a planilha sabe quem
+        depende de quem.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Signals por dentro">
+    <h3>Criar, ler e mudar</h3>
+    <vm-code snippet="09/signal-basics" caption="signals.ts" />
+    <p>Quatro operações, e é só isso que você precisa para começar:</p>
+    <ul>
+      <li><code>signal(2)</code> cria o <vm-term name="signal">signal</vm-term>, com um valor inicial.</li>
+      <li><code>visited()</code>, com parênteses, <strong>lê</strong> o valor. Um signal é uma função; chamá-la devolve o valor atual.</li>
+      <li><code>visited.set(5)</code> troca o valor por outro.</li>
+      <li><code>visited.update((n) =&gt; n + 1)</code> calcula o valor novo a partir do atual, com uma arrow function.</li>
+    </ul>
+
+    <h3><code>computed</code>: o valor que se calcula sozinho</h3>
+    <p>
+      Um <vm-term name="computed">computed</vm-term> é um signal derivado: você passa uma função que lê outros signals, e o
+      Angular cuida de recalcular quando eles mudam. Você não chama <code>set</code> num computed; ele só se calcula. Veja o
+      placar do Passaporte:
+    </p>
+    <vm-code snippet="09/etapa/src/app/world-progress/world-progress.ts" caption="world-progress.ts" />
+    <vm-code snippet="09/etapa/src/app/world-progress/world-progress.html" caption="world-progress.html" />
+    <p>
+      No template, todo signal e todo computed são lidos com parênteses: <code ngNonBindable>{{ visitedCount() }}</code>,
+      <code ngNonBindable>{{ percent() }}</code>. O <code>[style.width.%]</code> é um property binding de estilo, que dá a
+      largura da barra em porcentagem; estilos ficam para o <vm-see-chapter [number]="13" />.
+    </p>
+
+    <h3>Quem depende de quem</h3>
+    <p>
+      O segredo dos signals é que o Angular <strong>anota as dependências</strong>. Quando o <code>percent</code> roda, ele lê
+      <code>visitedCount()</code>, e o Angular toma nota: "o percent depende do visitedCount". Quando o template lê
+      <code>percent()</code>, outra nota: "esta parte da tela depende do percent". Assim, quando o
+      <code>visitedCount</code> muda, o Angular sabe exatamente o que recalcular e o que redesenhar, e nada mais.
+    </p>
+
+    <vm-signal-graph />
+
+    <p>
+      Repare no contador "recalculado" quando você muda só o nome: ele não sobe. O computed nem roda, porque nada do que ele
+      lê mudou. Num app grande, essa precisão é o que mantém a tela rápida.
+    </p>
+
+    <vm-deep-dive title="Por que não uma propriedade comum, como no capítulo 8?">
+      <p>
+        No capítulo 8, <code>visited</code> era uma propriedade comum, e a tela se atualizava porque o Angular confere o
+        componente depois de um evento dele. Mas um valor pode mudar por outros caminhos: um temporizador, uma resposta do
+        servidor, um componente vizinho. Com uma propriedade comum, o Angular não fica sabendo.
+      </p>
+      <p>
+        Com um signal, quem avisa é o próprio valor: ao mudar, ele notifica quem depende dele. É por isso que o Angular
+        moderno, sem a antiga biblioteca Zone.js e com a estratégia OnPush como padrão, guarda o estado em signals. Daqui em
+        diante, todo estado do Passaporte é um signal.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O placar do Passaporte">
+    <vm-steps label="Criar o placar com signals">
+      <ng-template vmStep="Gerar">
+        <vm-code snippet="09/ng-generate" caption="terminal" />
+      </ng-template>
+      <ng-template vmStep="A classe">
+        <p>Um signal, dois computed e dois métodos que usam <code>update</code>:</p>
+        <vm-code snippet="09/etapa/src/app/world-progress/world-progress.ts" caption="world-progress.ts" />
+        <p>
+          O <code>Math.min</code> e o <code>Math.max</code> só garantem que o número fique entre 0 e 195.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O template">
+        <vm-code snippet="09/etapa/src/app/world-progress/world-progress.html" caption="world-progress.html" />
+        <vm-code snippet="09/etapa/src/app/world-progress/world-progress.css" caption="world-progress.css" />
+        <p>Importe o <code>WorldProgress</code> no <code>App</code> e ponha <code>&lt;app-world-progress /&gt;</code> antes do país em destaque.</p>
+        <p><strong>O que muda na tela:</strong> o placar aparece, e cada clique muda os números e a barra.</p>
+      </ng-template>
+      <ng-template vmStep="Converter o destaque">
+        <p>
+          O país em destaque do capítulo 8 usava propriedades comuns. Converta para signals: cada propriedade vira
+          <code>signal(...)</code>, cada mudança vira <code>set</code> ou <code>update</code>, e cada leitura no template ganha
+          parênteses.
+        </p>
+        <vm-code snippet="09/etapa/src/app/featured-country/featured-country.ts" caption="featured-country.ts" />
+        <p>
+          <strong>O que muda na tela:</strong> nada, e é esse o objetivo: o comportamento é o mesmo, mas agora o estado avisa
+          a tela por conta própria.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Os tropeços com signals">
+    <vm-pitfall
+      title="Esquecer os parênteses no template"
+      where="O aviso que o Angular mostra"
+      message="▲ [WARNING] NG8109: NG8109: visitedCount is a function and should be invoked: visitedCount()"
+    >
+      <p>
+        Você escreveu <code ngNonBindable>{{ visitedCount }}</code>. Sem os parênteses, o template recebe o signal em si, e
+        não o valor, e a tela mostra algo como <code>[Signal: 2]</code>. O Angular avisa: "visitedCount é uma função e
+        deveria ser chamada". <strong>Como sair:</strong> <code ngNonBindable>{{ visitedCount() }}</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Tentar mudar um signal com ++ ou ="
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2540: Cannot assign to 'visitedCount' because it is a read-only property."
+    >
+      <p>
+        Você escreveu <code>this.visitedCount++</code>. O <code>readonly</code> protege a propriedade que guarda o signal, e,
+        de todo jeito, um signal não é um número: é uma caixinha com um número dentro. <strong>Como sair:</strong> use
+        <code>this.visitedCount.update((n) =&gt; n + 1)</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Tentar dar valor a um computed"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2339: Property 'set' does not exist on type 'Signal<number>'."
+    >
+      <p>
+        Um computed não tem <code>set</code>: o valor dele sempre vem da fórmula. <strong>Como sair:</strong> mude o signal de
+        que ele depende, e o computed acompanha.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="09-signals" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Com o estado em signals, a tela pode mudar de forma, e não só de valor: mostrar ou esconder
+      partes conforme o estado, no <vm-see-chapter [number]="10" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

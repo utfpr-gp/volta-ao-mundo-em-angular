@@ -1,0 +1,198 @@
+<vm-chapter-page slug="07-interpolacao-e-property-binding">
+  <vm-view kind="mission" title="Dados da classe na tela">
+    <p class="lead">
+      Até aqui, tudo o que o Passaporte mostra está escrito à mão no HTML. Neste capítulo, ele ganha um <strong>país em
+      destaque</strong>, e os dados desse país vêm da classe do componente, e não do HTML:
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-07/pais-em-destaque.png"
+      width="900"
+      height="420"
+      alt="O Passaporte com um cartão de país em destaque: a bandeira do Japão, o nome Japão, a capital Tóquio, a população e um botão Marcar como visitado. Abaixo, a lista de países."
+    />
+    <p>
+      Nome, capital, população, a imagem da bandeira e até o estado do botão saem de um objeto na classe. Ao final do
+      capítulo, você vai saber levar qualquer dado da classe para a tela, como texto ou como propriedade de um elemento.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O formulário com campos para preencher">
+    <vm-analogy emoji="🖨️" title="A mala direta">
+      <p>
+        Sabe aquelas cartas que chegam com o seu nome no meio do texto? Quem escreveu não fez uma carta para cada pessoa:
+        fez um modelo com espaços marcados, como "Olá, ___", e uma planilha com os dados. A impressora junta os dois.
+      </p>
+      <p>
+        O template é o modelo com os espaços, e a classe é a planilha. A diferença é que, no Angular, quando um dado da
+        classe muda, a tela é atualizada para mostrar o valor novo.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Duas formas de ligar a classe à tela">
+    <p>
+      Ligar um dado da classe a um lugar do template se chama <vm-term name="binding">binding</vm-term>. Neste capítulo, o
+      dado sempre <strong>desce</strong>, da classe para a tela. São duas formas, e você usa as duas no mesmo componente:
+    </p>
+    <vm-code snippet="07/etapa/src/app/featured-country/featured-country.ts" caption="featured-country.ts" />
+    <vm-code snippet="07/etapa/src/app/featured-country/featured-country.html" caption="featured-country.html" />
+
+    <h3>Interpolação: <code ngNonBindable>{{ }}</code> para mostrar texto</h3>
+    <p>
+      As chaves duplas são a <vm-term name="interpolacao">interpolação</vm-term>. Dentro delas vai uma expressão, como
+      <code>country.name</code>, e o resultado aparece como texto naquele lugar. Pode ter interpolação no meio de uma frase,
+      como em <code ngNonBindable>Capital: {{ country.capital }}</code>. A expressão pode fazer contas simples, como
+      <code ngNonBindable>{{ country.population / 1000000 }}</code>, mas a regra de ouro é manter o template simples: lógica
+      de verdade fica na classe.
+    </p>
+
+    <h3>Property binding: <code>[ ]</code> para dar valor a uma propriedade</h3>
+    <p>
+      Os colchetes são o <vm-term name="property-binding">property binding</vm-term>: em <code>[src]="country.flagUrl"</code>,
+      a propriedade <code>src</code> da imagem recebe o <strong>valor</strong> de <code>country.flagUrl</code>. Sem os
+      colchetes, <code>src="country.flagUrl"</code> seria só um texto, e o navegador tentaria abrir um arquivo chamado
+      literalmente "country.flagUrl".
+    </p>
+    <p>
+      O property binding serve para qualquer propriedade de um elemento: <code>[alt]</code>, <code>[disabled]</code>,
+      <code>[title]</code>, <code>[href]</code>. Repare em <code>[disabled]="country.visited"</code>: o valor é um
+      <code>boolean</code>, e não um texto. É por isso que, para propriedades que não são texto, os colchetes são o caminho.
+    </p>
+    <p>Mude os valores da classe e veja cada binding trabalhando:</p>
+
+    <vm-binding-flow mode="property" />
+
+    <h3>Qual usar?</h3>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Você quer…</th>
+            <th>Use</th>
+            <th>Exemplo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>mostrar um valor como texto</td>
+            <td>interpolação</td>
+            <td><code ngNonBindable>&lt;h2&gt;{{ country.name }}&lt;/h2&gt;</code></td>
+          </tr>
+          <tr>
+            <td>dar valor a uma propriedade de um elemento</td>
+            <td>property binding</td>
+            <td><code>&lt;img [src]="country.flagUrl"&gt;</code></td>
+          </tr>
+          <tr>
+            <td>ligar ou desligar algo com verdadeiro ou falso</td>
+            <td>property binding</td>
+            <td><code>&lt;button [disabled]="country.visited"&gt;</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <vm-deep-dive title="Atributo do HTML ou propriedade do elemento?">
+      <p>
+        No HTML, você escreve <strong>atributos</strong> (<code>src="..."</code>). Quando o navegador lê a página, ele cria
+        um objeto para cada elemento, com <strong>propriedades</strong>. Na maioria dos casos os nomes batem, mas não sempre:
+        o atributo <code>class</code> vira a propriedade <code>className</code>, por exemplo. O <code>[ ]</code> do Angular
+        liga a propriedade do objeto, e não o atributo.
+      </p>
+      <p>
+        Para os raros casos em que só existe o atributo, como <code>aria-label</code> em alguns elementos, o Angular tem o
+        <code>[attr.aria-label]="..."</code>. Você vai usar isso no capítulo de acessibilidade.
+      </p>
+    </vm-deep-dive>
+
+    <p>
+      Repare num detalhe da tela da missão: a população aparece como <code>123000000</code>, sem pontos. Formatar números,
+      datas e porcentagens é trabalho dos pipes, no <vm-see-chapter [number]="12" />. E o botão ainda não faz nada:
+      responder a cliques é o próximo capítulo.
+    </p>
+  </vm-view>
+
+  <vm-view kind="code" title="O país em destaque">
+    <vm-steps label="Criar o país em destaque">
+      <ng-template vmStep="Gerar">
+        <p>No segundo terminal, na pasta <code>passaporte</code>, crie o componente:</p>
+        <vm-code snippet="07/ng-generate" caption="terminal" />
+      </ng-template>
+      <ng-template vmStep="Os dados">
+        <p>Na classe, crie o objeto do país. As propriedades com <code>protected readonly</code> são as que o template lê:</p>
+        <vm-code snippet="07/etapa/src/app/featured-country/featured-country.ts" caption="featured-country.ts" />
+        <p>
+          A imagem da bandeira vem do <a href="https://flagcdn.com" rel="noopener">flagcdn.com</a>, um serviço gratuito de
+          bandeiras. Mais adiante, os países vão vir de uma API de verdade, já com o endereço da bandeira.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O template">
+        <vm-code snippet="07/etapa/src/app/featured-country/featured-country.html" caption="featured-country.html" />
+        <vm-code snippet="07/etapa/src/app/featured-country/featured-country.css" caption="featured-country.css" />
+      </ng-template>
+      <ng-template vmStep="Usar no App">
+        <p>Importe o <code>FeaturedCountry</code> no <code>App</code> e ponha a tag antes da lista:</p>
+        <vm-code snippet="07/etapa/src/app/app.html" caption="app.html" />
+        <p><strong>O que muda na tela:</strong> o cartão do Japão aparece no alto, como na imagem da missão.</p>
+      </ng-template>
+      <ng-template vmStep="Experimente">
+        <p>Para sentir o binding funcionando, mude os dados na classe e salve, um de cada vez:</p>
+        <ol>
+          <li>Troque o país para a Itália: nome, capital <code>'Roma'</code> e a bandeira <code>it.png</code>.</li>
+          <li>Troque <code>visited: false</code> por <code>true</code>: o botão fica desabilitado.</li>
+        </ol>
+        <p>
+          Bônus: o nome do app no cabeçalho também virou um dado. Abra o <code>header.ts</code> da etapa e veja o
+          <code>appName</code> com interpolação no <code>header.html</code>.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Quando o binding não liga">
+    <vm-pitfall
+      title="Uma propriedade que não existe"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2339: Property 'nome' does not exist on type '{ name: string; capital: string; population: number; flagUrl: string; visited: boolean; }'."
+    >
+      <p>
+        No template, você escreveu <code ngNonBindable>{{ country.nome }}</code>, mas a propriedade se chama
+        <code>name</code>. O Angular confere o template com o TypeScript, então o erro aparece antes de o app rodar, com a
+        lista de propriedades que existem. <strong>Como sair:</strong> use o nome exato que está na classe.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Uma propriedade que o elemento não tem"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG8002: Can't bind to 'scr' since it isn't a known property of 'img'."
+    >
+      <p>
+        "Não dá para ligar a <code>scr</code>, porque ela não é uma propriedade conhecida de <code>img</code>." Foi um erro
+        de digitação: o certo é <code>src</code>. O mesmo erro aparece se você tentar ligar uma propriedade que o elemento
+        realmente não tem. <strong>Como sair:</strong> confira o nome da propriedade.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Esquecer os colchetes" where="O que aparece no navegador" message="(uma imagem quebrada, sem erro no terminal)">
+      <p>
+        Com <code>src="country.flagUrl"</code>, sem colchetes, não há binding: o navegador procura um arquivo chamado
+        "country.flagUrl", não acha, e mostra o ícone de imagem quebrada. Como não é um erro de código, o terminal fica em
+        silêncio. <strong>Como sair:</strong> ponha os colchetes, <code>[src]</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="07-interpolacao-e-property-binding" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Os dados já descem da classe para a tela. Na próxima parada, eles sobem: o botão vai
+      responder ao clique, no <vm-see-chapter [number]="8" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

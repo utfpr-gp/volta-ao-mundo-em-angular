@@ -1,0 +1,22 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: #12263a;
+  color: #ffffff;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.menu {
+  display: flex;
+  gap: 1rem;
+}
+
+.menu a {
+  color: #c9d6e3;
+}

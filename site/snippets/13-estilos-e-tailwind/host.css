@@ -1,0 +1,5 @@
+/* :host é o próprio elemento do componente, a tag <app-featured-country> */
+:host {
+  display: block;
+  margin-bottom: 1.5rem;
+}

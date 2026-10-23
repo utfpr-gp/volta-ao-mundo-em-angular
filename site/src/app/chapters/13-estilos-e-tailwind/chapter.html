@@ -1,0 +1,176 @@
+<vm-chapter-page slug="13-estilos-e-tailwind">
+  <vm-view kind="mission" title="Estilo sem sair do template">
+    <p class="lead">
+      Até aqui, cada componente do Passaporte tinha um arquivo CSS cheio de regras escritas à mão. Neste capítulo, o
+      cabeçalho e a lista de países trocam o CSS por classes do <strong>Tailwind</strong>, escritas direto no HTML, e a lista
+      vira uma grade de duas colunas nas telas maiores.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-13/com-tailwind.png"
+      width="1000"
+      height="900"
+      alt="O Passaporte com o cabeçalho escuro e um ícone de globo, o placar, o país em destaque e a lista de países em duas colunas, com filtros arredondados e botões de remover."
+    />
+    <p>
+      Ao final, você vai entender como o Angular isola o CSS de cada componente, quando usar CSS próprio e quando usar o
+      Tailwind, e como acrescentar ícones.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="Peças prontas de Lego">
+    <vm-analogy emoji="🧱" title="Encaixar em vez de esculpir">
+      <p>
+        Você pode esculpir uma casinha num bloco de madeira, do jeito que quiser, ou montar com peças de Lego prontas: uma
+        para a parede, uma para a janela, uma para o telhado. Esculpir dá liberdade total; montar é muito mais rápido e
+        sempre combina.
+      </p>
+      <p>
+        Escrever CSS à mão é esculpir. O Tailwind é a caixa de peças: cada classe, como <code>p-4</code> (espaço interno) ou
+        <code>rounded-xl</code> (cantos arredondados), faz uma coisa pequena, e você monta o visual juntando classes.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Estilos no Angular por dentro">
+    <h3>O CSS de cada componente fica nele</h3>
+    <p>
+      No <vm-see-chapter [number]="6" />, você viu que o CSS de um componente só vale para ele. O truque: o Angular marca
+      cada elemento do componente com um atributo único e reescreve as regras do CSS para valer só para elementos com esse
+      atributo. Isso se chama <vm-term name="encapsulamento">encapsulamento</vm-term>.
+    </p>
+    <vm-code snippet="13/encapsulation" caption="o que acontece por trás" />
+    <p>
+      Para estilizar o próprio elemento do componente, a tag <code>&lt;app-featured-country&gt;</code>, use o seletor
+      especial <code>:host</code>:
+    </p>
+    <vm-code snippet="13/host" caption="featured-country.css" />
+    <p>E o que vale para o app inteiro, como a fonte e a cor de fundo, continua no <code>src/styles.css</code>.</p>
+
+    <h3>Estilo que muda com o estado</h3>
+    <p>
+      Você já usou duas formas de property binding para estilo. <code>[class.ativo]="condicao"</code> liga ou desliga uma
+      classe; <code>[style.width.%]="percent()"</code> dá um valor a uma propriedade de estilo, com a unidade depois do
+      ponto. Os filtros da lista usam a primeira:
+    </p>
+    <vm-code snippet="13/etapa/src/app/country-list/country-list.html" caption="country-list.html" />
+
+    <h3>Tailwind: classes utilitárias</h3>
+    <p>
+      O <vm-term name="tailwind">Tailwind</vm-term> é uma biblioteca de CSS com milhares de classes pequenas, as
+      <strong>utilitárias</strong>. Leia as do cartão de país: <code>flex items-center gap-3</code> (os itens lado a lado,
+      centralizados, com espaço entre eles), <code>rounded-xl</code> (cantos), <code>border border-stone-200</code> (borda
+      cinza), <code>bg-white px-4 py-3</code> (fundo branco e espaço interno) e <code>shadow-sm</code> (sombra leve).
+    </p>
+    <p>Prefixos mudam quando a classe vale:</p>
+    <ul>
+      <li><code>hover:text-white</code>: só quando o mouse está em cima.</li>
+      <li><code>sm:grid-cols-2</code>: duas colunas só a partir de telas pequenas para cima (640 px). No celular, uma coluna só.</li>
+    </ul>
+
+    <vm-class-builder />
+
+    <h3>Instalar com um comando</h3>
+    <p>O Angular CLI sabe acrescentar o Tailwind sozinho. A saída real do comando:</p>
+    <vm-code snippet="13/ng-add-output" caption="saída do ng add tailwindcss" />
+    <p>
+      Ele cria a configuração do PostCSS (a ferramenta que processa o CSS no build) e acrescenta o Tailwind ao estilo global:
+    </p>
+    <vm-code snippet="13/etapa/src/styles.css" caption="src/styles.css" />
+
+    <h3>Ícones</h3>
+    <p>
+      O globo do cabeçalho é um <strong>SVG</strong> escrito direto no template: um desenho feito de linhas, que fica nítido em
+      qualquer tamanho e pega a cor do texto com <code>stroke="currentColor"</code>.
+    </p>
+    <vm-code snippet="13/etapa/src/app/header/header.html" caption="header.html" />
+    <p>
+      O <code>aria-hidden="true"</code> diz aos leitores de tela que o ícone é decoração. Para muitos ícones, existem
+      bibliotecas prontas, como o <a href="https://lucide.dev" rel="noopener">Lucide</a> e o
+      <a href="https://fonts.google.com/icons" rel="noopener">Material Symbols</a>, ambas gratuitas.
+    </p>
+
+    <vm-deep-dive title="CSS próprio ou Tailwind?">
+      <p>
+        Os dois convivem bem, e o Passaporte usa os dois: o cabeçalho e a lista estão em Tailwind; o placar e o país em
+        destaque continuam com CSS próprio. Tailwind acelera o dia a dia e mantém o visual consistente; CSS próprio é melhor
+        para efeitos complexos, como animações elaboradas. Num projeto real, a equipe escolhe um caminho principal. No
+        <vm-see-chapter [number]="14" />, as cores soltas viram tokens com a identidade do app.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O Passaporte com Tailwind">
+    <vm-steps label="Adicionar o Tailwind">
+      <ng-template vmStep="Instalar">
+        <p>Com o <code>ng serve</code> parado, rode na pasta do projeto:</p>
+        <vm-code snippet="13/ng-add" caption="terminal" />
+        <p>Depois, ligue o <code>ng serve</code> de novo.</p>
+      </ng-template>
+      <ng-template vmStep="O cabeçalho">
+        <p>Troque o template do cabeçalho pelo da seção anterior, com o ícone, e apague o <code>header.css</code>. Tire também a linha <code>styleUrl</code> do <code>header.ts</code>:</p>
+        <vm-code snippet="13/etapa/src/app/header/header.ts" caption="header.ts" />
+      </ng-template>
+      <ng-template vmStep="A lista">
+        <p>
+          Troque o template da lista pelo da seção anterior e apague o <code>country-list.css</code> e a linha
+          <code>styleUrl</code>. Os botões de filtro agora saem de um array, com <code>&#64;for</code>:
+        </p>
+        <vm-code snippet="13/etapa/src/app/country-list/country-list.ts" caption="country-list.ts" />
+        <p>
+          <strong>O que muda na tela:</strong> o cabeçalho ganha o globo, e a lista vira uma grade de duas colunas em telas
+          largas. Diminua a janela e veja a lista voltar a uma coluna.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O título do destaque">
+        <p>O título "Japão" ficou pequeno (veja as armadilhas). Devolva o tamanho no <code>featured-country.css</code>:</p>
+        <vm-code snippet="13/etapa/src/app/featured-country/featured-country.css" caption="featured-country.css" />
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Estilos que não pegam">
+    <vm-pitfall title="Os títulos encolheram" where="O que aparece na tela" message="(o h2 do país em destaque ficou do tamanho do texto, sem erro)">
+      <p>
+        O Tailwind traz um <strong>reset</strong> que zera os estilos padrão do navegador: títulos perdem o tamanho e o
+        negrito, listas perdem as bolinhas. É de propósito: assim nada vem com aparência inesperada. <strong>Como
+        sair:</strong> dê o estilo explicitamente, com classes como <code>text-2xl font-extrabold</code> ou no CSS do
+        componente.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Classe montada aos pedaços" where="O que aparece na tela" message="(a cor simplesmente não muda, sem erro)">
+      <vm-code snippet="13/dynamic-class" caption="country-card.html" />
+      <p>
+        O Tailwind gera só as classes que encontra <strong>inteiras</strong> no seu código. Uma classe montada com
+        <code>+</code> só existe quando o app roda, e aí é tarde: ela não foi gerada. <strong>Como sair:</strong> escreva as
+        classes completas e escolha entre elas.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="@apply com uma classe que não existe"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] Cannot apply unknown utility class `bg-passaporte`"
+    >
+      <p>
+        No CSS, <code>&#64;apply bg-passaporte</code> pede ao Tailwind as regras de uma classe que ele não conhece. Ela só
+        existiria se você criasse uma cor chamada <code>passaporte</code>, que é justamente o assunto do próximo capítulo.
+        <strong>Como sair:</strong> use uma classe que existe, ou crie a cor como token.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="13-estilos-e-tailwind" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte usa cores soltas, como <code>bg-slate-900</code> e <code>#12263a</code>,
+      espalhadas por todo lado. A próxima parada dá identidade ao app com design tokens, e de brinde o modo escuro: o
+      <vm-see-chapter [number]="14" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

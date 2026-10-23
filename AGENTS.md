@@ -15,6 +15,8 @@ O critério principal é a **qualidade do material**. Não há prazo, turma ou c
 ## Regras de escrita
 
 1. **Público:** quem está na graduação em computação e qualquer pessoa que já sabe HTML, CSS e o básico de JavaScript.
+   Essas pessoas já usaram terminal: trate comandos básicos (`cd`, `ls`, `mkdir`) como revisão rápida, e não como novidade.
+   Não subestime: explique com calma o que é novo (Angular, TypeScript, ferramentas), sem infantilizar o que já é conhecido.
 2. **Tom:** fale com "você", em frases curtas, de forma motivadora e técnica ao mesmo tempo. Nada de parede de código sem
    contexto, nem de texto frio.
 3. **Toda ideia nova ganha uma analogia do cotidiano** (`<vm-analogy>`).

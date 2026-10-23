@@ -1,0 +1,46 @@
+.progress {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1rem;
+  background: #12263a;
+  color: #ffffff;
+}
+
+.big {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.bar {
+  height: 0.6rem;
+  margin: 0.75rem 0;
+  border-radius: 999px;
+  background: #1c3550;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: #d99a1e;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #d99a1e;
+  color: #12263a;
+  font-weight: 800;
+}
+
+button.secondary {
+  background: transparent;
+  color: #c9d6e3;
+  border: 1px solid #c9d6e3;
+}

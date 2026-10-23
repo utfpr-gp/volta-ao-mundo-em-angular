@@ -1,0 +1,24 @@
+<section class="list">
+  <h2>Países</h2>
+
+  <div class="filters">
+    <button type="button" [class.active]="filter() === 'all'" (click)="filter.set('all')">Todos</button>
+    <button type="button" [class.active]="filter() === 'visited'" (click)="filter.set('visited')">Visitados</button>
+    <button type="button" [class.active]="filter() === 'wishlist'" (click)="filter.set('wishlist')">Desejados</button>
+  </div>
+
+  <ul>
+    @for (country of visible(); track country.code; let i = $index) {
+      <li class="card">
+        <span class="position">{{ i + 1 }}</span>
+        <span class="flag">{{ country.code | flag }}</span>
+        <strong>{{ country.name }}</strong>
+        <span class="capital">{{ country.capital }}</span>
+        <button type="button" class="remove" [attr.aria-label]="'Remover ' + country.name" (click)="remove(country.code)">✕</button>
+      </li>
+    } @empty {
+      <li class="empty">Nenhum país aqui ainda.</li>
+    }
+  </ul>
+  <p class="count">{{ visible().length }} de {{ countries().length }} países</p>
+</section>

@@ -1,0 +1,9 @@
+<section class="progress">
+  <p class="big">{{ visitedCount() }} de {{ totalCountries }} países</p>
+  <p>{{ percent() }}% do mundo · faltam {{ remaining() }}</p>
+  <div class="bar"><div class="fill" [style.width.%]="percent()"></div></div>
+  <div class="actions">
+    <button type="button" (click)="visitOneMore()">＋ Visitei mais um</button>
+    <button type="button" class="secondary" (click)="undo()">Desfazer</button>
+  </div>
+</section>

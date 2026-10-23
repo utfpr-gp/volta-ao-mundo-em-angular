@@ -1,0 +1,6 @@
+<label class="note">
+  Anotação da viagem
+  <input #note (input)="onType(note.value)" (keydown.enter)="saveNote(note.value)" /> <!-- [!code highlight] -->
+</label>
+<p class="hint">{{ draft.length }} letras · aperte Enter para salvar</p>
+<p class="saved">Anotação salva: {{ savedNote || 'nenhuma ainda' }}</p>

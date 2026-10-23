@@ -174,7 +174,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Componentes',
     description:
       'Desmonte uma tela em átomos, moléculas e organismos, crie componentes standalone e monte com eles a árvore de componentes do app.',
-    minutes: 35,
+    minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '07-interpolacao-e-property-binding',
@@ -183,7 +185,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Interpolação e binding',
     description:
       'Leve os dados da classe para a tela com interpolação e property binding, e entenda quando usar cada um nos templates do Angular.',
-    minutes: 25,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '08-event-binding',
@@ -192,7 +196,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Event binding',
     description:
       'Faça a tela reagir a cliques, teclas e digitação com event binding, e veja os dados voltando da tela para a classe do componente.',
-    minutes: 25,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '09-signals',
@@ -201,7 +207,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Signals',
     description:
       'Guarde o estado do app em signals, derive valores com computed e veja o Angular atualizar só o que mudou na tela, sem você pedir.',
-    minutes: 35,
+    minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '10-if-e-switch',
@@ -210,7 +218,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: '@if e @switch',
     description:
       'Mostre, esconda e alterne partes da tela conforme o estado com @if e @switch, incluindo a mensagem de lista vazia do Passaporte.',
-    minutes: 20,
+    minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '11-for-e-track',
@@ -219,7 +229,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: '@for e track',
     description:
       'Repita cartões para cada país com @for, entenda para que serve o track e por que ele evita que o Angular recrie a lista inteira.',
-    minutes: 25,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '12-pipes',
@@ -228,7 +240,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Pipes',
     description:
       'Formate números, datas e porcentagens com os pipes prontos do Angular e crie o seu próprio pipe para mostrar a bandeira de um país.',
-    minutes: 25,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '13-estilos-e-tailwind',
@@ -237,7 +251,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Estilos e Tailwind',
     description:
       'Entenda o CSS isolado de cada componente, aplique classes do Tailwind direto no template e use ícones para dar vida ao Passaporte.',
-    minutes: 35,
+    minutes: 40,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '14-design-tokens',
@@ -246,7 +262,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Design tokens',
     description:
       'Declare cores, fontes e arredondamentos como design tokens no Tailwind e troque o visual inteiro do app, até o modo escuro, de uma vez.',
-    minutes: 30,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Componentes
   {

@@ -1,0 +1,157 @@
+<vm-chapter-page slug="14-design-tokens">
+  <vm-view kind="mission" title="Uma identidade, dois modos">
+    <p class="lead">
+      O Passaporte tem cores espalhadas por todo canto: <code>bg-slate-900</code> no cabeçalho, <code>#12263a</code> no
+      placar, <code>#d99a1e</code> no destaque. Neste capítulo, essas cores ganham nomes, viram <strong>design tokens</strong>,
+      e o app ganha de presente o modo escuro, sem mudar nenhum componente para isso.
+    </p>
+    <div class="not-prose my-6 grid gap-3 sm:grid-cols-2">
+      <img
+        class="w-full rounded-2xl border border-line shadow-sm"
+        src="imagens/capitulo-14/claro.png"
+        width="1000"
+        height="760"
+        alt="O Passaporte no modo claro: fundo creme, cabeçalho e placar azul-marinho, destaques dourados."
+      />
+      <img
+        class="w-full rounded-2xl border border-line shadow-sm"
+        src="imagens/capitulo-14/escuro.png"
+        width="1000"
+        height="760"
+        alt="O mesmo Passaporte no modo escuro: fundo azul muito escuro, cartões azulados e texto claro, com os mesmos destaques dourados."
+      />
+    </div>
+    <p>
+      As duas imagens são o mesmo app. O que mudou foi só o valor dos tokens. Ao final do capítulo, você vai saber criar os
+      tokens do seu app e entender por que os nomes deles são a parte mais importante.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O nome do cargo, e não da pessoa">
+    <vm-analogy emoji="🏷️" title="Cargos e pessoas">
+      <p>
+        Numa empresa, você não escreve no documento "fale com a Ana"; escreve "fale com a coordenação". Se a Ana sair, o
+        documento continua certo: basta outra pessoa assumir a coordenação.
+      </p>
+      <p>
+        Um <strong>design token</strong> é o nome do cargo. Em vez de pintar o cabeçalho de "azul-marinho", você pinta de
+        <code>primary</code>, a cor principal do app. No modo escuro, outro tom assume o cargo de <code>primary</code>, e todo
+        lugar que usa o token acompanha.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Design tokens por dentro">
+    <h3>Tokens no Tailwind: o <code>&#64;theme</code></h3>
+    <p>
+      No Tailwind 4, os <vm-term name="design-token">design tokens</vm-term> são declarados no CSS global, dentro de um bloco
+      <code>&#64;theme</code>. Cada token é uma variável CSS com um prefixo que diz o tipo: <code>--color-</code> para cores,
+      <code>--radius-</code> para arredondamentos, <code>--font-</code> para fontes.
+    </p>
+    <vm-code snippet="14/etapa/src/styles.css" caption="src/styles.css" />
+    <p>
+      O Tailwind lê o <code>&#64;theme</code> e cria classes para cada token: <code>--color-primary</code> vira
+      <code>bg-primary</code>, <code>text-primary</code>, <code>border-primary</code>; <code>--radius-card</code> vira
+      <code>rounded-card</code>. E, no CSS dos componentes, você usa o token direto, com <code>var(--color-primary)</code>.
+    </p>
+
+    <h3>Nomes de papel, nunca de aparência</h3>
+    <p>
+      Repare nos nomes: <code>primary</code>, <code>surface</code> (a superfície de fundo), <code>card</code>,
+      <code>ink</code> (a tinta do texto), <code>highlight</code> (o destaque). Nenhum se chama "azul" ou "creme". O motivo
+      aparece no modo escuro: lá, a <code>surface</code> fica azul-escura e a <code>ink</code> fica clara. Um token chamado
+      <code>--color-white</code> que vale azul-escuro seria uma armadilha para quem lê o código.
+    </p>
+
+    <vm-token-editor />
+
+    <h3>O modo escuro com um bloco de CSS</h3>
+    <p>
+      O <code>&#64;media (prefers-color-scheme: dark)</code> vale quando o sistema de quem usa está no modo escuro. Dentro
+      dele, os mesmos tokens recebem outros valores. Como todo componente usa os tokens, todo o app troca de tema de uma vez.
+      Nenhuma linha de TypeScript foi necessária.
+    </p>
+    <p>
+      Um cuidado: no modo escuro, o contraste entre texto e fundo continua importante. O texto precisa ser bem legível nos
+      dois modos; o <vm-see-chapter [number]="44" /> mostra como conferir.
+    </p>
+
+    <vm-deep-dive title="E um botão para trocar de tema?">
+      <p>
+        Seguir o sistema é o comportamento mais simples e mais respeitoso. Se quiser um botão para a pessoa escolher, o
+        caminho é guardar a escolha num signal, escrever um atributo como <code>data-theme="dark"</code> no
+        <code>&lt;html&gt;</code> e trocar os tokens por esse atributo, em vez da preferência do sistema. Este próprio livro
+        faz assim: o botão de sol e lua no topo. Você vai precisar do <code>effect</code>, do
+        <vm-see-chapter [number]="33" />, para isso.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="Os tokens do Passaporte">
+    <vm-steps label="Criar os tokens e o modo escuro">
+      <ng-template vmStep="Os tokens">
+        <p>Troque o <code>src/styles.css</code> pelo da seção anterior, com o <code>&#64;theme</code>, o modo escuro e o <code>body</code> usando os tokens.</p>
+      </ng-template>
+      <ng-template vmStep="As classes">
+        <p>Nos templates em Tailwind, troque as cores da paleta padrão pelas classes dos tokens:</p>
+        <vm-code snippet="14/etapa/src/app/header/header.html" caption="header.html" />
+        <vm-code snippet="14/etapa/src/app/country-list/country-list.html" caption="country-list.html" />
+      </ng-template>
+      <ng-template vmStep="O CSS próprio">
+        <p>Nos componentes com CSS próprio, troque cada cor por <code>var(--color-...)</code>:</p>
+        <vm-code snippet="14/etapa/src/app/world-progress/world-progress.css" caption="world-progress.css" />
+        <p>Faça o mesmo no <code>featured-country.css</code> e no <code>footer.css</code> (estão na etapa).</p>
+      </ng-template>
+      <ng-template vmStep="Testar o escuro">
+        <p>
+          Ligue o modo escuro do seu sistema (ou, no Chrome, abra as ferramentas com <kbd>F12</kbd>, aperte
+          <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> e procure por "dark").
+        </p>
+        <p><strong>O que muda na tela:</strong> o Passaporte inteiro troca para o tema escuro da missão.</p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Tokens que não pegam">
+    <vm-pitfall
+      title="Token declarado fora do @theme"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] Cannot apply unknown utility class `bg-brand`"
+    >
+      <p>
+        Você declarou <code>--color-brand</code> num <code>:root</code> comum e tentou usar <code>bg-brand</code>. A variável
+        existe, mas o Tailwind só cria classes para o que está no <code>&#64;theme</code>. Num template, a classe
+        simplesmente não faz nada; num <code>&#64;apply</code>, o build reclama. <strong>Como sair:</strong> declare o token
+        dentro do <code>&#64;theme</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Uma cor solta esquecida" where="O que aparece na tela" message="(no modo escuro, um cartão continua branco)">
+      <p>
+        Um <code>bg-white</code> ou <code>#ffffff</code> que ficou para trás não muda com o tema, e o cartão fica branco no
+        meio do app escuro. <strong>Como sair:</strong> procure as cores soltas no projeto (no VS Code,
+        <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> e busque por <code>#</code> e por nomes como <code>white</code>) e
+        troque por tokens.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Nome de aparência" where="O que aparece no código" message="(--color-blue que, no modo escuro, vale cinza)">
+      <p>
+        Um token chamado pela aparência mente assim que o tema muda. <strong>Como sair:</strong> nomeie pelo papel:
+        <code>primary</code>, <code>surface</code>, <code>ink</code>, <code>danger</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="14-design-tokens" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Você terminou a trilha Fundamentos. A próxima parada abre a trilha Componentes e faz os
+      componentes conversarem entre si: o <vm-see-chapter [number]="15" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

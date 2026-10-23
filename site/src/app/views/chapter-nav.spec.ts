@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { CHAPTERS } from '../catalog/catalog';
 import { ChapterNav } from './chapter-nav';
 
 describe('ChapterNav', () => {
@@ -12,9 +13,16 @@ describe('ChapterNav', () => {
   };
 
   it('links to the previous and next chapters and marks unpublished ones as "em breve"', async () => {
-    const element = await render('09-signals');
+    const firstUnpublished = CHAPTERS.find((chapter) => !chapter.published)!;
+    const current = CHAPTERS[firstUnpublished.number - 2];
+    const previous = CHAPTERS[firstUnpublished.number - 3];
+    const element = await render(current.slug);
     const links = [...element.querySelectorAll('a')];
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/capitulos/08-event-binding', '/capitulos/10-if-e-switch']);
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([
+      `/capitulos/${previous.slug}`,
+      `/capitulos/${firstUnpublished.slug}`,
+    ]);
+    expect(links[0].textContent).not.toContain('em breve');
     expect(links[1].textContent).toContain('em breve');
   });
 

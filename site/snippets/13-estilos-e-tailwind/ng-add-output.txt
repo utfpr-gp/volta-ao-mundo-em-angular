@@ -1,0 +1,7 @@
+› Found compatible package version: 4.3.3.
+The tailwindcss package does not provide `ng add` actions.
+The Angular CLI will use built-in actions to add it to your project.
+CREATE .postcssrc.json (53 bytes)
+UPDATE src/styles.css (104 bytes)
+UPDATE package.json (880 bytes)
+√ Packages installed successfully.

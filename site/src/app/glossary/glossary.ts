@@ -27,6 +27,16 @@ export const GLOSSARY = {
     definition: 'Um jeito curto de escrever uma função com a seta =>, como (c) => c.name. Aparece em todo lugar no Angular, dentro de filter, map e computed.',
     chapter: 3,
   },
+  'atomic-design': {
+    term: 'Atomic Design',
+    definition: 'Um jeito de pensar telas em cinco níveis, inspirado na química: átomos, moléculas, organismos, templates e páginas. Criado pelo designer Brad Frost.',
+    chapter: 6,
+  },
+  binding: {
+    term: 'Binding',
+    definition: 'A ligação entre um dado da classe e um lugar do template. Quando o dado muda, a tela acompanha; no event binding, o caminho é da tela para a classe.',
+    chapter: 7,
+  },
   biblioteca: {
     term: 'Biblioteca',
     definition:
@@ -43,6 +53,11 @@ export const GLOSSARY = {
     term: 'Compilador',
     definition: 'Um programa que transforma código de uma forma em outra. O do TypeScript confere os tipos e gera JavaScript; o do Angular transforma templates em JavaScript.',
     chapter: 4,
+  },
+  computed: {
+    term: 'Computed',
+    definition: 'Um signal calculado a partir de outros, como uma fórmula de planilha: computed(() => a() + b()). Recalcula sozinho quando o que ele lê muda.',
+    chapter: 9,
   },
   'codigo-aberto': {
     term: 'Código aberto',
@@ -62,16 +77,31 @@ export const GLOSSARY = {
       'Uma marcação com @ em cima de uma classe, como @Component, que acrescenta informações e transforma a classe em algo especial para o Angular.',
     chapter: 4,
   },
+  'design-token': {
+    term: 'Design token',
+    definition: 'Um valor visual com nome de papel, como --color-primary ou --radius-card. Mudar o valor do token muda todo lugar que o usa, inclusive no modo escuro.',
+    chapter: 14,
+  },
   desestruturacao: {
     term: 'Desestruturação',
     definition: 'Um atalho do JavaScript para tirar valores de dentro de um objeto ou array e criar variáveis com eles numa linha, como const { name } = country.',
     chapter: 3,
+  },
+  encapsulamento: {
+    term: 'Encapsulamento de estilos',
+    definition: 'O jeito como o Angular faz o CSS de um componente valer só para ele: marca os elementos com um atributo único e limita as regras a esse atributo.',
+    chapter: 13,
   },
   estado: {
     term: 'Estado',
     definition:
       'Um valor que muda enquanto o app roda, como o número de cliques ou a lista de países visitados. Quando o estado muda, a tela precisa mostrar o valor novo.',
     chapter: 1,
+  },
+  'event-binding': {
+    term: 'Event binding',
+    definition: 'Os parênteses ( ) no template, como (click)="salvar()": chamam um método da classe quando um evento acontece na tela.',
+    chapter: 8,
   },
   framework: {
     term: 'Framework',
@@ -94,6 +124,11 @@ export const GLOSSARY = {
     term: 'Inferência de tipos',
     definition: 'Quando o TypeScript deduz o tipo sozinho, pelo valor inicial: em let capital = \'Brasília\', ele já sabe que capital é uma string.',
     chapter: 4,
+  },
+  interpolacao: {
+    term: 'Interpolação',
+    definition: 'As chaves duplas {{ }} no template: avaliam uma expressão da classe e mostram o resultado como texto.',
+    chapter: 7,
   },
   interface: {
     term: 'Interface',
@@ -130,16 +165,31 @@ export const GLOSSARY = {
     definition: 'Um código pronto publicado no npm para todo mundo usar. O próprio Angular é distribuído como um conjunto de pacotes.',
     chapter: 2,
   },
+  pipe: {
+    term: 'Pipe',
+    definition: 'Um filtro do template, escrito com a barra vertical: {{ valor | number }}. Formata o valor para a tela sem mudar o dado na classe.',
+    chapter: 12,
+  },
   porta: {
     term: 'Porta',
     definition: 'Um número que identifica um programa que atende pedidos num computador, como o 4200 de http://localhost:4200. É como o número do apartamento num prédio.',
     chapter: 5,
+  },
+  'property-binding': {
+    term: 'Property binding',
+    definition: 'Os colchetes [ ] no template, como [src]="url": dão a uma propriedade do elemento o valor de uma expressão da classe.',
+    chapter: 7,
   },
   promise: {
     term: 'Promise',
     definition:
       'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
     chapter: 3,
+  },
+  seletor: {
+    term: 'Seletor (selector)',
+    definition: 'O nome da tag que representa um componente no HTML. Com selector: \'app-header\', o componente aparece onde estiver <app-header />.',
+    chapter: 6,
   },
   servidor: {
     term: 'Servidor',
@@ -164,6 +214,16 @@ export const GLOSSARY = {
     definition:
       'O HTML de um componente, com marcações do Angular como {{ }} para mostrar valores. É a parte do componente que vira tela.',
     chapter: 1,
+  },
+  'variavel-de-template': {
+    term: 'Variável de template',
+    definition: 'Um nome dado a um elemento com #, como <input #note>. Pode ser usado em outros pontos do mesmo template, como note.value.',
+    chapter: 8,
+  },
+  tailwind: {
+    term: 'Tailwind CSS',
+    definition: 'Uma biblioteca de CSS com classes pequenas e prontas, como p-4 e rounded-xl, que você junta direto no HTML para montar o visual.',
+    chapter: 13,
   },
   'template-string': {
     term: 'Template string',
