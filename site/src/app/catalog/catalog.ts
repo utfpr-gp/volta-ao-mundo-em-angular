@@ -296,7 +296,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'ng-content',
     description:
       'Construa componentes moldura, como um cartão ou um painel, que recebem conteúdo de fora com ng-content e servem para muitas telas.',
-    minutes: 20,
+    minutes: 25,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '18-view-child',

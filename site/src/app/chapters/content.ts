@@ -14,6 +14,7 @@ import { CHAPTER_13 } from './13-estilos-e-tailwind/content';
 import { CHAPTER_14 } from './14-design-tokens/content';
 import { CHAPTER_15 } from './15-input-e-output/content';
 import { CHAPTER_16 } from './16-model/content';
+import { CHAPTER_17 } from './17-ng-content/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -34,4 +35,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '14-design-tokens': CHAPTER_14,
   '15-input-e-output': CHAPTER_15,
   '16-model': CHAPTER_16,
+  '17-ng-content': CHAPTER_17,
 };

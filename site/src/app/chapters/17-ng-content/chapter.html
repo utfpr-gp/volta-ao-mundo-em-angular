@@ -1,0 +1,118 @@
+<vm-chapter-page slug="17-ng-content">
+  <vm-view kind="mission" title="Uma moldura para qualquer conteúdo">
+    <p class="lead">
+      O Passaporte já tem três "caixas" parecidas: o placar, o país em destaque e a lista, cada uma com borda, cantos e
+      título próprios. Neste capítulo, nasce o <code>Panel</code>, uma moldura que qualquer parte do app pode usar: você põe o
+      que quiser dentro, e ela cuida da borda, do título e do rodapé.
+    </p>
+    <div class="not-prose my-6 rounded-2xl border border-line bg-surface-raised p-5 text-ink" aria-hidden="true">
+      <p class="border-b border-line pb-2 text-lg font-extrabold">🌍 Países</p>
+      <p class="mt-3">🇧🇷 Brasil · 🇯🇵 Japão · 🇵🇹 Portugal …</p>
+      <p class="mt-3 text-sm text-ink-muted">6 de 6 países</p>
+    </div>
+    <p>
+      A lista de países é a primeira a usar a moldura. Ao final do capítulo, você vai saber criar componentes que recebem HTML
+      de fora, e não só dados.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O porta-retrato">
+    <vm-analogy emoji="🖼️" title="Moldura e foto">
+      <p>
+        Um porta-retrato não sabe qual foto vai receber: ele só define a moldura, o vidro e o espaço onde a foto entra. Você
+        põe a foto que quiser, e o mesmo porta-retrato serve para a foto da viagem ou do cachorro.
+      </p>
+      <p>
+        O <code>&lt;ng-content&gt;</code> é o espaço da foto: o lugar, dentro de um componente, onde entra o conteúdo que o
+        pai escreveu entre as tags.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Projeção de conteúdo por dentro">
+    <h3>O espaço vazio: <code>&lt;ng-content /&gt;</code></h3>
+    <vm-code snippet="17/etapa/src/app/panel/panel.html" caption="panel.html" />
+    <p>
+      Quando o pai escreve algo entre <code>&lt;app-panel&gt;</code> e <code>&lt;/app-panel&gt;</code>, o Angular leva esse
+      conteúdo para o lugar do <code>&lt;ng-content /&gt;</code>. Isso se chama <vm-term name="projecao">projeção de
+      conteúdo</vm-term>. O conteúdo continua sendo do pai: os bindings dele usam os dados do pai, e não os do
+      <code>Panel</code>.
+    </p>
+
+    <h3>Vários encaixes com <code>select</code></h3>
+    <p>
+      Um componente pode ter mais de um <code>&lt;ng-content&gt;</code>. O <code>select</code> diz qual conteúdo vai para
+      cada um, com um seletor de CSS: <code>select="[panel-title]"</code> pega os elementos com o atributo
+      <code>panel-title</code>. O <code>&lt;ng-content /&gt;</code> sem <code>select</code> recebe todo o resto.
+    </p>
+    <vm-code snippet="17/etapa/src/app/country-list/country-list.html" caption="country-list.html" />
+    <p>
+      Repare que <code>panel-title</code> e <code>panel-footer</code> são atributos inventados, só para marcar o destino de
+      cada pedaço. Eles não fazem nada sozinhos.
+    </p>
+
+    <vm-projection-lab />
+
+    <vm-deep-dive title="ng-content não é condicional">
+      <p>
+        O conteúdo projetado é criado pelo pai, mesmo que a moldura não o mostre. Colocar um <code>&lt;ng-content&gt;</code>
+        dentro de um <code>&#64;if</code> na moldura esconde o conteúdo, mas não evita que ele seja criado. A documentação do
+        Angular desaconselha isso. Se a moldura precisa decidir se mostra ou não o conteúdo, o caminho é outro, com
+        <code>&lt;ng-template&gt;</code>, um recurso mais avançado.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O Panel do Passaporte">
+    <vm-steps label="Criar a moldura e usar na lista">
+      <ng-template vmStep="Gerar">
+        <vm-code snippet="17/ng-generate" caption="terminal" />
+        <p>Apague o <code>panel.css</code> e a linha <code>styleUrl</code>.</p>
+      </ng-template>
+      <ng-template vmStep="A moldura">
+        <p>Escreva o template com os três encaixes da seção anterior. A classe fica vazia: a moldura não tem dados.</p>
+        <vm-code snippet="17/etapa/src/app/panel/panel.ts" caption="panel.ts" />
+      </ng-template>
+      <ng-template vmStep="Usar na lista">
+        <p>
+          Importe o <code>Panel</code> na <code>CountryList</code>. No template, troque o <code>&lt;section&gt;</code> e o
+          <code>&lt;h2&gt;</code> pela moldura, com o título no encaixe <code>panel-title</code> e a contagem no
+          <code>panel-footer</code>, como na seção anterior.
+        </p>
+        <p><strong>O que muda na tela:</strong> a lista ganha borda, título com linha embaixo e a contagem no rodapé.</p>
+      </ng-template>
+      <ng-template vmStep="Seu desafio">
+        <p>Use o mesmo <code>Panel</code> em volta do país em destaque, com o título "⭐ País em destaque".</p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Conteúdo que some">
+    <vm-pitfall title="Esquecer o ng-content" where="O que aparece" message="(o conteúdo entre as tags simplesmente não aparece, sem erro)">
+      <p>
+        Se o componente não tem <code>&lt;ng-content&gt;</code>, o que o pai escreve entre as tags é descartado em silêncio.
+        <strong>Como sair:</strong> ponha o <code>&lt;ng-content /&gt;</code> onde o conteúdo deve aparecer.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Atributo que não bate com o select" where="O que aparece" message="(o título aparece no lugar errado, junto do conteúdo)">
+      <p>
+        Com <code>&lt;span panel-titulo&gt;</code> no pai, mas <code>select="[panel-title]"</code> na moldura, o título não
+        combina com nenhum encaixe com <code>select</code> e cai no <code>&lt;ng-content /&gt;</code> geral, no meio do
+        conteúdo. <strong>Como sair:</strong> use exatamente o atributo do <code>select</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="17-ng-content" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Às vezes o componente precisa pegar um elemento do próprio template para agir sobre ele, como
+      dar foco a um campo. É o <code>viewChild()</code>, no <vm-see-chapter [number]="18" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

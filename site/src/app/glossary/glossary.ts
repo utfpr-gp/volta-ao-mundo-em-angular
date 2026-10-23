@@ -195,6 +195,11 @@ export const GLOSSARY = {
     definition: 'Os colchetes [ ] no template, como [src]="url": dão a uma propriedade do elemento o valor de uma expressão da classe.',
     chapter: 7,
   },
+  projecao: {
+    term: 'Projeção de conteúdo',
+    definition: 'Quando um componente recebe HTML de fora, escrito pelo pai entre as tags dele, e o mostra no lugar do <ng-content>.',
+    chapter: 17,
+  },
   promise: {
     term: 'Promise',
     definition:
