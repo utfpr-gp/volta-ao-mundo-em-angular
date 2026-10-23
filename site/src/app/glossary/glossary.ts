@@ -120,6 +120,11 @@ export const GLOSSARY = {
     definition: 'Um tipo que recebe outro tipo como parâmetro, entre < >. Array<string> é um array de textos; signal<number> é um signal de número.',
     chapter: 4,
   },
+  input: {
+    term: 'Input',
+    definition: 'O que um componente filho recebe do pai, declarado com input(). É um signal só de leitura: o filho lê e quem passa o valor é o pai.',
+    chapter: 15,
+  },
   inferencia: {
     term: 'Inferência de tipos',
     definition: 'Quando o TypeScript deduz o tipo sozinho, pelo valor inicial: em let capital = \'Brasília\', ele já sabe que capital é uma string.',
@@ -142,6 +147,11 @@ export const GLOSSARY = {
       'Um formato de texto para trocar dados, com chaves e valores, como {"nome": "Brasil"}. É o que o servidor costuma devolver para uma SPA.',
     chapter: 1,
   },
+  model: {
+    term: 'Model',
+    definition: 'Um input que o componente filho também pode mudar, declarado com model(). Com [(nome)] no pai, o valor fica sincronizado nos dois sentidos.',
+    chapter: 16,
+  },
   nodejs: {
     term: 'Node.js',
     definition:
@@ -159,6 +169,11 @@ export const GLOSSARY = {
     definition:
       'Diz-se de um framework que já decide muita coisa por você: estrutura de pastas, linguagem, forma de testar. Menos liberdade, mais projetos parecidos entre si.',
     chapter: 1,
+  },
+  output: {
+    term: 'Output',
+    definition: 'Um aviso que o componente filho dispara para o pai, declarado com output() e disparado com emit(). O pai escuta com (nome)="...".',
+    chapter: 15,
   },
   pacote: {
     term: 'Pacote',
@@ -179,6 +194,11 @@ export const GLOSSARY = {
     term: 'Property binding',
     definition: 'Os colchetes [ ] no template, como [src]="url": dão a uma propriedade do elemento o valor de uma expressão da classe.',
     chapter: 7,
+  },
+  projecao: {
+    term: 'Projeção de conteúdo',
+    definition: 'Quando um componente recebe HTML de fora, escrito pelo pai entre as tags dele, e o mostra no lugar do <ng-content>.',
+    chapter: 17,
   },
   promise: {
     term: 'Promise',

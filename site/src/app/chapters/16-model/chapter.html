@@ -1,0 +1,123 @@
+<vm-chapter-page slug="16-model">
+  <vm-view kind="mission" title="Estrelas para cada viagem">
+    <p class="lead">
+      Ao marcar o país em destaque como visitado, aparecem cinco estrelas para dar uma nota à viagem. Clicou na terceira, a
+      nota vira 3, e o texto "Sua nota: 3 de 5" acompanha na hora.
+    </p>
+    <div class="not-prose my-6 rounded-2xl border-2 border-highlight bg-surface-raised p-5" aria-hidden="true">
+      <p class="font-extrabold text-stamp">🛂 Carimbado! Você já esteve aqui.</p>
+      <p class="mt-2 text-3xl tracking-wide"><span class="text-highlight">★★★</span><span class="text-ink-muted/40">★★</span></p>
+      <p class="mt-1 text-sm text-ink-muted">Sua nota: 3 de 5</p>
+    </div>
+    <p>
+      As estrelas são um componente próprio, que dá para usar em qualquer lugar. O detalhe novo: a nota é de quem usa o
+      componente, mas o componente também pode mudá-la. Ao final do capítulo, você vai saber fazer esse vaivém com
+      <code>model()</code>.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O documento compartilhado">
+    <vm-analogy emoji="📄" title="Duas pessoas, um documento">
+      <p>
+        Num documento compartilhado na nuvem, você e um colega editam o mesmo texto. O que um escreve aparece para o outro, e
+        vice-versa. Não há "o meu" e "o seu": há um texto só, sincronizado.
+      </p>
+      <p>
+        O <code>model()</code> é isso entre um componente pai e um filho: um valor que os dois podem mudar, e que fica sempre
+        igual dos dois lados.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="model() por dentro">
+    <h3>Input e output num só</h3>
+    <p>
+      No capítulo 15, o input só descia e o output só subia. Um <vm-term name="model">model</vm-term> faz os dois: é um
+      input que o próprio filho pode mudar com <code>set</code>, e cada mudança avisa o pai.
+    </p>
+    <vm-code snippet="16/etapa/src/app/star-rating/star-rating.ts" caption="star-rating.ts" />
+    <vm-code snippet="16/etapa/src/app/star-rating/star-rating.html" caption="star-rating.html" />
+
+    <h3>A "banana na caixa": <code>[( )]</code></h3>
+    <p>
+      No pai, os colchetes e os parênteses juntos, <code>[(rating)]</code>, fazem o two-way binding, o binding nos dois
+      sentidos. O apelido "banana na caixa" ajuda a lembrar a ordem: os parênteses (a banana) ficam dentro dos colchetes (a
+      caixa). Ele é só um atalho:
+    </p>
+    <vm-code snippet="16/two-way" caption="duas formas de escrever o mesmo" />
+    <p>
+      Com o atalho, você passa o signal <strong>sem parênteses</strong>: <code>[(rating)]="rating"</code>. O Angular precisa
+      do signal em si, para poder tanto ler quanto mudar o valor dele.
+    </p>
+    <vm-code snippet="16/etapa/src/app/featured-country/featured-country.html" caption="featured-country.html" />
+
+    <vm-model-sync />
+
+    <h3>Quando usar model e quando usar input e output</h3>
+    <p>
+      Use <code>model()</code> em componentes de controle, que existem para editar um valor: estrelas, um seletor de cor, um
+      campo de busca próprio. Para o resto, prefira <code>input()</code> e <code>output()</code>: deixam claro que só o pai
+      muda os dados, e o fluxo fica mais fácil de seguir.
+    </p>
+  </vm-view>
+
+  <vm-view kind="code" title="As estrelas do Passaporte">
+    <vm-steps label="Criar as estrelas com model">
+      <ng-template vmStep="Gerar">
+        <vm-code snippet="16/ng-generate" caption="terminal" />
+        <p>Apague o <code>star-rating.css</code> e a linha <code>styleUrl</code>, como no capítulo anterior.</p>
+      </ng-template>
+      <ng-template vmStep="O componente">
+        <p>Escreva a classe com <code>model(0)</code> e o template das estrelas da seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="Usar no destaque">
+        <p>
+          No <code>FeaturedCountry</code>, importe o <code>StarRating</code>, crie <code>protected readonly rating =
+          signal(0);</code> e, dentro do <code>&#64;if (visited())</code>, ponha as estrelas e o texto da nota:
+        </p>
+        <vm-code snippet="16/etapa/src/app/featured-country/featured-country.ts" caption="featured-country.ts" />
+        <p>
+          <strong>O que muda na tela:</strong> marque o Japão como visitado, clique na terceira estrela e veja "Sua nota: 3 de
+          5".
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="O vaivém que trava">
+    <vm-pitfall
+      title="Chamar o signal dentro da banana na caixa"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG5002: Unsupported expression in a two-way binding"
+    >
+      <p>
+        Você escreveu <code>[(rating)]="rating()"</code>. Com os parênteses, o Angular recebe só o número, e não tem onde
+        gravar o valor novo que vem do filho. <strong>Como sair:</strong> passe o signal sem chamar: <code>[(rating)]="rating"</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Usar input() onde precisa de model()"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2339: Property 'set' does not exist on type 'InputSignal<number>'."
+    >
+      <p>
+        O filho declarou <code>rating = input(0)</code> e tentou <code>rating.set(...)</code>. Um input só é lido pelo filho.
+        Junto vem outro erro, NG8007, dizendo que as duas metades do <code>[(rating)]</code> não estão ligadas ao mesmo alvo:
+        não existe o evento <code>ratingChange</code>. <strong>Como sair:</strong> declare com <code>model(0)</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="16-model" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Às vezes um componente precisa receber não um dado, mas um pedaço inteiro de HTML, como uma
+      moldura que aceita qualquer conteúdo. É o <code>ng-content</code>, no <vm-see-chapter [number]="17" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

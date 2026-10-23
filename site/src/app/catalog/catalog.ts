@@ -274,7 +274,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'input() e output()',
     description:
       'Faça os componentes conversarem: dados descem do pai para o filho com input() e eventos sobem do filho para o pai com output().',
-    minutes: 30,
+    minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '16-model',
@@ -283,7 +285,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'model()',
     description:
       'Crie as estrelas de nota do Passaporte com model() e entenda como um valor fica sincronizado entre o componente pai e o filho.',
-    minutes: 20,
+    minutes: 25,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '17-ng-content',
@@ -292,7 +296,9 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'ng-content',
     description:
       'Construa componentes moldura, como um cartão ou um painel, que recebem conteúdo de fora com ng-content e servem para muitas telas.',
-    minutes: 20,
+    minutes: 25,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '18-view-child',
