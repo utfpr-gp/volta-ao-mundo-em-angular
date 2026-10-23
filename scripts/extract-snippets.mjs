@@ -95,6 +95,9 @@ export async function extractStages(root) {
 
 export function renderModule(entries) {
   const sorted = [...entries].sort((a, b) => a.key.localeCompare(b.key));
+  // A chave ignora a extensão: card.ts e card.html virariam a mesma chave, e um sumiria em silêncio.
+  const repeated = sorted.filter((entry, i) => i > 0 && sorted[i - 1].key === entry.key).map((entry) => entry.key);
+  if (repeated.length) throw new Error(`Trechos com a mesma chave (só a extensão muda): ${repeated.join(', ')}`);
   const union = sorted.length ? sorted.map((entry) => `'${entry.key}'`).join(' | ') : 'never';
   const body = sorted
     .map((entry) => `  '${entry.key}': ${JSON.stringify({ lang: entry.lang, html: entry.html, source: entry.source })},`)

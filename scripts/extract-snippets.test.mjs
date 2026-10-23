@@ -87,3 +87,8 @@ test('extractStages reads the src files and package.json of each stage, skipping
   const keys = (await extractStages(root)).map((entry) => entry.key);
   assert.deepEqual(keys, ['05/etapa/package.json', '05/etapa/src/app/app.html', '05/etapa/src/main.ts']);
 });
+
+test('refuses two snippets whose key differs only by the extension', () => {
+  const entry = { key: '22/card', lang: 'text', html: '', source: '' };
+  assert.throws(() => renderModule([entry, { ...entry }]), /mesma chave.*22\/card/);
+});

@@ -1,0 +1,15 @@
+<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>🇯🇵 Japão</mat-card-title>
+    <mat-card-subtitle>Tóquio</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>123 milhões de habitantes</p>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button matButton="outlined">Detalhes</button>
+    <button matButton="filled" (click)="visited.update((v) => !v)">
+      {{ visited() ? 'Visitado ✓' : 'Visitar' }}
+    </button>
+  </mat-card-actions>
+</mat-card>

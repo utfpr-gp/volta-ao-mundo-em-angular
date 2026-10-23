@@ -1,0 +1,242 @@
+<vm-chapter-page slug="22-bibliotecas-de-componentes">
+  <vm-view kind="mission" title="O mesmo cartão, quatro vezes">
+    <p class="lead">
+      Até aqui, cada botão e cada cartão do Passaporte foi feito à mão. Em muitos projetos, a equipe começa de uma biblioteca
+      de componentes prontos. Neste capítulo, o cartão de país foi feito quatro vezes, em quatro bibliotecas, e o filtro de
+      países ganhou uma quinta.
+    </p>
+    <div class="not-prose my-6 grid gap-3 sm:grid-cols-2">
+      @for (shot of shots; track shot.file) {
+        <figure class="overflow-hidden rounded-2xl border border-line bg-surface-raised">
+          <img class="w-full" [src]="'imagens/capitulo-22/' + shot.file + '.png'" width="420" height="300" [alt]="shot.alt" />
+          <figcaption class="border-t border-line px-3 py-2 text-sm font-bold text-ink">{{ shot.name }}</figcaption>
+        </figure>
+      }
+    </div>
+    <p>
+      Todo o código deste capítulo foi testado num projeto novo do Angular 22. O Passaporte não muda: os experimentos ficam
+      num projeto à parte. Ao final, você vai saber o que cada biblioteca entrega, quanto ela pesa, o que a licença permite e
+      como escolher.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="Pronta, sob medida ou só o tecido">
+    <vm-analogy emoji="👕" title="Três jeitos de ter uma roupa">
+      <p>
+        Dá para comprar a roupa pronta na loja: veste na hora, mas fica com a cara da marca. Dá para levar o molde a uma
+        costureira: o molde passa a ser seu, e você ajusta o que quiser. E dá para comprar só o zíper e os botões, as peças
+        que fazem a roupa funcionar, e escolher todo o tecido.
+      </p>
+      <p>
+        Angular Material e PrimeNG são a roupa pronta. Spartan é o molde, que vem para dentro do seu projeto. Angular Aria é o
+        zíper: o comportamento funciona, e o visual é todo seu. E o daisyUI é uma coleção de estampas prontas para aplicar no
+        seu tecido, o Tailwind.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="As bibliotecas por dentro">
+    <h3>O que cada uma entrega</h3>
+    <table>
+      <thead>
+        <tr><th>Biblioteca</th><th>Entrega</th><th>Visual</th><th>Licença</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Angular Material</td><td>Componentes completos</td><td>Material Design, ajustável pelo tema</td><td>MIT</td></tr>
+        <tr><td>PrimeNG</td><td>Componentes completos, a maior coleção</td><td>Vários temas prontos</td><td>Chave de licença</td></tr>
+        <tr><td>daisyUI</td><td>Só classes CSS</td><td>Pronto, por cima do Tailwind</td><td>MIT</td></tr>
+        <tr><td>Spartan</td><td>Comportamento pronto e o código do visual</td><td>Tailwind, no seu projeto</td><td>MIT</td></tr>
+        <tr><td>Angular Aria</td><td>Só comportamento e acessibilidade</td><td>Nenhum: é todo seu</td><td>MIT</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Uma biblioteca <strong>headless</strong> ("sem cabeça") é a que entrega o comportamento sem nenhum visual: teclado,
+      foco, papéis de acessibilidade. Angular Aria é assim, e a parte de comportamento do Spartan também.
+    </p>
+
+    <h3>Angular Material</h3>
+    <p>
+      A biblioteca da própria equipe do Angular. O <code>ng add</code> instala, cria um tema e liga a fonte Roboto e os ícones:
+    </p>
+    <vm-code snippet="22/material-install" caption="terminal" />
+    <vm-code snippet="22/material-card" caption="country-card.ts" />
+    <vm-code snippet="22/material-template" caption="country-card.html" />
+    <p>
+      Cada parte do cartão é um componente: <code>mat-card-header</code>, <code>mat-card-title</code>,
+      <code>mat-card-actions</code>. O botão é um <code>&lt;button&gt;</code> comum com o atributo <code>matButton</code>, cujo
+      valor escolhe a aparência: <code>filled</code>, <code>outlined</code>, <code>tonal</code>, <code>elevated</code> ou
+      <code>text</code>. As cores vêm do tema do Material, e não dos seus tokens.
+    </p>
+
+    <h3>PrimeNG</h3>
+    <p>
+      A maior coleção de componentes do Angular, com tabelas cheias de recursos, calendários e gráficos. Instala-se com o npm
+      e liga-se no <code>app.config.ts</code>, escolhendo um tema:
+    </p>
+    <vm-code snippet="22/prime-install" caption="terminal" />
+    <vm-code snippet="22/prime-config" caption="app.config.ts" />
+    <vm-code snippet="22/prime-template" caption="country-card.html" />
+    <p>
+      O cartão recebe o título por input (<code>header</code>), e o rodapé vai num <code>ng-template</code> chamado
+      <code>#footer</code>. O clique do <code>p-button</code> é um output chamado <code>onClick</code>. O espaço entre os
+      botões fica no CSS do componente, e a fonte da página, no CSS global:
+    </p>
+    <vm-code snippet="22/prime-style" caption="country-card.css" />
+    <vm-code snippet="22/prime-font" caption="src/styles.css" />
+    <p>
+      <strong>A licença mudou.</strong> Até a versão 21, o PrimeNG era gratuito, sob a licença MIT. A versão 22 pede uma
+      <strong>chave de licença</strong>, que é gratuita para estudantes, pessoas físicas e equipes pequenas, e paga por pessoa
+      desenvolvedora nas demais empresas. Sem a chave, tudo funciona, mas aparece um aviso vermelho no canto da tela, como
+      na imagem acima. As condições estão no arquivo <code>LICENSE.md</code> do pacote e no site da PrimeUI.
+    </p>
+
+    <h3>daisyUI</h3>
+    <p>
+      Um plugin do Tailwind: em vez de componentes Angular, ele cria classes como <code>card</code> e <code>btn</code>. Não
+      há nada para importar no componente.
+    </p>
+    <vm-code snippet="22/daisy-install" caption="terminal" />
+    <vm-code snippet="22/daisy-styles" caption="src/styles.css" />
+    <vm-code snippet="22/daisy-card" caption="country-card.html" />
+    <p>
+      É o mais leve, porque é só CSS. Por isso mesmo, o comportamento fica com você: num menu que abre e fecha, quem cuida do
+      teclado, do foco e dos atributos de acessibilidade é o seu código.
+    </p>
+
+    <h3>Spartan</h3>
+    <p>
+      O Spartan tem duas partes. A <strong>brain</strong> é um pacote do npm com o comportamento, headless. A
+      <strong>helm</strong> é o visual em Tailwind, e não vem como pacote: o CLI <strong>copia o código para dentro do seu
+      projeto</strong>, na pasta <code>libs/ui</code>.
+    </p>
+    <vm-code snippet="22/spartan-install" caption="terminal" />
+    <p>
+      O <code>init</code> pergunta a qual app aplicar o tema e qual tema usar; o <code>ui</code> pergunta a pasta e o estilo.
+      As sugestões servem. O cartão usa diretivas nos elementos HTML:
+    </p>
+    <vm-code snippet="22/spartan-card" caption="country-card.ts" />
+    <vm-code snippet="22/spartan-template" caption="country-card.html" />
+    <p>E este é um dos arquivos que o CLI copiou para o projeto. Ele é seu: dá para mudar as classes à vontade.</p>
+    <vm-code snippet="22/spartan-hlm-card-title" caption="libs/ui/card/src/lib/hlm-card-title.ts" />
+
+    <h3>Angular Aria</h3>
+    <p>
+      O Angular Aria é da equipe do Angular, como o Material, mas não tem cartão: um cartão não tem comportamento. Ele entra
+      onde há interação, como o filtro de países, que é uma lista em que se escolhe uma opção:
+    </p>
+    <vm-code snippet="22/aria-install" caption="terminal" />
+    <vm-code snippet="22/aria-filter" caption="country-filter.ts" />
+    <vm-code snippet="22/aria-template" caption="country-filter.html" />
+    <img
+      class="not-prose my-4 rounded-2xl border border-line"
+      src="imagens/capitulo-22/aria.png"
+      width="420"
+      height="130"
+      alt="Três botões arredondados: Todos, em amarelo, selecionado; Visitados e Desejados, com borda cinza. Abaixo, o texto Mostrando: Todos."
+    />
+    <p>
+      O visual é todo do Tailwind. O que o <code>ngListbox</code> e o <code>ngOption</code> dão de graça: os papéis
+      <code>listbox</code> e <code>option</code> para os leitores de tela, o <code>aria-selected</code> na opção escolhida, e
+      as setas do teclado trocando a seleção. O <code>aria-selected:bg-amber-400</code> usa justamente esse atributo para
+      pintar a opção escolhida. Este livro usa o Aria nas abas e nas perguntas do desafio.
+    </p>
+
+    <vm-library-picker />
+
+    <vm-deep-dive title="E o Passaporte, adotaria qual?">
+      <p>
+        O Passaporte já tem Tailwind e tokens próprios. Material e PrimeNG trazem o próprio sistema de tema, e os tokens
+        teriam de ser traduzidos para ele. Spartan, ou daisyUI com Aria, encaixam com menos atrito, porque falam Tailwind. Mesmo
+        assim, o Passaporte segue com os componentes próprios: são poucos, simples, e servem para aprender.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="Um laboratório à parte">
+    <vm-steps label="Experimentar uma biblioteca">
+      <ng-template vmStep="O projeto">
+        <p>Fora da pasta do Passaporte, crie um projeto só para testar:</p>
+        <vm-code snippet="22/lab-new" caption="terminal" />
+      </ng-template>
+      <ng-template vmStep="A biblioteca">
+        <p>
+          Escolha uma das bibliotecas e rode os comandos de instalação dela, da seção anterior. Para o PrimeNG, acrescente
+          também o <code>providePrimeNG</code> ao <code>app.config.ts</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O cartão">
+        <p>
+          Gere um componente <code>country-card</code>, escreva o código da biblioteca escolhida e use
+          <code>&lt;app-country-card /&gt;</code> no <code>app.html</code>, no lugar da página de boas-vindas.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Comparar">
+        <p>Rode o build e procure a linha <code>Initial total</code>: é o tamanho que o navegador baixa ao abrir o app.</p>
+        <vm-code snippet="22/lab-build" caption="terminal" />
+        <p>
+          <strong>O que muda na tela:</strong> o cartão do Japão no visual da biblioteca; o botão "Visitar" vira "Visitado ✓".
+          Depois, troque de biblioteca num projeto novo e compare o visual, o código e o tamanho.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Peças que não encaixam">
+    <vm-pitfall title="Duas bibliotecas com os mesmos nomes" where="O que aparece na tela" message="(o cabeçalho do Passaporte fica roxo e o placar vira uma faixa fina)">
+      <img
+        class="not-prose my-4 w-full rounded-2xl border border-line"
+        src="imagens/capitulo-22/passaporte-com-daisyui.png"
+        width="1100"
+        height="500"
+        alt="O Passaporte com o daisyUI: o cabeçalho e o botão Marcar como visitado ficaram roxos, e o placar azul-marinho encolheu até virar uma faixa fina."
+      />
+      <p>
+        Foi o que aconteceu ao pôr o daisyUI no Passaporte. O tema do daisyUI também define um <code>--color-primary</code>,
+        roxo, que passou por cima do token do Passaporte. E o placar usa uma classe chamada <code>progress</code>, que no
+        daisyUI é a barra de progresso. <strong>Como sair:</strong> dê um prefixo às classes do daisyUI e desligue os temas
+        dele, para que ele use os seus tokens:
+      </p>
+      <vm-code snippet="22/daisy-prefix" caption="src/styles.css" />
+      <p>
+        Com o prefixo, as classes passam a ser <code>d-card</code>, <code>d-btn</code>. Na versão testada, o build mostra um
+        aviso de CSS vindo de uma animação do próprio daisyUI; o app funciona normalmente.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Sem a chave do PrimeNG" where="O aviso no canto da tela" message="Invalid PrimeUI License">
+      <p>
+        O PrimeNG 22 confere a chave de licença ao iniciar o app, sem conexão com a internet. Sem ela, tudo funciona, mas o
+        aviso aparece. <strong>Como sair:</strong> peça a licença gratuita da comunidade, se você se encaixa nela, e passe a
+        chave em <code>license</code> no <code>providePrimeNG</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Esquecer de importar o módulo" where="O que aparece na tela" message="(o botão aparece sem estilo nenhum, sem erro)">
+      <p>
+        Sem o <code>MatButtonModule</code> no <code>imports</code>, o <code>matButton="filled"</code> é só um atributo comum
+        num <code>&lt;button&gt;</code>, e o Angular não reclama. <strong>Como sair:</strong> quando um componente de biblioteca
+        aparece cru, confira primeiro o <code>imports</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Botões grudados" where="O que aparece na tela" message="(os dois botões do cartão do Material ficam encostados)">
+      <p>
+        O <code>mat-card-actions</code> não põe espaço entre os botões. <strong>Como sair:</strong> uma linha de CSS no
+        componente:
+      </p>
+      <vm-code snippet="22/material-style" caption="country-card.css" />
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="22-bibliotecas-de-componentes" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Você terminou a trilha Componentes. O Passaporte ainda é uma tela só; a próxima trilha, a
+      Navegação, dá a ele várias telas e endereços próprios: o <vm-see-chapter [number]="23" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
