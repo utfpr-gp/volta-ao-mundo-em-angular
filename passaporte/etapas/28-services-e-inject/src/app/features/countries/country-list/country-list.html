@@ -1,0 +1,35 @@
+<app-panel>
+  <span panel-title>🌍 Países</span>
+
+  <div class="flex gap-2">
+    @for (option of filters; track option.value) {
+      <button
+        type="button"
+        class="rounded-full border border-ink-muted px-4 py-1.5 font-bold"
+        [class.text-ink]="filter() !== option.value"
+        [class.bg-highlight]="filter() === option.value"
+        [class.border-highlight]="filter() === option.value"
+        [class.text-primary]="filter() === option.value"
+        (click)="filter.set(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+
+  <ul class="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-1">
+    @for (country of visible(); track country.code; let i = $index) {
+      <li>
+        <app-country-card
+          [country]="country"
+          [position]="i + 1"
+          (toggled)="passport.toggleVisited($event)"
+          (removed)="passport.remove($event)"
+        />
+      </li>
+    } @empty {
+      <li class="rounded-card border border-dashed border-line p-4 text-center text-ink-muted sm:col-span-2">Nenhum país aqui ainda.</li>
+    }
+  </ul>
+  <span panel-footer>{{ visible().length }} de {{ countries().length }} países</span>
+</app-panel>
