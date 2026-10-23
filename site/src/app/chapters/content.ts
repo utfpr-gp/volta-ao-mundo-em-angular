@@ -29,6 +29,7 @@ import { CHAPTER_28 } from './28-services-e-inject/content';
 import { CHAPTER_29 } from './29-http-client/content';
 import { CHAPTER_30 } from './30-rxjs/content';
 import { CHAPTER_31 } from './31-to-signal/content';
+import { CHAPTER_32 } from './32-resource-e-http-resource/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -64,4 +65,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '29-http-client': CHAPTER_29,
   '30-rxjs': CHAPTER_30,
   '31-to-signal': CHAPTER_31,
+  '32-resource-e-http-resource': CHAPTER_32,
 };

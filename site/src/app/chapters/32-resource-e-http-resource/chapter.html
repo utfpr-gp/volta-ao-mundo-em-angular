@@ -1,0 +1,194 @@
+<vm-chapter-page slug="32-resource-e-http-resource">
+  <vm-view kind="mission" title="O tempo agora, em qualquer capital">
+    <p class="lead">
+      A aba Clima conhecia seis países, com um texto fixo. Neste capítulo, ela mostra o tempo de verdade, agora, na capital
+      de qualquer um dos 195, buscado numa API de previsão do tempo. E o service perde o <code>subscribe</code> e o signal de
+      status que ele mantinha à mão.
+    </p>
+    <figure class="not-prose my-6 overflow-hidden rounded-2xl border border-line">
+      <img class="w-full" src="imagens/capitulo-32/clima-agora.png" width="1000" height="460" alt="A página da Islândia, aba Clima: agora em Reykjavík, 0,4 °C, céu limpo, com botões para trocar entre °C e °F e a fonte Open-Meteo." />
+      <figcaption class="border-t border-line bg-surface-raised px-3 py-2 font-mono text-sm text-ink">localhost:4200/paises/IS/clima</figcaption>
+    </figure>
+    <p>
+      As duas mudanças usam a mesma ferramenta: o <vm-term name="resource">resource</vm-term>, um signal para dados que vêm de
+      fora. Ao final do capítulo, você vai saber buscar dados com <code>httpResource()</code> e <code>resource()</code>,
+      mostrar carregando, erro e resultado, e fazer a busca se repetir sozinha quando um signal muda.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O painel de chegadas">
+    <vm-analogy emoji="🛬" title="O voo no painel do aeroporto">
+      <p>
+        No painel de chegadas, cada voo tem um status: "no horário", "atrasado", "pousou", "cancelado". Quem espera alguém
+        não liga para a companhia a cada minuto: olha o painel, que se atualiza sozinho. E, se o voo mudar, o painel passa a
+        mostrar o novo.
+      </p>
+      <p>
+        Um resource é uma linha desse painel. Ele sabe se está carregando, se deu certo ou se deu erro, e guarda o valor quando
+        chega. E, se o que ele busca depende de um signal, como o país ou a unidade de temperatura, ele busca de novo sozinho
+        quando o signal muda.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Resources por dentro">
+    <h3>httpResource: uma requisição que vira signal</h3>
+    <p>
+      O <code>httpResource()</code> recebe uma função que devolve a URL, faz o GET com o <code>HttpClient</code> e guarda o
+      resultado. Ele não precisa de <code>subscribe</code>, nem de signal de status: ele mesmo é o status.
+    </p>
+    <vm-code snippet="32/etapa/src/app/core/passport.ts" caption="core/passport.ts" />
+    <p>Um resource tem vários signals:</p>
+    <table>
+      <thead>
+        <tr><th>Signal</th><th>O que diz</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>status()</code></td><td><code>'idle'</code>, <code>'loading'</code>, <code>'reloading'</code>, <code>'resolved'</code>, <code>'error'</code> ou <code>'local'</code></td></tr>
+        <tr><td><code>isLoading()</code></td><td>Se está buscando agora, pela primeira vez ou de novo</td></tr>
+        <tr><td><code>value()</code></td><td>O valor; <code>undefined</code> enquanto não chega, e lança um erro se o status for <code>'error'</code></td></tr>
+        <tr><td><code>hasValue()</code></td><td>Se há um valor que dá para ler sem susto</td></tr>
+        <tr><td><code>error()</code></td><td>O erro, quando houver</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Por isso o service sempre pergunta <code>hasValue()</code> antes de ler o <code>value()</code>. E, como no
+      <vm-see-chapter [number]="28" />, ele expõe uma versão somente leitura, com <code>asReadonly()</code>: as telas olham o
+      status, mas não escrevem. A lista usa esses signals direto no template:
+    </p>
+    <vm-code snippet="32/etapa/src/app/features/countries/country-list/country-list.html" caption="country-list.html" />
+
+    <h3>Escrever no resource: o estado local</h3>
+    <p>
+      O <code>set()</code> e o <code>update()</code> de um resource trocam o valor na hora, sem requisição, e o status passa a
+      <code>'local'</code>. É o que o <code>toggleVisited</code> faz com o passaporte salvo: muda o valor no resource e, em
+      seguida, manda o PUT. O PUT continua com o <code>HttpClient</code> e o <code>subscribe</code>, como no
+      <vm-see-chapter [number]="29" />: o resource é para <strong>buscar</strong>; para <strong>salvar</strong>, uma ação.
+    </p>
+
+    <h3>Uma busca que depende de signals</h3>
+    <p>A aba Clima pede o tempo à Open-Meteo, uma API gratuita e sem chave, com as coordenadas da capital:</p>
+    <vm-code snippet="32/etapa/src/app/features/country-detail/country-weather/country-weather.ts" caption="country-weather.ts" />
+    <ul>
+      <li>
+        A função lê dois signals, o país e a unidade. Quando um deles muda, o resource faz outra requisição; se a anterior
+        ainda estiver a caminho, ela é <strong>cancelada</strong>, como o <code>switchMap</code> do
+        <vm-see-chapter [number]="30" />.
+      </li>
+      <li>Se a função devolver <code>undefined</code>, não há requisição, e o resource fica <code>'idle'</code>.</li>
+      <li>
+        No lugar de montar a URL à mão, um objeto com <code>url</code> e <code>params</code>: o Angular monta a parte do
+        <code>?latitude=…&amp;longitude=…</code>.
+      </li>
+    </ul>
+    <p>
+      As coordenadas de cada capital foram para a API de países do livro, junto com o nome e a população. O template mostra
+      cada situação:
+    </p>
+    <vm-code snippet="32/etapa/src/app/features/country-detail/country-weather/country-weather.html" caption="country-weather.html" />
+    <p>
+      Repare no <code>[class.opacity-50]="weather.isLoading()"</code>: ao trocar a unidade, a temperatura antiga fica clara
+      enquanto a nova não chega. No status <code>'reloading'</code>, o valor anterior continua disponível.
+    </p>
+
+    <vm-resource-sim />
+
+    <vm-deep-dive title="resource() sem HttpClient">
+      <p>
+        O <code>httpResource()</code> é o atalho para requisições. O <code>resource()</code> aceita qualquer carregamento que
+        devolva uma <vm-term name="promise">Promise</vm-term>: um <code>fetch</code>, uma biblioteca de terceiros, um banco de
+        dados no navegador. O <code>params</code> diz do que ele depende, e o <code>loader</code> carrega; o
+        <code>abortSignal</code> avisa quando a busca foi cancelada.
+      </p>
+      <vm-code snippet="32/resource-loader" caption="o clima com resource() e fetch" />
+      <p>
+        Prefira o <code>httpResource()</code> quando for HTTP: ele passa pelo <code>HttpClient</code>, e funciona com os
+        interceptors do <vm-see-chapter [number]="39" /> e com o <code>HttpTestingController</code> dos testes.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="Como testar um httpResource">
+      <p>
+        O resource só pede os dados quando o Angular roda os efeitos, e só entrega a resposta depois que o app se estabiliza.
+        Nos testes do Passaporte, a sequência é: <code>TestBed.tick()</code>, para a requisição sair; responder com o
+        <code>HttpTestingController</code>; e esperar o <code>whenStable()</code>:
+      </p>
+      <vm-code snippet="32/etapa/src/testing/passport-testing.ts" caption="src/testing/passport-testing.ts" />
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="Resources no Passaporte">
+    <vm-steps label="Trocar o subscribe por resources">
+      <ng-template vmStep="O service">
+        <p>
+          O <code>ApiCountry</code> ganha <code>lat</code> e <code>lon</code>. No <code>passport.ts</code>, troque os dois
+          <code>subscribe</code> do <code>load()</code> por dois <code>httpResource</code>, apague o <code>status</code> e o
+          <code>load()</code>, e acrescente o <code>reloadCountries()</code>, como na seção anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="As telas">
+        <p>
+          Na lista e na página do país, troque o <code>passport.status()</code> pelos signals do resource:
+          <code>passport.catalog.isLoading()</code>, <code>passport.catalog.error()</code> e
+          <code>passport.catalog.hasValue()</code>. O "Tentar de novo" chama <code>passport.reloadCountries()</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O clima">
+        <p>
+          Apague o <code>countries.ts</code>, com o <code>CLIMATES</code>, e escreva a aba do clima e a função
+          <code>describeWeather</code>:
+        </p>
+        <vm-code snippet="32/etapa/src/app/features/country-detail/country-weather/weather-description.ts" caption="weather-description.ts" />
+        <p>
+          <strong>O que muda na tela:</strong> abra qualquer país e a aba Clima: aparece "Buscando o tempo…" e, um instante
+          depois, a temperatura de agora na capital. Troque para °F e veja a temperatura antiga ficar clara até a nova chegar.
+          Desligue a internet e troque de país: aparece o erro, com o botão de tentar de novo.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Respostas que não encaixam">
+    <vm-pitfall title="Ler o value() sem conferir" where="O que o Angular mostra no terminal" message="✘ [ERROR] TS2532: Object is possibly 'undefined'.">
+      <vm-code snippet="32/sem-guarda" caption="country-weather.ts" />
+      <p>
+        Antes de a resposta chegar, o <code>value()</code> é <code>undefined</code>, e o TypeScript avisa. E, se a API falhar,
+        ler o <code>value()</code> lança "Resource is currently in an error state". <strong>Como sair:</strong> confira com
+        <code>hasValue()</code> antes de ler.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Criar o resource num método"
+      where="O que aparece no console do navegador"
+      message="NG0203: httpResource() can only be used within an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`."
+    >
+      <vm-code snippet="32/no-metodo" caption="country-weather.ts" />
+      <p>
+        O resource é criado uma vez, num campo da classe, e se atualiza sozinho quando os signals que ele lê mudam.
+        <strong>Como sair:</strong> em vez de criar outro, mude o signal de que ele depende, como o <code>unit</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Salvar com httpResource" where="O que aparece na aba Network" message="(um PUT a cada mudança de signal, inclusive quando ninguém clicou em nada)">
+      <vm-code snippet="32/put-com-resource" caption="passport.ts" />
+      <p>
+        O resource refaz a requisição sempre que um signal que ele lê muda: para buscar, é ótimo; para salvar, é perigoso, e
+        a documentação do Angular recomenda não usar assim. <strong>Como sair:</strong> buscar com resource; salvar com o
+        <code>HttpClient</code>, quando a pessoa fizer algo.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="32-resource-e-http-resource" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O passaporte depende do json-server ligado. Seria bom guardar uma cópia no próprio navegador,
+      e salvar lá sempre que algo mudar. Rodar código quando um signal muda é o assunto do <vm-see-chapter [number]="33" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

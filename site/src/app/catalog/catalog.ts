@@ -464,6 +464,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Busque dados que dependem de signals com resource() e httpResource(), mostrando carregando, erro e resultado sem escrever subscribe.',
     minutes: 30,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '33-effect',

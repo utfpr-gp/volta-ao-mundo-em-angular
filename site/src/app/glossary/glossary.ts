@@ -248,6 +248,12 @@ export const GLOSSARY = {
       'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
     chapter: 3,
   },
+  resource: {
+    term: 'Resource',
+    definition:
+      'Um signal para dados que chegam de fora: busca o valor quando os parâmetros mudam e informa o status (carregando, pronto, erro). O httpResource é o resource feito para requisições HTTP.',
+    chapter: 32,
+  },
   rota: {
     term: 'Rota',
     definition:
