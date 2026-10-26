@@ -121,6 +121,18 @@ export const GLOSSARY = {
     definition: 'Os parênteses ( ) no template, como (click)="salvar()": chamam um método da classe quando um evento acontece na tela.',
     chapter: 8,
   },
+  'form-control': {
+    term: 'FormControl',
+    definition:
+      'Nos Reactive Forms, o objeto que guarda o valor e o estado de um campo do formulário: se mudou, se foi tocado, se é válido. Liga-se ao HTML com formControlName.',
+    chapter: 34,
+  },
+  'form-group': {
+    term: 'FormGroup',
+    definition:
+      'Nos Reactive Forms, o objeto que junta os FormControl de um formulário. O value dele é um objeto com o valor de cada campo. Liga-se ao <form> com [formGroup].',
+    chapter: 34,
+  },
   framework: {
     term: 'Framework',
     definition:

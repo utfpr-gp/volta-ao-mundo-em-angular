@@ -38,4 +38,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '32-resource-e-http-resource': () =>
     import('./32-resource-e-http-resource/chapter').then((m) => m.Chapter32),
   '33-effect': () => import('./33-effect/chapter').then((m) => m.Chapter33),
+  '34-reactive-forms': () => import('./34-reactive-forms/chapter').then((m) => m.Chapter34),
 };

@@ -1,0 +1,190 @@
+<vm-chapter-page slug="34-reactive-forms">
+  <vm-view kind="mission" title="O diário de viagens">
+    <p class="lead">
+      Até aqui, a única coisa que se escrevia no Passaporte era uma anotação. Neste capítulo, a página "Meu passaporte" ganha
+      um formulário de verdade: para onde você foi, quando chegou, quantos dias ficou, como viajou e com quem. Cada viagem
+      registrada vai para um diário e carimba o país.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-34/formulario.png"
+      width="1150"
+      height="600"
+      alt="A página Meu passaporte: à esquerda, o formulário Registrar viagem, com país Islândia, data de chegada, 7 dias, companhia Bia e o transporte avião marcado; à direita, o Diário de viagens com Japão, chegada em 03/04/2026, 12 dias de navio com Ana, e Portugal, em 10/07/2025, 5 dias de avião."
+    />
+    <p>
+      Ao final do capítulo, você vai saber montar um formulário com <strong>Reactive Forms</strong>: um
+      <code>FormGroup</code> na classe, ligado ao HTML campo a campo, com valores iniciais e o envio dos dados.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O formulário da imigração, de novo">
+    <vm-analogy emoji="🧾" title="Um modelo na classe, um papel na tela">
+      <p>
+        No aeroporto, o formulário de entrada tem um campo para cada informação, e o agente lê o formulário inteiro de uma vez
+        quando você entrega. Ele também sabe dizer, só de olhar, se você mexeu em algum campo ou se o deixou como veio.
+      </p>
+      <p>
+        Nos Reactive Forms, o formulário existe primeiro na classe: um <vm-term name="form-group">FormGroup</vm-term>, com um
+        <vm-term name="form-control">FormControl</vm-term> para cada campo. O HTML só mostra os campos e os liga ao modelo. Quem
+        guarda os valores, e sabe se algo mudou, é o objeto na classe.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Reactive Forms por dentro">
+    <h3>O modelo do formulário</h3>
+    <vm-code snippet="34/etapa/src/app/features/passport/trip-form/trip-form.ts" caption="trip-form.ts" />
+    <ul>
+      <li>
+        O <code>NonNullableFormBuilder</code> é um ajudante, pedido com <code>inject()</code>, que monta o
+        <code>FormGroup</code>. Cada propriedade do objeto vira um <code>FormControl</code>, com o valor inicial ao lado:
+        hoje, 7 dias, de avião.
+      </li>
+      <li>
+        O tipo de cada campo vem do valor inicial: <code>days</code> é <code>number</code>, <code>country</code> é
+        <code>string</code>. O <code>as Transport</code> diz que o transporte só aceita os quatro valores do tipo.
+      </li>
+      <li>
+        O "NonNullable" do nome muda o <code>reset()</code>: ele volta aos valores iniciais, e não a <code>null</code>.
+      </li>
+      <li>
+        O <code>getRawValue()</code> devolve um objeto com o valor de todos os campos, já no formato do <code>Trip</code>,
+        e o <code>submit()</code> o entrega ao service.
+      </li>
+    </ul>
+    <vm-code snippet="34/etapa/src/app/core/trip.ts" caption="core/trip.ts" />
+    <vm-deep-dive title="E sem o FormBuilder?">
+      <p>O FormBuilder só encurta. O mesmo formulário, escrito à mão:</p>
+      <vm-code snippet="34/a-mao" caption="trip-form.ts" />
+    </vm-deep-dive>
+
+    <h3>Ligar o modelo ao HTML</h3>
+    <vm-code snippet="34/etapa/src/app/features/passport/trip-form/trip-form.html" caption="trip-form.html" />
+    <ul>
+      <li><code>[formGroup]="form"</code> liga o <code>&lt;form&gt;</code> ao <code>FormGroup</code> da classe.</li>
+      <li>
+        <code>formControlName="country"</code> liga cada campo ao <code>FormControl</code> de mesmo nome. Vale para
+        <code>input</code>, <code>select</code> e rádios: nos rádios, cada um diz o seu <code>[value]</code>.
+      </li>
+      <li>
+        <code>(ngSubmit)</code> é o envio: dispara com o clique no botão do tipo <code>submit</code> ou com o Enter num
+        campo, e o Angular impede o navegador de recarregar a página.
+      </li>
+      <li>O componente importa o <code>ReactiveFormsModule</code>, que traz todas essas diretivas.</li>
+    </ul>
+
+    <vm-form-sim />
+
+    <h3>Guardar a viagem</h3>
+    <p>
+      O passaporte salvo ganhou uma lista de viagens. O <code>addTrip</code> acrescenta a viagem e carimba o país, e o resto
+      já funciona sozinho desde os capítulos anteriores: o PUT no json-server e a cópia no navegador.
+    </p>
+    <vm-code snippet="34/etapa/src/app/core/passport.ts" caption="core/passport.ts" />
+    <p>
+      O <code>trips</code> é opcional no tipo porque passaportes salvos antes deste capítulo não têm a lista; o
+      <code>?? []</code> trata os dois casos. A página mostra o diário, do mais recente para o mais antigo:
+    </p>
+    <vm-code snippet="34/etapa/src/app/features/passport/passport-page/passport-page.html" caption="passport-page.html" />
+
+    <vm-deep-dive title="Reactive Forms, template-driven e Signal Forms">
+      <p>
+        O Angular tem três jeitos de fazer formulários. Nos <strong>template-driven</strong>, o modelo fica no HTML, com
+        <code>[(ngModel)]</code>: rápidos para formulários pequenos, mas difíceis de testar e validar. Nos
+        <strong>Reactive Forms</strong>, deste capítulo, o modelo fica na classe. E os <strong>Signal Forms</strong>, os mais
+        novos, usam um signal como modelo: eles são o assunto do <vm-see-chapter [number]="36" />.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O formulário de viagem">
+    <vm-steps label="Criar o formulário de viagem">
+      <ng-template vmStep="A viagem">
+        <p>
+          Crie o <code>core/trip.ts</code> e, no <code>passport.ts</code>, acrescente o <code>trips</code> ao
+          <code>SavedPassport</code>, o signal <code>trips</code> e o método <code>addTrip</code>. No <code>db.json</code>, a
+          lista vazia:
+        </p>
+        <vm-code snippet="34/db" caption="db.json" />
+      </ng-template>
+      <ng-template vmStep="O formulário">
+        <vm-code snippet="34/ng-generate" caption="terminal" />
+        <p>Apague o <code>.css</code> e a linha <code>styleUrl</code>, e escreva a classe e o template da seção anterior.</p>
+      </ng-template>
+      <ng-template vmStep="A página">
+        <p>
+          Na <code>PassportPage</code>, importe o <code>TripForm</code>, o <code>DatePipe</code> e o <code>FlagPipe</code>, crie
+          o <code>diary</code> e troque o template.
+        </p>
+        <vm-code snippet="34/etapa/src/app/features/passport/passport-page/passport-page.ts" caption="passport-page.ts" />
+        <p>
+          <strong>O que muda na tela:</strong> abra "Meu passaporte", escolha a Islândia, mude os dias e registre: a viagem
+          aparece no diário, a Islândia ganha o carimbo, e o formulário volta ao começo. Recarregue a página: a viagem continua
+          lá.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Campos que não se ligam">
+    <vm-pitfall
+      title="Esquecer o ReactiveFormsModule"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG8002: Can't bind to 'formGroup' since it isn't a known property of 'form'."
+    >
+      <p>
+        O <code>[formGroup]</code> e o <code>formControlName</code> são diretivas, e vêm do <code>ReactiveFormsModule</code>.
+        <strong>Como sair:</strong> acrescente-o ao <code>imports</code> do componente.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Um campo sem o formulário em volta"
+      where="O que aparece no console do navegador"
+      message="NG01050: formControlName must be used with a parent formGroup or formArray directive."
+    >
+      <vm-code snippet="34/sem-formgroup" caption="trip-form.html" />
+      <p>
+        O <code>formControlName</code> procura o <code>FormGroup</code> no elemento de fora. <strong>Como sair:</strong> o
+        campo precisa estar dentro do <code>&lt;form [formGroup]="form"&gt;</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O nome errado" where="O que aparece no console do navegador" message="Error: Cannot find control with name: 'contry'">
+      <vm-code snippet="34/nome-errado" caption="trip-form.html" />
+      <p>
+        O nome no HTML tem de ser igual ao da chave no <code>FormGroup</code>. <strong>Como sair:</strong> a mensagem diz o nome
+        que não existe; confira a grafia.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O número que virou texto" where="O que aparece no diário" message='(a viagem fica com "days": "12", entre aspas)'>
+      <vm-code snippet="34/tipo-texto" caption="trip-form.html" />
+      <p>
+        Com <code>type="text"</code>, o campo entrega o que foi digitado, um texto, e o TypeScript não tem como perceber: para
+        ele, o campo continua sendo um número. No simulador, ligue a opção do <code>type="text"</code> e veja.
+        <strong>Como sair:</strong> <code>type="number"</code>, que o Angular converte em número.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O formulário aceita tudo" where="O que aparece no diário" message="(uma viagem sem país, com -3 dias)">
+      <p>
+        Nada impede de registrar uma viagem sem escolher o país, ou com dias negativos. Falta validar. <strong>Como
+        sair:</strong> é o assunto do próximo capítulo.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="34-reactive-forms" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O formulário aceita uma viagem sem país e com dias negativos. A próxima parada ensina o
+      formulário a recusar o que não faz sentido, com mensagens claras: o <vm-see-chapter [number]="35" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
