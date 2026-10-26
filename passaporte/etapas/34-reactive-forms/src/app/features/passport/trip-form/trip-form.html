@@ -1,0 +1,44 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="rounded-card border border-line bg-card p-5 text-ink shadow-sm">
+  <h2 class="mb-4 text-xl font-extrabold">✍️ Registrar viagem</h2>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <label class="flex flex-col gap-1 font-bold">
+      País
+      <select formControlName="country" class="rounded-lg border border-line bg-surface px-3 py-2 font-normal">
+        <option value="">Escolha um país</option>
+        @for (country of passport.countries(); track country.code) {
+          <option [value]="country.code">{{ country.name }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="flex flex-col gap-1 font-bold">
+      Chegada
+      <input type="date" formControlName="arrival" class="rounded-lg border border-line bg-surface px-3 py-2 font-normal" />
+    </label>
+
+    <label class="flex flex-col gap-1 font-bold">
+      Quantos dias
+      <input type="number" formControlName="days" min="1" class="rounded-lg border border-line bg-surface px-3 py-2 font-normal" />
+    </label>
+
+    <label class="flex flex-col gap-1 font-bold">
+      Com quem
+      <input formControlName="companion" placeholder="Sozinho, com a família…" class="rounded-lg border border-line bg-surface px-3 py-2 font-normal" />
+    </label>
+  </div>
+
+  <fieldset class="mt-4">
+    <legend class="font-bold">Transporte</legend>
+    <div class="mt-1 flex flex-wrap gap-3">
+      @for (option of transports; track option.value) {
+        <label class="flex cursor-pointer items-center gap-2">
+          <input type="radio" formControlName="transport" [value]="option.value" class="size-4" />
+          {{ option.label }}
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <button type="submit" class="mt-5 rounded-full bg-primary px-5 py-2 font-bold text-on-primary">Registrar viagem</button>
+</form>

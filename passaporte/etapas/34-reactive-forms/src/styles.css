@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens do Passaporte: cada valor tem um nome de papel, e não de aparência.
+ * O Tailwind transforma cada --color-* em classes como bg-primary e text-ink.
+ */
+@theme {
+  --color-primary: #12263a;
+  --color-primary-soft: #1c3550;
+  --color-on-primary: #ffffff;
+  --color-on-primary-muted: #c9d6e3;
+  --color-surface: #fbf8f1;
+  --color-card: #ffffff;
+  --color-ink: #1e2430;
+  --color-ink-muted: #5b6474;
+  --color-line: #e7e1d3;
+  --color-highlight: #d99a1e;
+  --color-stamp: #c8102e;
+  --radius-card: 0.75rem;
+  --font-sans: system-ui, sans-serif;
+  --font-stamp: 'Courier New', ui-monospace, monospace;
+}
+
+/* Modo escuro: os mesmos nomes, outros valores. Nenhum componente precisa mudar. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #0a1622;
+    --color-primary-soft: #24476b;
+    --color-surface: #0f1c2b;
+    --color-card: #16283b;
+    --color-ink: #e8eef5;
+    --color-ink-muted: #a7b6c6;
+    --color-line: #2a3f55;
+    --color-highlight: #f2b544;
+    --color-stamp: #ff5a6e;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}

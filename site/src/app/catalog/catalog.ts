@@ -487,6 +487,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Monte o formulário de viagem do Passaporte com Reactive Forms: FormGroup, FormControl, valores iniciais e o envio dos dados.',
     minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '35-validacao',

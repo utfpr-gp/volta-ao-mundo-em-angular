@@ -31,6 +31,7 @@ import { CHAPTER_30 } from './30-rxjs/content';
 import { CHAPTER_31 } from './31-to-signal/content';
 import { CHAPTER_32 } from './32-resource-e-http-resource/content';
 import { CHAPTER_33 } from './33-effect/content';
+import { CHAPTER_34 } from './34-reactive-forms/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -68,4 +69,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '31-to-signal': CHAPTER_31,
   '32-resource-e-http-resource': CHAPTER_32,
   '33-effect': CHAPTER_33,
+  '34-reactive-forms': CHAPTER_34,
 };

@@ -5,7 +5,7 @@ import { writeFileSync } from 'node:fs';
 const [url, out, width, height, script = ''] = process.argv.slice(2);
 const port = 9333;
 const { spawn } = await import('node:child_process');
-const chrome = spawn('google-chrome', ['--headless=new', `--remote-debugging-port=${port}`, '--hide-scrollbars', '--blink-settings=preferredColorScheme=1', `--window-size=${width},${height}`, 'about:blank'], { stdio: 'ignore' });
+const chrome = spawn('google-chrome', ['--headless=new', `--remote-debugging-port=${port}`, '--hide-scrollbars', '--blink-settings=preferredColorScheme=1', '--lang=pt-BR', `--window-size=${width},${height}`, 'about:blank'], { stdio: 'ignore' });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let targets;
 for (let i = 0; i < 50; i++) { try { targets = await (await fetch(`http://localhost:${port}/json`)).json(); break; } catch { await sleep(200); } }
@@ -15,6 +15,7 @@ await new Promise((r) => ws.addEventListener('open', r));
 let id = 0; const pending = new Map();
 ws.addEventListener('message', (e) => { const m = JSON.parse(e.data); if (pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } });
 const send = (method, params = {}) => new Promise((r) => { const i = ++id; pending.set(i, r); ws.send(JSON.stringify({ id: i, method, params })); });
+await send('Emulation.setLocaleOverride', { locale: 'pt-BR' });
 await send('Emulation.setDeviceMetricsOverride', { width: +width, height: +height, deviceScaleFactor: 1, mobile: false });
 await send('Page.navigate', { url });
 await sleep(4000);
