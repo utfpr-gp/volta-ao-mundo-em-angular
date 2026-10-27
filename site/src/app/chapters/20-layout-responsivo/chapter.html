@@ -58,6 +58,7 @@
         <tr><td><code>md:</code></td><td>768 px</td><td>tablet</td></tr>
         <tr><td><code>lg:</code></td><td>1024 px</td><td>notebook</td></tr>
         <tr><td><code>xl:</code></td><td>1280 px</td><td>monitor</td></tr>
+        <tr><td><code>2xl:</code></td><td>1536 px</td><td>monitor grande</td></tr>
       </tbody>
     </table>
     <p>
@@ -65,6 +66,33 @@
       ler é o <vm-term name="mobile-first">mobile-first</vm-term>: o celular é o ponto de partida, e cada prefixo é uma
       mudança para as telas maiores.
     </p>
+
+    <h4>O mesmo nome, escalas diferentes</h4>
+    <p>
+      Os nomes <code>sm</code>, <code>md</code>, <code>lg</code> e <code>xl</code> vêm dos tamanhos de roupa em inglês:
+      <em>small</em>, <em>medium</em>, <em>large</em> e <em>extra large</em>, e daí <code>2xl</code>, <code>3xl</code>… para
+      os maiores. O Tailwind usa essa mesma régua de roupa em <strong>várias escalas</strong>, e o valor depende de onde o
+      nome aparece:
+    </p>
+    <table>
+      <thead>
+        <tr><th>Escrito assim</th><th>Escala</th><th>O <code>xl</code> vale</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>xl:flex</code>, com dois-pontos, na frente</td><td>breakpoint: a largura da <strong>tela</strong></td><td>1280 px</td></tr>
+        <tr><td><code>max-w-xl</code></td><td>largura máxima de um <strong>elemento</strong></td><td>576 px</td></tr>
+        <tr><td><code>text-xl</code></td><td>tamanho da <strong>letra</strong></td><td>20 px</td></tr>
+        <tr><td><code>rounded-xl</code></td><td>arredondamento dos <strong>cantos</strong></td><td>12 px</td></tr>
+      </tbody>
+    </table>
+    <p>
+      A regra para não confundir: <strong>com dois-pontos, é tela</strong>; no fim do nome da classe, é o tamanho daquela
+      coisa. E por trás de todos esses números está o <code>rem</code>: o Tailwind escreve os tamanhos em <code>rem</code>,
+      e cada <code>1rem</code> vale 16 px, o tamanho padrão da letra. O <code>sm:</code> é <code>40rem</code> (640 px), e o
+      <code>text-xl</code> é <code>1.25rem</code> (20 px). Então <code>xl:text-xl</code> quer dizer "a partir de 1280 px de tela, letra de 20 px". E o
+      <code>max-w-6xl</code> que aparece logo abaixo, no layout do Passaporte, é tamanho de caixa, e não de tela.
+    </p>
+
     <p>
       Tudo isso depende de uma linha que o Angular CLI já põe no <code>src/index.html</code> quando cria o projeto. Ela diz
       ao celular que use a largura real da tela, em vez de fingir que é um computador e encolher a página:
@@ -76,7 +104,12 @@
     <vm-code snippet="20/etapa/src/app/app.html" caption="app.html" />
     <p>Leia as classes do <code>&lt;main&gt;</code> em partes:</p>
     <ul>
-      <li><code>mx-auto max-w-6xl</code>: no máximo 1152 px de largura, centralizado. Num monitor grande, o conteúdo não se espalha até as bordas.</li>
+      <li>
+        <code>mx-auto max-w-6xl</code>: no máximo 1152 px de largura, centralizado. Num monitor grande, o conteúdo não se
+        espalha até as bordas. De onde vem o 1152: o Tailwind define o <code>max-w-6xl</code> como <code>72rem</code>, e
+        <code>1rem</code> é o tamanho padrão da letra do navegador, 16 px. Então 72 × 16 = 1152 px. É o
+        <code>6xl</code> da escala de larguras, e não de telas.
+      </li>
       <li><code>p-4 sm:p-6</code>: espaço interno de 16 px no celular, de 24 px a partir de 640 px.</li>
       <li><code>grid gap-6</code>: uma grade, com 24 px entre os blocos. Sem colunas declaradas, é uma coluna só.</li>
       <li>
