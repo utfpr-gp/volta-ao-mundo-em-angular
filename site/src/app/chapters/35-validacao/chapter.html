@@ -1,0 +1,258 @@
+<vm-chapter-page slug="35-validacao">
+  <vm-view kind="mission" title="Um formulário que sabe dizer não">
+    <p class="lead">
+      O diário de viagens do capítulo anterior aceita tudo: uma viagem sem país, com dias negativos, com chegada no ano que
+      vem. Neste capítulo, o formulário passa a conferir cada campo, explica o que está errado com uma frase clara e só libera
+      o botão quando tudo faz sentido.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-35/formulario-com-erros.png"
+      width="1150"
+      height="600"
+      alt="O formulário Registrar viagem com três mensagens em vermelho: escolha para qual país você viajou; a viagem tem de durar de 1 a 365 dias; use só letras, espaços, apóstrofo e hífen. O botão Registrar viagem está apagado, com o aviso: escolha o país e confira os campos marcados para liberar o botão."
+    />
+    <p>
+      Ao final do capítulo, você vai saber usar os <vm-term name="validador">validadores</vm-term> prontos do Angular,
+      escrever um validador seu, conferir texto com uma <vm-term name="regex">regex</vm-term> e decidir a hora certa de mostrar
+      cada mensagem.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O guichê da imigração">
+    <vm-analogy emoji="🛂" title="Quem confere o formulário">
+      <p>
+        No guichê da imigração, o agente lê o seu formulário campo por campo. Se a data de chegada está no futuro ou falta o
+        número do passaporte, ele não diz só "está errado": aponta o campo e diz o que corrigir. E ele não reclama de um campo
+        em branco enquanto você ainda está escrevendo; espera você terminar.
+      </p>
+      <p>
+        No Angular, cada campo ganha a sua lista de regras, os validadores. Eles conferem o valor a cada mudança, e o formulário
+        sabe a qualquer momento se está tudo certo. Quando mostrar a reclamação, e com que palavras, é decisão sua.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Validação por dentro">
+    <h3>As regras de cada campo</h3>
+    <p>No <code>group</code>, cada campo deixa de ser só um valor inicial: vira uma lista com o valor e as regras.</p>
+    <vm-code snippet="35/etapa/src/app/features/passport/trip-form/trip-form.ts" caption="trip-form.ts" />
+    <ul>
+      <li>
+        <code>Validators</code> vem do <code>&#64;angular/forms</code> e traz os validadores prontos. Uma regra vai sozinha
+        (<code>Validators.required</code>); várias vão numa lista.
+      </li>
+      <li>
+        O Angular roda as regras a cada mudança. O campo fica com <code>status</code> <code>VALID</code> ou
+        <code>INVALID</code>, e o <code>errors</code> diz quais regras falharam. O formulário inteiro é inválido se qualquer campo
+        for.
+      </li>
+    </ul>
+    <p>Cada validador, quando falha, deixa um erro com um nome e alguns detalhes:</p>
+    <vm-code snippet="35/validadores-prontos" caption="os validadores prontos e o erro de cada um" />
+
+    <h3>Uma regra que o Angular não tem: o validador próprio</h3>
+    <p>
+      Nenhum validador pronto sabe que uma viagem do diário não pode ter chegada no futuro. Para isso, você escreve o seu:
+    </p>
+    <vm-code snippet="35/etapa/src/app/features/passport/trip-form/trip-validators.ts" caption="trip-validators.ts" />
+    <ul>
+      <li>
+        Um validador é uma função do tipo <code>ValidatorFn</code>: recebe o controle e devolve <code>null</code>, se o valor está
+        certo, ou um objeto com o nome do erro e os detalhes que a mensagem pode usar.
+      </li>
+      <li>
+        O nome do erro é seu: aqui, <code>futureDate</code>. É ele que o template procura depois.
+      </li>
+      <li>
+        Ele deixa o campo vazio passar. Conferir se está preenchido é trabalho do <code>Validators.required</code>; cada regra
+        cuida de uma coisa.
+      </li>
+    </ul>
+
+    <h3>Regex: um molde para texto</h3>
+    <p>
+      O campo "Com quem" aceita nomes de pessoas: letras de qualquer alfabeto, com acento, espaço, apóstrofo e hífen. Uma regex
+      descreve essa forma, e o <code>Validators.pattern</code> confere o texto contra ela. Peça por peça:
+    </p>
+    <table>
+      <thead>
+        <tr><th>Peça</th><th>Quer dizer</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>/ … /u</code></td><td>Uma regex. O <code>u</code> liga o modo Unicode, que entende letras de qualquer alfabeto.</td></tr>
+        <tr><td><code>^</code> e <code>$</code></td><td>O começo e o fim do texto. Juntos, obrigam o texto <strong>inteiro</strong> a seguir o molde.</td></tr>
+        <tr><td><code>[ … ]</code></td><td>Um caractere, qualquer um dos que estão dentro dos colchetes.</td></tr>
+        <tr><td><code>\p&#123;L&#125;</code></td><td>Qualquer letra, de qualquer alfabeto: a, Á, ç, ø, ë.</td></tr>
+        <tr><td><code>' -</code></td><td>Espaço, apóstrofo e hífen, como em "Ana Maria", "d'Ávila" e "Jean-Luc".</td></tr>
+        <tr><td><code>*</code></td><td>O que vem antes, repetido zero ou mais vezes. Zero vezes é o campo vazio, que vale, porque a companhia é opcional.</td></tr>
+      </tbody>
+    </table>
+    <vm-deep-dive title="Regex em texto ou em RegExp?">
+      <p>
+        O <code>Validators.pattern</code> aceita as duas formas, e elas não se comportam igual. Em texto, como
+        <code>Validators.pattern('[a-zA-Z ]*')</code>, o Angular acrescenta o <code>^</code> e o <code>$</code> sozinho. Uma
+        <code>RegExp</code>, entre barras, é usada exatamente como está: sem <code>^</code> e <code>$</code>, ela aceita qualquer
+        texto que tenha um pedaço combinando. Com a <code>RegExp</code>, você ganha o modo Unicode e o <code>\p&#123;L&#125;</code>,
+        e fica responsável pelas âncoras.
+      </p>
+    </vm-deep-dive>
+
+    <h3>A hora certa da mensagem</h3>
+    <p>
+      Um campo inválido não deve gritar antes de a pessoa ter a chance de preenchê-lo. Por isso, a mensagem espera duas coisas:
+      o campo ser inválido e já ter sido <strong>tocado</strong>. Um <code>FormControl</code> fica <code>touched</code> quando a
+      pessoa entra nele e sai, e <code>dirty</code> quando ela muda o valor.
+    </p>
+    <vm-code snippet="35/etapa/src/app/features/passport/trip-form/trip-form.html" caption="trip-form.html" />
+    <ul>
+      <li>O <code>showError</code> da classe junta as duas condições, para o template não repeti-las em cada campo.</li>
+      <li>
+        O <code>hasError('nome')</code> diz qual regra falhou. Cada uma ganha a sua frase: "diga quantos dias" é diferente de
+        "de 1 a 365 dias".
+      </li>
+      <li>
+        <code>aria-invalid</code> avisa ao leitor de tela que o campo está errado, e <code>aria-describedby</code> liga o campo à
+        mensagem, que é lida junto com ele.
+      </li>
+      <li>
+        A cor vem de um token novo do design do Passaporte, <code>--color-danger</code>, com um valor para o modo claro e outro
+        para o escuro. A borda vermelha usa a variante <code>aria-invalid:</code> do Tailwind: ela aparece exatamente quando o
+        leitor de tela anuncia o erro, e as duas coisas nunca se desencontram.
+      </li>
+    </ul>
+
+    <vm-validation-sim />
+
+    <h3>Desligar o botão, e dizer por quê</h3>
+    <p>
+      Com <code>[disabled]="form.invalid"</code>, o botão só liga quando todas as regras passam. Mas um botão apagado, sozinho,
+      não diz o que falta, e quem acabou de abrir a tela não tocou em nenhum campo, então nenhuma mensagem apareceu ainda. Por
+      isso, enquanto o formulário for inválido, um aviso embaixo do botão explica o que fazer.
+    </p>
+    <p>
+      E o <code>submit()</code> confere de novo: <code>if (this.form.invalid) return;</code>. O botão desligado é a primeira
+      barreira, a que a pessoa vê; o <code>if</code> é a garantia.
+    </p>
+    <vm-deep-dive title="A outra escola: o botão sempre ligado">
+      <p>
+        Muitos guias de acessibilidade preferem o botão sempre ligado: quem não enxerga a tela pode nem perceber que um botão
+        está desativado. Nesse estilo, o envio de um formulário inválido mostra todas as mensagens de uma vez:
+      </p>
+      <vm-code snippet="35/marcar-todos" caption="trip-form.ts" />
+      <p>
+        As duas escolhas funcionam; o que não funciona é um botão apagado sem explicação. Se você desligar o botão, diga ao lado
+        o que falta.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O formulário que confere">
+    <vm-steps label="Validar o formulário de viagem">
+      <ng-template vmStep="As regras">
+        <p>
+          No <code>trip-form.ts</code>, importe o <code>Validators</code> e troque cada valor inicial do <code>group</code> por uma
+          lista com o valor e as regras, como na seção anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O validador próprio">
+        <p>
+          Crie o <code>trip-validators.ts</code> ao lado do formulário, mova para ele a função <code>today()</code> e escreva o
+          <code>notInFuture</code> e o <code>NAME_PATTERN</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="As mensagens">
+        <p>
+          Acrescente o método <code>showError</code> à classe e, no template, a mensagem de cada campo, com o
+          <code>aria-invalid</code> e o <code>aria-describedby</code>. No <code>styles.css</code>, o token
+          <code>--color-danger</code>, nos dois modos.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O botão">
+        <p>
+          Ligue o <code>[disabled]</code> do botão ao <code>form.invalid</code>, ponha o aviso embaixo dele e o <code>if</code> no
+          começo do <code>submit()</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> abra "Meu passaporte". O botão está apagado, com o aviso. Entre no campo do país e
+          saia sem escolher: a mensagem aparece. Escreva 0 nos dias, "Ana2" em "Com quem", uma chegada no ano que vem, e veja cada
+          mensagem. Corrija tudo, e o botão liga.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Regras que deixam passar">
+    <vm-pitfall title="A regex sem ^ e $" where="O que aparece no formulário" message='(o campo aceita "Ana2", sem mensagem nenhuma)'>
+      <vm-code snippet="35/sem-ancoras" caption="trip-form.ts" />
+      <p>
+        Uma <code>RegExp</code> procura um pedaço que combine, em qualquer lugar do texto. <strong>Como sair:</strong> ponha
+        <code>^</code> no começo e <code>$</code> no fim. No simulador, escolha "Sem ^ e $" e digite "Ana2".
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="A flag g" where="O que aparece no formulário" message='(a mesma "Ana" passa numa validação e falha na seguinte)'>
+      <vm-code snippet="35/flag-g" caption="trip-form.ts" />
+      <p>
+        Com a flag <code>g</code>, a regex guarda onde parou a última busca, e a busca seguinte começa dali. A documentação do
+        Angular recomenda não usar as flags <code>g</code> e <code>y</code> no <code>Validators.pattern</code>.
+        <strong>Como sair:</strong> tire o <code>g</code>; para validar, ele não serve para nada. No simulador, escolha "Com a flag
+        g", digite "Ana" e clique em <code>updateValueAndValidity()</code> algumas vezes.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O nome do erro" where="O que aparece no formulário" message="(a mensagem de tamanho nunca aparece)">
+      <vm-code snippet="35/nome-do-erro" caption="trip-form.html" />
+      <p>
+        O validador se chama <code>Validators.maxLength</code>, mas o erro que ele deixa se chama <code>maxlength</code>, todo em
+        minúsculas. O mesmo vale para o <code>minLength</code>. <strong>Como sair:</strong> <code>hasError('maxlength')</code>.
+        Na dúvida, mostre o <code>errors</code> na tela por um instante, com o pipe <code>json</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O min sem o required" where="O que aparece no diário" message='(uma viagem com "days": null)'>
+      <vm-code snippet="35/min-sem-required" caption="trip-form.ts" />
+      <p>
+        O <code>min</code> e o <code>max</code> não conferem campo vazio, e o campo de número apagado vale <code>null</code>.
+        <strong>Como sair:</strong> o <code>Validators.required</code> na mesma lista.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Só espaços" where="O que aparece no formulário" message='(um campo obrigatório aceita "   ")'>
+      <vm-code snippet="35/so-espacos" caption="um formulário com nome obrigatório" />
+      <p>
+        Para o <code>required</code>, três espaços são um texto preenchido. <strong>Como sair:</strong> junte um
+        <code>Validators.pattern(/\S/)</code>, que exige pelo menos um caractere que não seja espaço. Aqui a falta do
+        <code>^</code> e do <code>$</code> é de propósito: basta um pedaço combinar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Ler o erro direto"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2531: Object is possibly 'null'."
+    >
+      <vm-code snippet="35/erro-pode-ser-null" caption="trip-form.html" />
+      <p>
+        O <code>errors</code> é <code>null</code> quando o campo está válido, e o TypeScript não deixa ler uma propriedade de algo
+        que pode ser <code>null</code>. Junto vem um segundo erro, <code>TS4111</code>, porque o <code>errors</code> é um objeto
+        com chaves livres, lidas com <code>['min']</code>. <strong>Como sair:</strong> o <code>getError</code>, que devolve os
+        detalhes do erro ou <code>null</code>:
+      </p>
+      <vm-code snippet="35/erro-com-get-error" caption="trip-form.html" />
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="35-validacao" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O formulário de viagem está completo com Reactive Forms. O Angular tem um jeito mais novo de fazer
+      a mesma coisa, em que o modelo do formulário é um signal, e as regras ficam ao lado dele. A próxima parada refaz este
+      formulário com Signal Forms e compara as duas versões: o <vm-see-chapter [number]="36" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

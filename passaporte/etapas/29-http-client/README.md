@@ -1,9 +1,10 @@
-# Passaporte · etapa do capítulo 5
+# Passaporte · etapa do capítulo 29
 
-O projeto do Passaporte recém-criado com o Angular CLI, com a página inicial trocada pela primeira tela do app.
-Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/05-angular-cli
+O Passaporte do jeito que ele fica ao fim do capítulo 29, **HttpClient**: como buscar dados de uma API com HttpClient?
+Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/29-http-client
 
 ```bash
 npm install
-npm start   # abre em http://localhost:4200
+npm run api   # num terminal: o json-server, em http://localhost:3000
+npm start     # em outro terminal: o app, em http://localhost:4200
 ```

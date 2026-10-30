@@ -1,7 +1,8 @@
 # Regras para quem mantém o livro
 
 Este arquivo vale para pessoas e para agentes de IA. O projeto completo do livro está em
-[docs/projeto.md](docs/projeto.md); leia-o antes da primeira mudança.
+[docs/projeto.md](docs/projeto.md); leia-o antes da primeira mudança. **Onde a construção parou e o que vem a seguir
+está em [ESTADO.md](ESTADO.md):** leia antes de começar e atualize ao publicar um capítulo.
 
 ## O que é este repositório
 
@@ -160,4 +161,8 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **APIs externas em uso:** a API de países do livro (com coordenadas das capitais) e a Open-Meteo para o tempo (sem chave,
   com CORS; exige citar a fonte, "Dados: Open-Meteo").
 - **Capturas com interação:** `node scripts/capturar-tela.mjs <url> <saida.png> <largura> <altura> "js;;wait:600"` roda
-  passos em JavaScript (digitar, clicar, esperar) no Chrome headless e captura a tela, sem Puppeteer.
+  passos em JavaScript (digitar, clicar, esperar) no Chrome headless e captura a tela, sem Puppeteer. Para que um
+  `<input type="date">` apareça como 30/10/2026, e não 10/30/2026, rode com `LANG=pt_BR.UTF-8 LANGUAGE=pt_BR`.
+- **Capítulo 35 (validação), verificado no Angular 22.2.3:** `Validators.pattern` com texto ganha `^` e `$`; com `RegExp`,
+  não. A flag `g` faz a mesma validação alternar. `min`/`max`/`pattern` ignoram campo vazio. `required` aceita `"   "`.
+  As chaves de erro de `minLength`/`maxLength` são `minlength`/`maxlength`.

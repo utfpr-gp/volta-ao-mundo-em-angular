@@ -498,6 +498,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Valide campos com regex e validadores próprios, mostre mensagens claras na hora certa e decida quando desabilitar o botão de enviar.',
     minutes: 45,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '36-signal-forms',

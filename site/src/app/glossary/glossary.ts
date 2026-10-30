@@ -266,6 +266,12 @@ export const GLOSSARY = {
       'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
     chapter: 3,
   },
+  regex: {
+    term: 'Regex (expressão regular)',
+    definition:
+      'Um molde para texto, escrito entre barras, como /^[0-9]+$/. Serve para conferir se um texto segue uma forma: só letras, um CEP, um e-mail.',
+    chapter: 35,
+  },
   resource: {
     term: 'Resource',
     definition:
@@ -345,6 +351,12 @@ export const GLOSSARY = {
     definition:
       'JavaScript com tipos. Os tipos apontam erros enquanto você escreve, antes de o código rodar. O código é convertido em JavaScript para o navegador executar.',
     chapter: 1,
+  },
+  validador: {
+    term: 'Validador',
+    definition:
+      'Uma função que confere o valor de um campo e devolve null, se ele está certo, ou um objeto que diz qual regra falhou, como { required: true }.',
+    chapter: 35,
   },
 } as const satisfies Record<string, GlossaryEntry>;
 
