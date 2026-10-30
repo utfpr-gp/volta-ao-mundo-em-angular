@@ -1,7 +1,7 @@
-# Passaporte · etapa do capítulo 5
+# Passaporte · etapa do capítulo 17
 
-O projeto do Passaporte recém-criado com o Angular CLI, com a página inicial trocada pela primeira tela do app.
-Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/05-angular-cli
+O Passaporte do jeito que ele fica ao fim do capítulo 17, **ng-content**: como reaproveitar conteúdo com ng-content?
+Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/17-ng-content
 
 ```bash
 npm install

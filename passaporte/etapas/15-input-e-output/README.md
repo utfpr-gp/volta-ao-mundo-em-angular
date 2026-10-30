@@ -1,7 +1,7 @@
-# Passaporte · etapa do capítulo 5
+# Passaporte · etapa do capítulo 15
 
-O projeto do Passaporte recém-criado com o Angular CLI, com a página inicial trocada pela primeira tela do app.
-Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/05-angular-cli
+O Passaporte do jeito que ele fica ao fim do capítulo 15, **input() e output()**: como passar dados entre componentes com input() e output()?
+Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/15-input-e-output
 
 ```bash
 npm install

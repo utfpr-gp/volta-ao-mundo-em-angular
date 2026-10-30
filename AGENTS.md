@@ -1,7 +1,8 @@
 # Regras para quem mantém o livro
 
 Este arquivo vale para pessoas e para agentes de IA. O projeto completo do livro está em
-[docs/projeto.md](docs/projeto.md); leia-o antes da primeira mudança.
+[docs/projeto.md](docs/projeto.md); leia-o antes da primeira mudança. **Onde a construção parou e o que vem a seguir
+está em [ESTADO.md](ESTADO.md):** leia antes de começar e atualize ao publicar um capítulo.
 
 ## O que é este repositório
 

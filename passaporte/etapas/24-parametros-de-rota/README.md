@@ -1,7 +1,7 @@
-# Passaporte · etapa do capítulo 5
+# Passaporte · etapa do capítulo 24
 
-O projeto do Passaporte recém-criado com o Angular CLI, com a página inicial trocada pela primeira tela do app.
-Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/05-angular-cli
+O Passaporte do jeito que ele fica ao fim do capítulo 24, **Parâmetros de rota**: como receber parâmetros da URL com input()?
+Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/24-parametros-de-rota
 
 ```bash
 npm install

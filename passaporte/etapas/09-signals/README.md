@@ -1,7 +1,7 @@
-# Passaporte · etapa do capítulo 5
+# Passaporte · etapa do capítulo 9
 
-O projeto do Passaporte recém-criado com o Angular CLI, com a página inicial trocada pela primeira tela do app.
-Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/05-angular-cli
+O Passaporte do jeito que ele fica ao fim do capítulo 9, **Signals**: como guardar estado que atualiza a tela com signal() e computed()?
+Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/09-signals
 
 ```bash
 npm install
