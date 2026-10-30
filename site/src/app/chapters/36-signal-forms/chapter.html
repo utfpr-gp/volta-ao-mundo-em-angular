@@ -1,0 +1,331 @@
+<vm-chapter-page slug="36-signal-forms">
+  <vm-view kind="mission" title="O mesmo formulário, outro motor">
+    <p class="lead">
+      O formulário de viagem já confere cada campo e explica cada erro. Neste capítulo, ele é refeito com Signal Forms, o jeito
+      mais novo de fazer formulários no Angular. Por fora, nada muda. Por dentro, o valor do formulário passa a ser um signal, e
+      cada regra fica ao lado da frase que explica o erro.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-36/formulario-signal-forms.png"
+      width="1150"
+      height="600"
+      alt="O formulário Registrar viagem, agora feito com Signal Forms, com três mensagens em vermelho: escolha para qual país você viajou; a viagem tem de durar de 1 a 365 dias; use só letras, espaços, apóstrofo e hífen. O botão Registrar viagem está apagado, com o aviso embaixo."
+    />
+    <p>
+      Ao final do capítulo, você vai saber criar um formulário a partir de um <vm-term name="signal">signal</vm-term>, escrever
+      as regras num <vm-term name="schema">schema</vm-term>, ligar os campos com <code>[formField]</code> e comparar os Signal
+      Forms com os Reactive Forms dos dois últimos capítulos.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A planilha com regras">
+    <vm-analogy emoji="📊" title="Os dados e as regras no mesmo lugar">
+      <p>
+        Numa planilha compartilhada, o que você digita numa célula já é o dado: não existe uma cópia em outro lugar esperando
+        para ser salva. E a planilha deixa você pôr uma regra numa coluna inteira, "só números de 1 a 365", junto com o texto
+        que aparece quando alguém erra: "a viagem tem de durar de 1 a 365 dias".
+      </p>
+      <p>
+        Os Signal Forms funcionam assim. O valor do formulário é um signal seu, e cada campo escreve direto nele. As regras de
+        cada campo ficam num lugar só, o schema, e cada regra já leva a sua frase. O template só mostra a frase.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Signal Forms por dentro">
+    <h3>O modelo é um signal</h3>
+    <p>
+      Tudo começa com um signal comum, o <strong>modelo</strong>, com o formato dos dados do formulário. A função
+      <code>form()</code>, do pacote <code>&#64;angular/forms/signals</code>, cria o formulário a partir dele:
+    </p>
+    <vm-code snippet="36/modelo-e-form" caption="o modelo e o formulário" />
+    <ul>
+      <li>
+        O formulário tem a mesma forma do modelo: <code>tripForm.days</code> é o campo dos dias. Cada campo é uma
+        <vm-term name="field-tree">FieldTree</vm-term>, e o formulário inteiro também.
+      </li>
+      <li>
+        Chamar o campo, com parênteses, dá o estado dele, feito de signals: <code>value()</code>, <code>valid()</code>,
+        <code>invalid()</code>, <code>touched()</code>, <code>dirty()</code> e <code>errors()</code>.
+      </li>
+      <li>
+        O formulário não guarda cópia do valor. Mudar um campo muda o signal <code>trip</code>, e mudar o
+        <code>trip</code> muda o campo. Nos Reactive Forms, o valor morava dentro do <code>FormGroup</code>, e era preciso
+        tirá-lo de lá com <code>getRawValue()</code>.
+      </li>
+    </ul>
+
+    <h3>As regras e as frases, juntas: o schema</h3>
+    <p>
+      O segundo argumento do <code>form()</code> é o schema: uma função que recebe o <code>path</code>, o caminho até cada campo,
+      e diz as regras de cada um. É o formulário de viagem inteiro:
+    </p>
+    <vm-code snippet="36/etapa/src/app/features/passport/trip-form/trip-form.ts" caption="trip-form.ts" />
+    <ul>
+      <li>
+        Os <vm-term name="validador">validadores</vm-term> são funções importadas de <code>&#64;angular/forms/signals</code>:
+        <code>required</code>, <code>min</code>, <code>max</code>, <code>maxLength</code>, <code>pattern</code>. Cada uma recebe o
+        caminho do campo e, por último, o <code>message</code>: a frase que a pessoa vai ler.
+      </li>
+      <li>
+        O schema roda uma vez, quando o formulário nasce, e deixa as regras ligadas. Daí em diante, o Angular confere cada campo
+        a cada mudança.
+      </li>
+      <li>
+        O <code>blankTrip()</code> é a viagem em branco: o valor inicial do signal e o valor de volta depois de registrar.
+      </li>
+    </ul>
+    <p>Quando uma regra falha, o campo ganha um erro com um <code>kind</code>, o nome da regra, e a sua frase:</p>
+    <vm-code snippet="36/validadores-prontos" caption="os validadores prontos e o erro de cada um" />
+
+    <h3>O validador próprio, no estilo novo</h3>
+    <p>A regra "a chegada não pode ser depois de hoje" continua sendo sua. Ela agora usa o <code>validate</code>:</p>
+    <vm-code snippet="36/etapa/src/app/features/passport/trip-form/trip-validators.ts" caption="trip-validators.ts" />
+    <ul>
+      <li>
+        O <code>validate</code> recebe o caminho do campo e uma função que lê o <code>value()</code>. Ela devolve
+        <code>null</code>, se o valor está certo, ou um erro com <code>kind</code> e <code>message</code>.
+      </li>
+      <li>
+        O <code>notInFuture</code> é uma função que recebe o caminho e chama o <code>validate</code>. No schema, ela se usa como
+        as regras prontas: <code>notInFuture(path.arrival, &#123; message: '…' &#125;)</code>.
+      </li>
+      <li>
+        O campo vazio continua passando: <code>'' &gt; '2026-10-30'</code> é falso. Conferir se está preenchido é trabalho do
+        <code>required</code>.
+      </li>
+    </ul>
+    <vm-deep-dive title="O que não mudou na regex">
+      <p>
+        O <code>pattern</code> dos Signal Forms só aceita <code>RegExp</code>, entre barras, e a usa exatamente como ela está. Por
+        isso, tudo o que você viu no <vm-see-chapter [number]="35" /> continua valendo: o <code>^</code> e o <code>$</code> são
+        seus, e a flag <code>g</code> faz a mesma validação alternar entre certo e errado. O <code>required</code> também
+        continua aceitando um texto só de espaços.
+      </p>
+    </vm-deep-dive>
+
+    <h3>O template: [formField] e [formRoot]</h3>
+    <p>No template, cada campo do HTML se liga a um campo do formulário com <code>[formField]</code>:</p>
+    <vm-code snippet="36/etapa/src/app/features/passport/trip-form/trip-form.html" caption="trip-form.html" />
+    <ul>
+      <li>
+        <code>[formField]="tripForm.days"</code> liga o campo nos dois sentidos: o que a pessoa digita vai para o modelo, e o
+        que muda no modelo aparece no campo. Quando a pessoa sai do campo, ele fica <code>touched</code>.
+      </li>
+      <li>
+        O <code>[formField]</code> também escreve no HTML os atributos que vêm das regras: o campo de dias ganha
+        <code>min="1"</code> e <code>max="365"</code>, o país ganha <code>required</code>, e o "Com quem" ganha
+        <code>maxlength="40"</code>. Você não escreve esses atributos; o schema escreve.
+      </li>
+      <li>
+        A data é a exceção. O modelo guarda a chegada como texto, e o limite de hoje vem de uma regra sua, que o
+        <code>[formField]</code> não conhece. Por isso, no campo de data, o <code>[max]="today"</code> continua sendo escrito à
+        mão, como no capítulo anterior.
+      </li>
+      <li>
+        Nos rádios, o <code>[value]</code> vai mesmo para o HTML, e o rádio marcado é o que tem o valor igual ao do modelo.
+      </li>
+      <li>
+        O <code>[formRoot]</code>, no <code>&lt;form&gt;</code>, desliga as mensagens do navegador (<code>novalidate</code>),
+        impede que a página recarregue e, no envio, chama o <code>submit()</code>.
+      </li>
+      <li>
+        O <code>errorOf</code> da classe devolve a frase do primeiro erro, quando o campo é inválido e já foi tocado. O template
+        só a mostra: as frases agora moram no schema.
+      </li>
+    </ul>
+
+    <vm-signal-form-sim />
+
+    <h3>O envio</h3>
+    <p>
+      O terceiro argumento do <code>form()</code> traz o <code>submission</code>, com o <code>action</code>: o que fazer com uma
+      viagem válida. Ao enviar, o <code>submit()</code>:
+    </p>
+    <ol>
+      <li>marca todos os campos como tocados, e as mensagens aparecem;</li>
+      <li>para ali, sem rodar o <code>action</code>, se alguma regra falhar;</li>
+      <li>senão, roda o <code>action</code>, que registra a viagem e devolve o formulário à viagem em branco.</li>
+    </ol>
+    <p>
+      O <code>reset(blankTrip())</code> faz duas coisas: põe a viagem em branco no modelo e volta os campos a "não tocados", para
+      nenhuma mensagem aparecer na tela limpa. O botão continua desligado enquanto <code>tripForm().invalid()</code>, com o aviso
+      embaixo, como no capítulo anterior; o <code>submit()</code> é a garantia.
+    </p>
+    <vm-deep-dive title="O botão sempre ligado, agora mais simples">
+      <p>
+        No <vm-see-chapter [number]="35" />, o estilo do botão sempre ligado pedia um <code>markAllAsTouched()</code> à mão. Com
+        Signal Forms, o <code>submit()</code> já marca tudo como tocado; basta tirar o <code>[disabled]</code>:
+      </p>
+      <vm-code snippet="36/botao-sempre-ligado" caption="trip-form.html" />
+      <p>E o <code>onInvalid</code>, ao lado do <code>action</code>, ainda pode levar o foco ao primeiro campo errado:</p>
+      <vm-code snippet="36/focar-o-primeiro-erro" caption="trip-form.ts" />
+    </vm-deep-dive>
+    <vm-deep-dive title="O campo de número vazio vale null">
+      <p>
+        Quando a pessoa apaga o número dos dias, o <code>[formField]</code> escreve <code>null</code> no modelo, mesmo com o tipo
+        <code>Trip</code> dizendo <code>days: number</code>. Experimente no simulador: apague o número e veja
+        <code>"days": null</code>. É o <code>required</code> que garante que o <code>action</code> só recebe viagens com número.
+      </p>
+    </vm-deep-dive>
+
+    <h3>Lado a lado: Reactive Forms e Signal Forms</h3>
+    <p>A mesma regra dos dias, dos dois jeitos. Nos Reactive Forms, a regra fica na classe e a frase, no template:</p>
+    <vm-code snippet="36/lado-a-lado-reactive" caption="trip-form.ts (capítulo 35)" />
+    <vm-code snippet="36/lado-a-lado-reactive-template" caption="trip-form.html (capítulo 35)" />
+    <p>Nos Signal Forms, a regra e a frase ficam juntas, e o template só mostra:</p>
+    <vm-code snippet="36/lado-a-lado-signal" caption="trip-form.ts" />
+    <vm-code snippet="36/lado-a-lado-signal-template" caption="trip-form.html" />
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr><th></th><th>Reactive Forms</th><th>Signal Forms</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Onde mora o valor</td><td>No <code>FormGroup</code>; sai com <code>getRawValue()</code></td><td>No seu signal</td></tr>
+          <tr><td>As regras</td><td>Numa lista, ao lado do valor inicial</td><td>No schema, uma chamada por regra</td></tr>
+          <tr><td>As frases de erro</td><td>No template, com <code>hasError</code></td><td>No schema, com <code>message</code></td></tr>
+          <tr><td>Ligar o campo</td><td><code>formControlName="days"</code></td><td><code>[formField]="tripForm.days"</code></td></tr>
+          <tr><td>Ler o estado</td><td><code>form.invalid</code></td><td><code>tripForm().invalid()</code></td></tr>
+          <tr><td>Nome do erro de tamanho</td><td><code>maxlength</code></td><td><code>maxLength</code></td></tr>
+          <tr><td>Atributos <code>min</code>, <code>max</code>, <code>required</code></td><td>Escritos à mão</td><td>Escritos pelo <code>[formField]</code></td></tr>
+          <tr><td>Enviar</td><td><code>(ngSubmit)</code> e um <code>if</code></td><td><code>[formRoot]</code> e o <code>action</code></td></tr>
+          <tr><td>Reagir a mudanças</td><td><code>valueChanges</code>, um observable</td><td><code>computed</code> e <code>effect</code>, como qualquer signal</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Os dois são estáveis: os Signal Forms desde a versão 22. Os Reactive Forms estão em quase todo projeto Angular que já
+      existe, e você vai encontrá-los muito. Os Signal Forms combinam com um app feito de signals, como o Passaporte, e são a
+      escolha natural para formulários novos.
+    </p>
+  </vm-view>
+
+  <vm-view kind="code" title="O formulário refeito">
+    <vm-steps label="Refazer o formulário de viagem com Signal Forms">
+      <ng-template vmStep="O modelo">
+        <p>
+          No <code>trip-form.ts</code>, troque os imports de <code>&#64;angular/forms</code> pelos de
+          <code>&#64;angular/forms/signals</code>, e o <code>ReactiveFormsModule</code> por <code>FormField</code> e
+          <code>FormRoot</code>. Tire o <code>NonNullableFormBuilder</code>, crie a função <code>blankTrip()</code> e o signal
+          <code>trip</code>, como na seção anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O schema">
+        <p>
+          Crie o <code>tripForm</code> com o <code>form()</code>, passando o <code>trip</code> e o schema com as regras e as frases
+          que estavam no template. No <code>trip-validators.ts</code>, reescreva o <code>notInFuture</code> com o
+          <code>validate</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O template">
+        <p>
+          No <code>trip-form.html</code>, troque o <code>[formGroup]</code> e o <code>(ngSubmit)</code> por
+          <code>[formRoot]="tripForm"</code>, e cada <code>formControlName</code> pelo <code>[formField]</code> do campo. Tire o
+          <code>min</code> e o <code>max</code> do campo de dias. No lugar dos <code>hasError</code>, mostre o
+          <code>errorOf</code> de cada campo, e troque o <code>showError</code> da classe por ele.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O envio">
+        <p>
+          Acrescente o <code>submission</code> com o <code>action</code>, apague o método <code>submit()</code> antigo e ligue o
+          <code>[disabled]</code> do botão ao <code>tripForm().invalid()</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> nada, e é esse o teste. Abra "Meu passaporte" e repita o que fez no capítulo
+          anterior: o país em branco, 0 nos dias, "Ana2" em "Com quem". Cada mensagem aparece igual. Registre uma viagem válida, e
+          o formulário volta à viagem em branco. Depois, nas ferramentas do navegador, inspecione o campo de dias: o
+          <code>min="1"</code> e o <code>max="365"</code> estão lá, sem você ter escrito.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="O motor novo e as suas regras">
+    <vm-pitfall
+      title="Esquecer o FormField"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG8002: Can't bind to 'formField' since it isn't a known property of 'select'."
+    >
+      <vm-code snippet="36/sem-form-field" caption="trip-form.ts" />
+      <p>
+        O <code>[formField]</code> é uma diretiva, e o componente precisa importá-la. <strong>Como sair:</strong>
+        <code>imports: [FormField, FormRoot]</code>, os dois vindos de <code>&#64;angular/forms/signals</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Escrever a regra no HTML"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] NG8022: Setting the 'min' attribute is not allowed on nodes using the '[formField]' directive"
+    >
+      <vm-code snippet="36/atributo-no-campo" caption="trip-form.html" />
+      <p>
+        Quem escreve o <code>min</code> e o <code>max</code> agora é o <code>[formField]</code>, a partir do schema; duas fontes
+        para a mesma regra acabariam se desencontrando. O mesmo vale para <code>[disabled]</code>, <code>[value]</code> e
+        <code>required</code>. <strong>Como sair:</strong> a regra vai só no schema. Para desligar um campo, existe a regra
+        <code>disabled(path.campo)</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O campo ou o estado?"
+      where="O que o Angular mostra no terminal"
+      message="✘ [ERROR] TS2339: Property 'invalid' does not exist on type 'FieldTree<Trip, string | number, &quot;writable&quot;>'."
+    >
+      <vm-code snippet="36/campo-ou-estado" caption="trip-form.html" />
+      <p>
+        <code>tripForm</code> é o formulário; o <code>invalid()</code> mora no estado, que vem com os parênteses. No
+        <code>[formField]</code> é o contrário: ele quer o campo, e passar <code>tripForm.country()</code>, com parênteses, dá o
+        erro <code>TS2322: Type 'FieldState&lt;string, string&gt;' is not assignable to type 'Field&lt;any, string | number&gt;'.</code>
+        <strong>Como sair:</strong> o campo sem parênteses no <code>[formField]</code>; o estado com parênteses para ler.
+      </p>
+      <vm-code snippet="36/campo-ou-estado-certo" caption="trip-form.html" />
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Criar o formulário tarde demais"
+      where="O que aparece no console do navegador"
+      message="NG0203: The `Injector` token injection failed. `inject()` function must be called from an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`."
+    >
+      <vm-code snippet="36/form-fora-do-construtor" caption="trip-form.ts" />
+      <p>
+        O <code>form()</code> usa a injeção de dependência por dentro, como o <code>inject()</code>, e só funciona enquanto o
+        componente está nascendo. <strong>Como sair:</strong> crie o formulário na declaração da propriedade, como no
+        <code>trip-form.ts</code> deste capítulo.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O nome do erro, ao contrário" where="O que aparece no formulário" message="(a mensagem de tamanho nunca aparece)">
+      <vm-code snippet="36/nome-do-erro" caption="trip-form.html" />
+      <p>
+        Nos Reactive Forms, o erro se chamava <code>maxlength</code>, todo em minúsculas. Nos Signal Forms, o <code>kind</code> é
+        <code>maxLength</code>, igual ao nome da regra, e o <code>getError('maxlength')</code> devolve <code>undefined</code> sem
+        reclamar. <strong>Como sair:</strong> <code>getError('maxLength')</code>; ou, melhor, a frase no <code>message</code> da
+        regra, sem procurar o erro pelo nome.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Só espaços, de novo" where="O que aparece no formulário" message='(um campo obrigatório aceita "   ")'>
+      <vm-code snippet="36/so-espacos" caption="um formulário com nome obrigatório" />
+      <p>
+        O <code>required</code> dos Signal Forms também conta três espaços como texto preenchido. <strong>Como sair:</strong> a
+        mesma do capítulo anterior, um <code>pattern</code> com <code>/\S/</code>, que exige um caractere que não seja espaço.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="36-signal-forms" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte guarda as viagens num servidor que roda na sua máquina, e o diário não sabe de quem
+      é. A próxima trilha leva os dados para a nuvem, com o Supabase, e cada pessoa passa a ter a sua conta. A primeira parada é o
+      login: o <vm-see-chapter [number]="37" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

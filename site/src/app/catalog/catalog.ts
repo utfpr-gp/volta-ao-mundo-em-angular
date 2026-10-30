@@ -509,6 +509,8 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Refaça o formulário de viagem com Signal Forms, em que o modelo do formulário é um signal, e compare com a versão em Reactive Forms.',
     minutes: 35,
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Back-end
   {

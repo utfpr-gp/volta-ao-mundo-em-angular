@@ -121,6 +121,12 @@ export const GLOSSARY = {
     definition: 'Os parênteses ( ) no template, como (click)="salvar()": chamam um método da classe quando um evento acontece na tela.',
     chapter: 8,
   },
+  'field-tree': {
+    term: 'FieldTree',
+    definition:
+      'Nos Signal Forms, um campo do formulário, ou o formulário inteiro. Tem a forma do modelo (tripForm.days é o campo dos dias) e, chamado com parênteses, dá o estado do campo: value(), valid(), touched(), errors().',
+    chapter: 36,
+  },
   'form-control': {
     term: 'FormControl',
     definition:
@@ -283,6 +289,12 @@ export const GLOSSARY = {
     definition:
       'Uma regra que liga um endereço do app, como /sobre, a um componente. O Router lê as rotas em ordem e mostra no <router-outlet> o componente da primeira que combina.',
     chapter: 23,
+  },
+  schema: {
+    term: 'Schema (Signal Forms)',
+    definition:
+      'A função que diz as regras de cada campo de um formulário com Signal Forms, como required(path.days, { message: \'…\' }). Roda uma vez, quando o formulário nasce, e cada regra já leva a frase do erro.',
+    chapter: 36,
   },
   seletor: {
     term: 'Seletor (selector)',
