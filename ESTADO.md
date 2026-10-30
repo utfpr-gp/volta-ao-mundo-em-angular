@@ -2,29 +2,30 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-10-30.
+> Última atualização: 2026-10-30 (capítulo 35 em revisão).
 
 ## Publicado
 
 - **Capítulos 1 a 34**, em seis trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados e o começo de Formulários. Todos com `verifiedWithAngular: '22.2'`.
 - **Último capítulo novo:** 34, Reactive Forms (PR #28). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
+- **Em revisão:** capítulo 35, Validação, na branch `trilha-formularios-2` (PR aberto, esperando a autorização do merge). A mesma branch corrige os READMEs de todas as etapas, que diziam "capítulo 5".
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
-## O Passaporte, na etapa 34
+## O Passaporte, na etapa 35
 
-`passaporte/etapas/34-reactive-forms/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
+`passaporte/etapas/35-validacao/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
 
 - `/paises`: lista, destaque, progresso mundial, filtro; dados da API de países do livro (`site/public/api/paises.json`).
 - `/paises/:code`: rotas filhas com visão geral, anotações e o tempo (Open-Meteo).
 - `/passaporte`: o livro de carimbos e, desde o 34, o **formulário de viagem** (`trip-form`, Reactive Forms com `NonNullableFormBuilder`: país, chegada, dias, transporte, companhia) e o **diário de viagens**, do mais recente ao mais antigo.
 - `core/passport.ts`: o estado salvo (visitados, desejados, anotações, `trips?`), PUT no json-server (`npm run api`, `db.json`) e cópia no `localStorage` por um `effect` (capítulo 33).
-- **O formulário ainda aceita tudo** (uma viagem sem país, dias negativos). O capítulo 34 termina prometendo a validação no 35.
+- **Desde o 35, o formulário valida:** `Validators.required`/`min`/`max`/`maxLength`/`pattern` e um validador próprio (`notInFuture`, em `trip-validators.ts`, junto com `today()` e `NAME_PATTERN`). Mensagem quando o campo é inválido e `touched` (`showError`), com `aria-invalid`, `aria-describedby` e borda `aria-invalid:border-danger`; token novo `--color-danger`. O botão fica desligado enquanto o formulário for inválido, com um aviso embaixo, e o `submit()` confere de novo.
+- **O 36 (Signal Forms)** refaz este mesmo formulário e compara com a versão do 35.
 
 ## Próximos capítulos (catálogo)
 
 | Nº | Slug | Pergunta |
 | --- | --- | --- |
-| 35 | `35-validacao` | Como validar campos com regex e mostrar mensagens de erro? |
 | 36 | `36-signal-forms` | Como fazer formulários com Signal Forms? |
 | 37 | `37-login-com-supabase` | Como fazer login com Supabase Auth? |
 | 38 | `38-guards` | Como proteger rotas com guards? |

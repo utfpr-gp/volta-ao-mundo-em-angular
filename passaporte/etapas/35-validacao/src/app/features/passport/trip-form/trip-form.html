@@ -1,0 +1,114 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="rounded-card border border-line bg-card p-5 text-ink shadow-sm">
+  <h2 class="mb-4 text-xl font-extrabold">✍️ Registrar viagem</h2>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-1">
+      <label for="trip-country" class="font-bold">País</label>
+      <select
+        id="trip-country"
+        formControlName="country"
+        [attr.aria-invalid]="showError('country') || null"
+        [attr.aria-describedby]="showError('country') ? 'trip-country-error' : null"
+        class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+      >
+        <option value="">Escolha um país</option>
+        @for (country of passport.countries(); track country.code) {
+          <option [value]="country.code">{{ country.name }}</option>
+        }
+      </select>
+      @if (showError('country')) {
+        <p id="trip-country-error" class="text-sm font-bold text-danger">Escolha para qual país você viajou.</p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="trip-arrival" class="font-bold">Chegada</label>
+      <input
+        id="trip-arrival"
+        type="date"
+        formControlName="arrival"
+        [max]="today"
+        [attr.aria-invalid]="showError('arrival') || null"
+        [attr.aria-describedby]="showError('arrival') ? 'trip-arrival-error' : null"
+        class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+      />
+      @if (showError('arrival')) {
+        <p id="trip-arrival-error" class="text-sm font-bold text-danger">
+          @if (form.controls.arrival.hasError('futureDate')) {
+            A chegada não pode ser depois de hoje: o diário guarda viagens que já aconteceram.
+          } @else {
+            Informe a data de chegada.
+          }
+        </p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="trip-days" class="font-bold">Quantos dias</label>
+      <input
+        id="trip-days"
+        type="number"
+        formControlName="days"
+        min="1"
+        max="365"
+        [attr.aria-invalid]="showError('days') || null"
+        [attr.aria-describedby]="showError('days') ? 'trip-days-error' : null"
+        class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+      />
+      @if (showError('days')) {
+        <p id="trip-days-error" class="text-sm font-bold text-danger">
+          @if (form.controls.days.hasError('required')) {
+            Diga quantos dias durou a viagem.
+          } @else {
+            A viagem tem de durar de 1 a 365 dias.
+          }
+        </p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="trip-companion" class="font-bold">Com quem</label>
+      <input
+        id="trip-companion"
+        formControlName="companion"
+        placeholder="Sozinho, com a família…"
+        [attr.aria-invalid]="showError('companion') || null"
+        [attr.aria-describedby]="showError('companion') ? 'trip-companion-error' : null"
+        class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+      />
+      @if (showError('companion')) {
+        <p id="trip-companion-error" class="text-sm font-bold text-danger">
+          @if (form.controls.companion.hasError('maxlength')) {
+            Use no máximo 40 letras.
+          } @else {
+            Use só letras, espaços, apóstrofo e hífen, como em "Ana Maria" ou "Pedro d'Ávila".
+          }
+        </p>
+      }
+    </div>
+  </div>
+
+  <fieldset class="mt-4">
+    <legend class="font-bold">Transporte</legend>
+    <div class="mt-1 flex flex-wrap gap-3">
+      @for (option of transports; track option.value) {
+        <label class="flex cursor-pointer items-center gap-2">
+          <input type="radio" formControlName="transport" [value]="option.value" class="size-4" />
+          {{ option.label }}
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <button
+    type="submit"
+    [disabled]="form.invalid"
+    aria-describedby="trip-form-hint"
+    class="mt-5 rounded-full bg-primary px-5 py-2 font-bold text-on-primary disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    Registrar viagem
+  </button>
+  @if (form.invalid) {
+    <p id="trip-form-hint" class="mt-2 text-sm text-ink-muted">Escolha o país e confira os campos marcados para liberar o botão.</p>
+  }
+</form>
