@@ -2,13 +2,13 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-10-30 (capítulo 36 em revisão).
+> Última atualização: 2026-10-30 (capítulo 36 publicado; a caixa sobre o `max` da data vai num PR à parte).
 
 ## Publicado
 
-- **Capítulos 1 a 35**, em seis trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados e o começo de Formulários. Todos com `verifiedWithAngular: '22.2'`.
-- **Último capítulo novo:** 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Em revisão:** capítulo 36, Signal Forms, na branch `trilha-formularios-3` (PR aberto, esperando a autorização do merge).
+- **Capítulos 1 a 36**, em seis trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados e Formulários. Todos com `verifiedWithAngular: '22.2'`.
+- **Último capítulo novo:** 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
+- **Em revisão:** no capítulo 36, a caixa "Por que só a data tem o max escrito à mão", na branch `capitulo-36-max-da-data` (o commit dela não chegou ao PR #31; ver os cuidados). Próximo capítulo novo: 37, login com Supabase, que abre a trilha Back-end.
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
 ## O Passaporte, na etapa 36
@@ -51,6 +51,8 @@ As perguntas e descrições completas estão em `site/src/app/catalog/catalog.ts
 4. Commit `Capítulo NN: <título>`, push, Pull Request.
 5. **O merge é autorizado pelo professor.** Com a autorização dada na conversa, o merge foi feito por `gh api` (PUT no endpoint de merge do PR). O merge na `main` dispara o `publicar.yml`; se a publicação não rodar, ela pode ser disparada à mão (`workflow_dispatch`).
 6. Conferir a página publicada com `curl` (status 200 e o título do capítulo).
+
+   Antes do merge, conferir se o PR tem o último commit: `gh pr view N --json headRefOid` tem de bater com `git rev-parse HEAD`. No PR #31, um push feito depois da abertura não chegou ao PR, e o merge levou a versão anterior.
 
 ## Cuidados que apareceram no caminho
 
