@@ -166,3 +166,11 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Capítulo 35 (validação), verificado no Angular 22.2.3:** `Validators.pattern` com texto ganha `^` e `$`; com `RegExp`,
   não. A flag `g` faz a mesma validação alternar. `min`/`max`/`pattern` ignoram campo vazio. `required` aceita `"   "`.
   As chaves de erro de `minLength`/`maxLength` são `minlength`/`maxlength`.
+- **Capítulo 36 (Signal Forms), verificado no Angular 22.2.3:** `@angular/forms/signals` é `@publicApi 22.0` (estável).
+  O `[formField]` escreve no HTML os atributos que vêm do schema (`required`, `min`, `max`, `maxlength`), e o compilador
+  recusa os mesmos atributos escritos à mão (`NG8022`); em `input type="date"`, `min`/`max` são permitidos. Nos rádios, o
+  `[value]` é permitido e vai para o HTML. O `[formField]` escuta só o evento `input`: nos testes, o `<select>` precisa de
+  `new Event('input')`, e não de `change`. Campo de número apagado vira `null`. A chave do erro é `maxLength` (camelCase).
+  O `pattern` só aceita `RegExp`; a flag `g` continua alternando, e o `required` aceita `"   "`. `form()` fora de um
+  contexto de injeção dá `NG0203`. `submit()` marca os campos como tocados; `reset(valor)` troca o valor e limpa
+  `touched`/`dirty`. Para testar um validador isolado: `TestBed.runInInjectionContext(() => form(signal(v), schema))`.

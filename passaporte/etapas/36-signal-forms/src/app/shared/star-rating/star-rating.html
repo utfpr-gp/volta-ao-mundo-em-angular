@@ -1,0 +1,15 @@
+<div class="flex gap-1" role="group" aria-label="Nota da viagem">
+  @for (star of stars; track star) {
+    <button
+      type="button"
+      class="text-2xl leading-none"
+      [class.text-highlight]="star <= rating()"
+      [class.text-line]="star > rating()"
+      [attr.aria-label]="star + (star === 1 ? ' estrela' : ' estrelas')"
+      [attr.aria-pressed]="star <= rating()"
+      (click)="rating.set(star)"
+    >
+      ★
+    </button>
+  }
+</div>

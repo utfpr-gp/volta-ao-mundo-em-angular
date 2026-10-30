@@ -1,0 +1,94 @@
+<form [formRoot]="tripForm" class="rounded-card border border-line bg-card p-5 text-ink shadow-sm">
+  <h2 class="mb-4 text-xl font-extrabold">✍️ Registrar viagem</h2>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="flex flex-col gap-1">
+      <label for="trip-country" class="font-bold">País</label>
+      <select
+        id="trip-country"
+        [formField]="tripForm.country"
+        [attr.aria-invalid]="errorOf(tripForm.country) ? true : null"
+        [attr.aria-describedby]="errorOf(tripForm.country) ? 'trip-country-error' : null"
+        class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+      >
+        <option value="">Escolha um país</option>
+        @for (country of passport.countries(); track country.code) {
+          <option [value]="country.code">{{ country.name }}</option>
+        }
+      </select>
+      @if (errorOf(tripForm.country); as message) {
+        <p id="trip-country-error" class="text-sm font-bold text-danger">{{ message }}</p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="trip-arrival" class="font-bold">Chegada</label>
+      <input
+        id="trip-arrival"
+        type="date"
+        [formField]="tripForm.arrival"
+        [max]="today"
+        [attr.aria-invalid]="errorOf(tripForm.arrival) ? true : null"
+        [attr.aria-describedby]="errorOf(tripForm.arrival) ? 'trip-arrival-error' : null"
+        class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+      />
+      @if (errorOf(tripForm.arrival); as message) {
+        <p id="trip-arrival-error" class="text-sm font-bold text-danger">{{ message }}</p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="trip-days" class="font-bold">Quantos dias</label>
+      <input
+        id="trip-days"
+        type="number"
+        [formField]="tripForm.days"
+        [attr.aria-invalid]="errorOf(tripForm.days) ? true : null"
+        [attr.aria-describedby]="errorOf(tripForm.days) ? 'trip-days-error' : null"
+        class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+      />
+      @if (errorOf(tripForm.days); as message) {
+        <p id="trip-days-error" class="text-sm font-bold text-danger">{{ message }}</p>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="trip-companion" class="font-bold">Com quem</label>
+      <input
+        id="trip-companion"
+        [formField]="tripForm.companion"
+        placeholder="Sozinho, com a família…"
+        [attr.aria-invalid]="errorOf(tripForm.companion) ? true : null"
+        [attr.aria-describedby]="errorOf(tripForm.companion) ? 'trip-companion-error' : null"
+        class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+      />
+      @if (errorOf(tripForm.companion); as message) {
+        <p id="trip-companion-error" class="text-sm font-bold text-danger">{{ message }}</p>
+      }
+    </div>
+  </div>
+
+  <fieldset class="mt-4">
+    <legend class="font-bold">Transporte</legend>
+    <div class="mt-1 flex flex-wrap gap-3">
+      @for (option of transports; track option.value) {
+        <label class="flex cursor-pointer items-center gap-2">
+          <input type="radio" [formField]="tripForm.transport" [value]="option.value" class="size-4" />
+          {{ option.label }}
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <button
+    type="submit"
+    [disabled]="tripForm().invalid()"
+    aria-describedby="trip-form-hint"
+    class="mt-5 rounded-full bg-primary px-5 py-2 font-bold text-on-primary disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    Registrar viagem
+  </button>
+  @if (tripForm().invalid()) {
+    <p id="trip-form-hint" class="mt-2 text-sm text-ink-muted">Escolha o país e confira os campos marcados para liberar o botão.</p>
+  }
+</form>
