@@ -2,13 +2,13 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-10-30 (capítulo 35 em revisão).
+> Última atualização: 2026-10-30 (capítulo 35 publicado).
 
 ## Publicado
 
-- **Capítulos 1 a 34**, em seis trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados e o começo de Formulários. Todos com `verifiedWithAngular: '22.2'`.
-- **Último capítulo novo:** 34, Reactive Forms (PR #28). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Em revisão:** capítulo 35, Validação, na branch `trilha-formularios-2` (PR aberto, esperando a autorização do merge). A mesma branch corrige os READMEs de todas as etapas, que diziam "capítulo 5".
+- **Capítulos 1 a 35**, em seis trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados e o começo de Formulários. Todos com `verifiedWithAngular: '22.2'`.
+- **Último capítulo novo:** 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
+- **Próximo:** capítulo 36, Signal Forms, na branch `trilha-formularios-3`.
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
 ## O Passaporte, na etapa 35
