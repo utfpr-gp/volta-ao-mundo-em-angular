@@ -135,6 +135,33 @@
         só a mostra: as frases agora moram no schema.
       </li>
     </ul>
+    <vm-deep-dive title="Por que só a data tem o max escrito à mão">
+      <p>
+        No campo de dias, a linha <code>max(path.days, 365, …)</code> faz duas coisas: cria a regra e conta ao campo qual é o
+        limite. É com essa informação que o <code>[formField]</code> escreve <code>max="365"</code> no HTML.
+      </p>
+      <p>
+        Na data, isso não funciona. O <code>max()</code> dos Signal Forms só aceita campos de número, e a chegada é um texto como
+        <code>'2026-10-30'</code>, que é o que o <code>&lt;input type="date"&gt;</code> entrega. Por isso a regra "até hoje" é o
+        <code>notInFuture</code>, feito com <code>validate</code>. Só que um validador seu é uma função qualquer: o formulário
+        não sabe que ali dentro existe um limite, e o <code>[formField]</code> não escreve atributo nenhum.
+      </p>
+      <p>O limite aparece, então, em dois lugares, e cada um faz uma parte do trabalho:</p>
+      <ul>
+        <li>
+          o <code>notInFuture</code>, no schema, impede de registrar a viagem e mostra a frase de erro, mesmo para quem digita
+          a data no teclado;
+        </li>
+        <li>
+          o <code>[max]="today"</code>, no HTML, só ajuda quem usa o calendário do navegador: os dias depois de hoje aparecem
+          apagados, sem como clicar.
+        </li>
+      </ul>
+      <p>
+        Num campo de data, o Angular aceita esse <code>[max]</code> escrito à mão. No campo de dias, o mesmo atributo daria o erro
+        NG8022, que você vai ver nas armadilhas.
+      </p>
+    </vm-deep-dive>
 
     <vm-signal-form-sim />
 
