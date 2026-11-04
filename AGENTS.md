@@ -187,3 +187,12 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   `npx supabase@3.0.0 init`, mudar as portas do `config.toml` se já houver outro Supabase local, `supabase start`;
   os e-mails ficam no Mailpit. **Nunca commitar** as chaves locais no `environment*.ts` da etapa: ela vai com valores
   de exemplo, e os testes usam o `testing/fake-supabase.ts`.
+- **Capítulo 38 (Guards), verificado no Angular 22.2.4 e num Supabase local:** `CanActivateFn` assíncrono; `inject()`
+  depois do `await` dá `NG0203: The \`Router\` token injection failed…` e a navegação não acontece. Guard que devolve
+  `false`: o link não faz nada; digitando o endereço, o app abre em `/` com o cabeçalho e a tela vazia. Sem esperar a
+  sessão: na maior parte das vezes ela chega a tempo (`ready=true` no guard), mas com o token vencido no `localStorage`
+  o guard vê `ready=false signedIn=false` e desvia para `/entrar`; o `guestGuard` (que espera) devolve a pessoa.
+  `withComponentInputBinding()` liga também os parâmetros de consulta, pelo nome público: `input(…, { alias: 'voltar' })`
+  recebe `?voltar=`; sem o alias, o input fica vazio sem erro (conferido com `RouterTestingHarness`). Campo da classe
+  declarado depois de uma Promise que o preenche é zerado pela declaração (`useDefineForClassFields`, ES2022): use
+  variável local no construtor. Não afirmar que o `canActivate` evita baixar o `loadComponent` (não medido).

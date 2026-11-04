@@ -533,6 +533,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Impeça que alguém sem login entre nas telas privadas com guards funcionais, e mande a pessoa para o login com o endereço de volta.',
     minutes: 25,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '39-interceptors',

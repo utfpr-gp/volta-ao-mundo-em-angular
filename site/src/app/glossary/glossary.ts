@@ -151,6 +151,12 @@ export const GLOSSARY = {
       'Uma estrutura pronta que organiza a aplicação e chama o seu código na hora certa. Você escreve as peças; o framework monta e faz funcionar.',
     chapter: 1,
   },
+  guard: {
+    term: 'Guard',
+    definition:
+      'Uma função que o roteador chama antes de abrir uma rota. Ela devolve true para deixar passar, ou outro endereço para onde mandar a pessoa, como a tela de entrar.',
+    chapter: 38,
+  },
   'lazy-loading': {
     term: 'Lazy loading',
     definition:
