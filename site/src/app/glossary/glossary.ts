@@ -38,6 +38,12 @@ export const GLOSSARY = {
     definition: 'Um jeito de pensar telas em cinco níveis, inspirado na química: átomos, moléculas, organismos, templates e páginas. Criado pelo designer Brad Frost.',
     chapter: 6,
   },
+  baas: {
+    term: 'BaaS (Back-end as a Service)',
+    definition:
+      'Um back-end que já vem pronto, contratado como serviço: banco, login e API, sem você escrever o servidor. O Supabase é um BaaS.',
+    chapter: 37,
+  },
   breakpoint: {
     term: 'Breakpoint',
     definition:
@@ -189,6 +195,12 @@ export const GLOSSARY = {
       'No TypeScript, a descrição do formato de um objeto: quais propriedades ele tem e o tipo de cada uma. Some quando o código vira JavaScript.',
     chapter: 4,
   },
+  jwt: {
+    term: 'JWT (token de acesso)',
+    definition:
+      'Um texto assinado pelo servidor que prova quem entrou, como um crachá com validade. Os dados dentro dele qualquer um lê; o que não dá para falsificar é a assinatura.',
+    chapter: 37,
+  },
   json: {
     term: 'JSON',
     definition:
@@ -295,6 +307,12 @@ export const GLOSSARY = {
     definition:
       'A função que diz as regras de cada campo de um formulário com Signal Forms, como required(path.days, { message: \'…\' }). Roda uma vez, quando o formulário nasce, e cada regra já leva a frase do erro.',
     chapter: 36,
+  },
+  sessao: {
+    term: 'Sessão',
+    definition:
+      'O registro de que alguém entrou: quem é e o token que prova isso. No Supabase, fica guardada no navegador e sobrevive ao recarregar a página, até a pessoa sair.',
+    chapter: 37,
   },
   seletor: {
     term: 'Seletor (selector)',

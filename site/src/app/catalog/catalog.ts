@@ -521,6 +521,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Crie o seu projeto gratuito no Supabase e adicione cadastro, login e logout ao Passaporte, guardando a sessão de quem entrou.',
     minutes: 40,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '38-guards',

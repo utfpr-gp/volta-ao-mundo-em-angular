@@ -174,3 +174,16 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   O `pattern` só aceita `RegExp`; a flag `g` continua alternando, e o `required` aceita `"   "`. `form()` fora de um
   contexto de injeção dá `NG0203`. `submit()` marca os campos como tocados; `reset(valor)` troca o valor e limpa
   `touched`/`dirty`. Para testar um validador isolado: `TestBed.runInInjectionContext(() => form(signal(v), schema))`.
+- **Capítulo 37 (Login com Supabase), verificado com `@supabase/supabase-js` 2.118 num Supabase local (CLI 3.0, Docker):**
+  conferido contra o servidor de verdade, não contra a documentação. `signUp` com senha curta dá `weak_password`
+  ("Password should be at least 6 characters."); e-mail repetido dá `user_already_exists`; senha errada e e-mail
+  inexistente dão o mesmo `invalid_credentials` ("Invalid login credentials", status 400). Com a confirmação ligada
+  (padrão dos projetos na nuvem), o `signUp` devolve `session: null`, e o login antes de confirmar dá
+  `email_not_confirmed`; o link do e-mail volta ao **Site URL** (padrão `http://localhost:3000` na nuvem) e o cliente
+  lê o token da URL e avisa `SIGNED_IN`. O `onAuthStateChange` avisa `INITIAL_SESSION` logo ao assinar. Sessão no
+  `localStorage`, chave `sb-<ref>-auth-token` (`sb-127-auth-token` no local); `expires_in` 3600. Servidor fora do ar:
+  `AuthRetryableFetchError`, `code` indefinido, status 0. `createClient('', …)` lança `supabaseUrl is required.`.
+  O callback `async` do `onAuthStateChange` está `@deprecated` (pode travar): use o síncrono. Para conferir de novo:
+  `npx supabase@3.0.0 init`, mudar as portas do `config.toml` se já houver outro Supabase local, `supabase start`;
+  os e-mails ficam no Mailpit. **Nunca commitar** as chaves locais no `environment*.ts` da etapa: ela vai com valores
+  de exemplo, e os testes usam o `testing/fake-supabase.ts`.
