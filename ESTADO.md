@@ -2,13 +2,13 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-11-04 (capítulo 37 em revisão).
+> Última atualização: 2026-11-04 (capítulo 37 publicado).
 
 ## Publicado
 
-- **Capítulos 1 a 36**, em seis trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados e Formulários. Todos com `verifiedWithAngular: '22.2'`.
-- **Último capítulo novo:** 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Em revisão:** capítulo 37, Login com Supabase, que abre a trilha Back-end, na branch `trilha-back-end-1` (PR aberto, esperando a autorização do merge). A caixa do `max` da data no 36 já está publicada (PR #32).
+- **Capítulos 1 a 37**, em sete trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários e o começo de Back-end. Todos com `verifiedWithAngular: '22.2'`.
+- **Último capítulo novo:** 37, Login com Supabase (PR #33). Antes dele, o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
+- **Próximo capítulo novo:** 38, Guards (usa o `Auth.ready` da etapa 37).
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
 ## O Passaporte, na etapa 37
