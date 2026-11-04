@@ -1,0 +1,2 @@
+[guard] ready=false signedIn=false     ← o guard decide: "ninguém logado" → /entrar
+[guard] ready=true  signedIn=true      ← a sessão chega logo depois
