@@ -1,0 +1,345 @@
+<vm-chapter-page slug="37-login-com-supabase">
+  <vm-view kind="mission" title="Cada um com o seu passaporte">
+    <p class="lead">
+      Até aqui, o Passaporte é de quem estiver na frente do computador: não há conta, nem senha, nem como saber de quem é cada
+      viagem. Neste capítulo, ele ganha uma porta de entrada. A pessoa cria a conta com e-mail e senha, entra, e o app passa a
+      saber quem ela é, mesmo depois de fechar a aba.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-37/entrar-com-supabase.png"
+      width="1150"
+      height="640"
+      alt="A tela Entrar do Passaporte, com os campos E-mail e Senha preenchidos e a mensagem em vermelho: E-mail ou senha incorretos. Embaixo, o botão Entrar e o link Ainda não tem conta? Criar uma. No cabeçalho, ao lado de Países, Meu passaporte e Sobre, o link Entrar aparece destacado."
+    />
+    <p>
+      Ao final do capítulo, você vai saber criar um projeto no <vm-term name="baas">Supabase</vm-term>, ligar o app a ele, guardar a
+      <vm-term name="sessao">sessão</vm-term> de quem entrou num signal e montar as telas de entrar, criar conta e sair. Os dados do
+      passaporte continuam no json-server por enquanto: eles vão para o Supabase no <vm-see-chapter [number]="40" />.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O crachá do evento">
+    <vm-analogy emoji="🪪" title="Mostra o documento uma vez, usa o crachá o dia inteiro">
+      <p>
+        Na entrada de um evento, você mostra o documento uma vez só, e recebe um crachá. Daí em diante, ninguém pede o documento
+        de novo: cada porta olha o crachá. O crachá tem validade, e, quando está para vencer, a organização troca por outro sem
+        você precisar voltar à fila. Ao ir embora, você devolve.
+      </p>
+      <p>
+        O login funciona assim. O e-mail e a senha são o documento, mostrados uma vez ao Supabase. O que volta é um
+        <vm-term name="jwt">token</vm-term>, o crachá, que vale uma hora e é trocado sozinho antes de vencer. Sair é devolver o
+        crachá.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O login por dentro">
+    <h3>O Supabase, um back-end que já vem pronto</h3>
+    <p>
+      Para ter login, alguém precisa guardar as contas, conferir as senhas e emitir os tokens. Escrever esse servidor é um trabalho
+      grande, e errar nele custa caro. O Supabase é um <vm-term name="baas">BaaS</vm-term>, um back-end como serviço: ele já traz
+      um banco PostgreSQL, o login e uma API, e o app fala com tudo isso por uma biblioteca, a <code>&#64;supabase/supabase-js</code>.
+      Neste capítulo, você usa só o login, o <strong>Supabase Auth</strong>.
+    </p>
+
+    <h3>As duas informações do projeto</h3>
+    <p>
+      Cada projeto do Supabase tem um endereço, como <code>https://abcdwxyz.supabase.co</code>, e chaves de API. Duas importam
+      agora:
+    </p>
+    <ul>
+      <li>
+        <strong>A chave publicável</strong>, que começa com <code>sb_publishable_</code>. Ela foi feita para o navegador: vai no
+        app, e pode ir para o Git. Ela só diz "este app é do projeto tal"; quem decide o que cada pessoa pode ler é o banco, com
+        as regras que você vai escrever no <vm-see-chapter [number]="40" />.
+      </li>
+      <li>
+        <strong>A chave secreta</strong>, que começa com <code>sb_secret_</code>. Ela passa por cima de todas as regras do banco,
+        e por isso <strong>nunca</strong> vai para o navegador: tudo o que está no app, qualquer pessoa que o abre consegue ler.
+      </li>
+    </ul>
+    <vm-deep-dive title="E a chave anon, dos tutoriais?">
+      <p>
+        Tutoriais mais antigos usam a chave <code>anon</code>, um texto comprido que começa com <code>eyJ</code>. Ela é a versão
+        antiga da chave publicável, e ainda funciona nos projetos que a têm. Num projeto novo, use a publicável: o lugar no código
+        é o mesmo, só o valor muda.
+      </p>
+    </vm-deep-dive>
+
+    <h3>Onde guardar: os ambientes</h3>
+    <p>
+      O endereço e a chave não pertencem a nenhum componente: são do <strong>ambiente</strong> em que o app roda. O Angular CLI
+      cria os arquivos para isso com <code>ng generate environments</code>:
+    </p>
+    <vm-code snippet="37/etapa/src/environments/environment.ts" caption="environment.ts" />
+    <ul>
+      <li>
+        São dois arquivos: o <code>environment.ts</code>, usado no build de produção, e o
+        <code>environment.development.ts</code>, que o <code>ng serve</code> usa no lugar dele. O comando também acrescenta ao
+        <code>angular.json</code> a troca de um pelo outro.
+      </li>
+      <li>
+        O código importa sempre o <code>environment.ts</code>. Quem decide qual dos dois entra é o build, e por isso o projeto de
+        desenvolvimento e o de produção podem ser diferentes sem mudar uma linha do código.
+      </li>
+    </ul>
+
+    <h3>Um cliente só, para o app inteiro</h3>
+    <p>
+      O <code>createClient()</code> cria o cliente que conversa com o projeto. Ele deve existir uma vez só, e quem precisa dele o
+      pede com <code>inject()</code>:
+    </p>
+    <vm-code snippet="37/etapa/src/app/core/supabase.ts" caption="supabase.ts" />
+    <ul>
+      <li>
+        Um <code>InjectionToken</code> é uma chave para a injeção de dependência, como um service, mas para um valor que não é
+        uma classe sua. A <code>factory</code> diz como criá-lo, e o <code>providedIn: 'root'</code> faz existir um só.
+      </li>
+      <li>
+        Nos testes, outro valor entra no lugar do cliente de verdade, e nada sai para a rede. Você vê isso no fim desta seção.
+      </li>
+    </ul>
+
+    <h3>O service da autenticação</h3>
+    <p>Os componentes não falam com o Supabase direto. Quem fala é o service <code>Auth</code>, e eles perguntam a ele:</p>
+    <vm-code snippet="37/etapa/src/app/core/auth.ts" caption="auth.ts" />
+    <ul>
+      <li>
+        A sessão mora num signal. Quem escreve nele é o <code>onAuthStateChange</code>: o Supabase chama a função a cada mudança,
+        com o nome do que aconteceu e a sessão nova. O <code>user</code> e o <code>signedIn</code> são <code>computed</code> dela,
+        e a tela inteira se atualiza sozinha.
+      </li>
+      <li>
+        O primeiro aviso chega logo que o app abre, o <code>INITIAL_SESSION</code>, com a sessão que estava guardada, ou
+        <code>null</code>. É ele que liga o <code>ready</code>: a partir daí, o app sabe se alguém está logado. Ele vai fazer falta
+        no <vm-see-chapter [number]="38" />.
+      </li>
+      <li>
+        <code>signInWithPassword</code>, <code>signUp</code> e <code>signOut</code> devolvem uma <vm-term name="promise">Promise</vm-term>
+        com <code>&#123; data, error &#125;</code>. Nenhum deles lança exceção quando a senha está errada: o erro vem no
+        <code>error</code>, e o código precisa olhar.
+      </li>
+      <li>
+        O <code>messageFor</code> traduz o erro pelo <code>error.code</code>, que é estável. A <code>message</code> vem em inglês e
+        pode mudar de uma versão para outra.
+      </li>
+    </ul>
+
+    <vm-session-sim />
+
+    <h3>A sessão no navegador</h3>
+    <p>
+      O Supabase guarda a sessão no <code>localStorage</code>, numa chave como <code>sb-abcdwxyz-auth-token</code>. É por isso que
+      a pessoa continua logada depois de recarregar a página: o <code>INITIAL_SESSION</code> traz o que estava lá. Dentro da
+      sessão vem o <strong>token de acesso</strong>, que vale uma hora, e um token de renovação, que o Supabase usa para pedir um
+      novo antes de o primeiro vencer. Cada troca chega como um aviso <code>TOKEN_REFRESHED</code>.
+    </p>
+    <vm-deep-dive title="O que tem dentro do token">
+      <p>
+        O token de acesso é um <vm-term name="jwt">JWT</vm-term>: três partes separadas por pontos, a do meio com os dados de quem
+        entrou, como o e-mail, o papel <code>authenticated</code> e a hora em que vence. Os dados <strong>não</strong> são
+        secretos: qualquer um lê, colando o token em <code>jwt.io</code>. O que o servidor confere é a terceira parte, a
+        assinatura, que só ele sabe fazer. Mudar uma letra dos dados quebra a assinatura, e o token deixa de valer.
+      </p>
+    </vm-deep-dive>
+
+    <h3>A tela de entrar</h3>
+    <p>
+      Uma tela só serve para entrar e para criar a conta: muda o título, o texto do botão e o método chamado. O formulário é de
+      Signal Forms, como o de viagem:
+    </p>
+    <vm-code snippet="37/etapa/src/app/features/auth/sign-in-page/sign-in-page.ts" caption="sign-in-page.ts" />
+    <vm-code snippet="37/etapa/src/app/features/auth/sign-in-page/sign-in-page.html" caption="sign-in-page.html" />
+    <ul>
+      <li>
+        A regra <code>email()</code> confere o formato do e-mail, e o <code>minLength</code> da senha é o mesmo mínimo que o
+        Supabase exige, 6 caracteres. Assim a pessoa fica sabendo antes de a chamada sair.
+      </li>
+      <li>
+        O <code>action</code> é <code>async</code> e espera a resposta do Supabase. Enquanto ela não chega,
+        <code>signInForm().submitting()</code> vale <code>true</code>: o botão fica desligado e diz "Aguarde…", e um clique duplo
+        não cria duas contas.
+      </li>
+      <li>
+        A frase do servidor vai num parágrafo com <code>role="status"</code> e <code>aria-live</code>, para o leitor de tela anunciar
+        o erro sem a pessoa precisar procurá-lo.
+      </li>
+    </ul>
+
+    <h3>A confirmação de e-mail</h3>
+    <p>
+      Num projeto novo do Supabase, a confirmação de e-mail vem ligada. O <code>signUp</code> cria a conta, mas devolve
+      <code>data.session</code> igual a <code>null</code>, e o Supabase manda um e-mail com um link. Por isso o
+      <code>signUp</code> do service devolve <code>confirm-email</code>, e a tela avisa. Quem tentar entrar antes de clicar recebe o
+      erro <code>email_not_confirmed</code>.
+    </p>
+    <p>
+      O link do e-mail confirma a conta e volta para o endereço do app que está configurado no projeto, o <strong>Site URL</strong>,
+      com o token no fim do endereço. O <code>&#64;supabase/supabase-js</code> lê esse token sozinho, guarda a sessão e avisa
+      <code>SIGNED_IN</code>: a pessoa chega ao app já logada.
+    </p>
+
+    <h3>O cabeçalho sabe quem entrou</h3>
+    <p>O cabeçalho só pergunta ao service:</p>
+    <vm-code snippet="37/etapa/src/app/core/layout/header/header.html" caption="header.html" />
+    <ul>
+      <li>
+        O <code>&#64;if (auth.user(); as user)</code> lê o signal: quem não entrou vê "Entrar"; quem entrou vê o e-mail e "Sair". Quando a
+        sessão muda, o cabeçalho muda junto, sem nenhum código a mais.
+      </li>
+      <li>
+        O "Sair" chama o <code>signOut()</code>, que apaga a sessão do navegador, e leva a pessoa para a lista de países.
+      </li>
+    </ul>
+
+    <vm-deep-dive title="O app ficou mais pesado">
+      <p>Rode <code>npm run build</code> depois deste capítulo, e um aviso aparece:</p>
+      <vm-code snippet="37/aviso-do-build" caption="terminal" />
+      <p>
+        O cabeçalho, que aparece em toda tela, usa o <code>Auth</code>, e o <code>Auth</code> traz a biblioteca do Supabase
+        junto. Ela entrou no pacote que o navegador baixa logo ao abrir o app: no Passaporte, o pacote inicial foi de 326 kB para
+        554 kB, ou de 91 kB para 141 kB comprimidos, que é o que de fato viaja pela rede. Esse é o preço de ter login desde a
+        primeira tela.
+      </p>
+      <p>
+        O <strong>orçamento</strong> (<em>budget</em>), no <code>angular.json</code>, é o limite que o próprio projeto se deu
+        para esse pacote. Passar dele não quebra nada: é um alarme, para o aumento não acontecer sem ninguém perceber. Aqui, ele
+        foi percebido e aceito, e por isso a etapa sobe o aviso para 600 kB:
+      </p>
+      <vm-code snippet="37/orcamento" caption="angular.json" />
+      <p>
+        Subir o orçamento é uma decisão, e não um conserto. Quando o pacote incomodar de verdade, existem jeitos de carregar
+        partes do app só quando elas aparecem, como o <code>&#64;defer</code> do <vm-see-chapter [number]="45" />.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="Testar sem internet">
+      <p>
+        Os testes da etapa não falam com Supabase nenhum. O arquivo <code>testing/fake-supabase.ts</code> cria um cliente falso,
+        com o mesmo formato do verdadeiro, e o teste o põe no lugar do <code>SUPABASE</code>. Cada teste diz o que a chamada
+        devolve, e pode até anunciar um login com <code>fake.emit('SIGNED_IN', …)</code>:
+      </p>
+      <vm-code snippet="37/fake-supabase-no-teste" caption="sign-in-page.spec.ts" />
+      <p>
+        É a vantagem do <code>InjectionToken</code>: quem pede o cliente não sabe se é o de verdade, e o teste roda rápido, sem rede
+        e sem conta.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A porta de entrada">
+    <vm-steps label="Ligar o Passaporte ao Supabase e criar o login">
+      <ng-template vmStep="O projeto no Supabase">
+        <p>
+          Crie uma conta gratuita em <code>supabase.com</code> e um projeto novo, com a região <strong>São Paulo</strong>. Guarde a
+          senha do banco num lugar seguro: ela não vai para o app.
+        </p>
+        <p>
+          Com o projeto pronto, clique em <strong>Connect</strong>, no topo do painel: ali estão o endereço do projeto, o
+          <strong>Project URL</strong>, e a <strong>chave publicável</strong>. Copie os dois. Depois, em
+          <strong>Authentication → URL Configuration</strong>, troque o <strong>Site URL</strong> de
+          <code>http://localhost:3000</code> para <code>http://localhost:4200</code>, o endereço do <code>ng serve</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A biblioteca e os ambientes">
+        <p>Na pasta do Passaporte:</p>
+        <vm-code snippet="37/instalar" caption="terminal" />
+        <p>
+          Nos dois arquivos de <code>src/environments</code>, escreva o <code>supabaseUrl</code> e o
+          <code>supabasePublishableKey</code> do seu projeto, como no <code>environment.ts</code> da seção anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O cliente e o service">
+        <p>
+          Crie o <code>core/supabase.ts</code>, com o <code>SUPABASE</code>, e o <code>core/auth.ts</code>, com o service
+          <code>Auth</code>, como na seção anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A tela e a rota">
+        <p>
+          Crie o componente <code>features/auth/sign-in-page</code> e a rota <code>entrar</code> no <code>app.routes.ts</code>, com
+          <code>loadComponent</code>, como as outras.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O cabeçalho">
+        <p>
+          No cabeçalho, injete o <code>Auth</code> e o <code>Router</code>, crie o método <code>signOut()</code> e mostre "Entrar" ou
+          o e-mail com "Sair".
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> o cabeçalho ganha "Entrar". Crie uma conta: aparece o aviso do link de confirmação.
+          Tente entrar antes de confirmar, e veja o pedido para confirmar o e-mail. Abra o e-mail, clique no link, e você chega ao
+          Passaporte já logado, com o seu e-mail no cabeçalho. Recarregue a página: você continua lá. Clique em "Sair", e o
+          "Entrar" volta. Por fim, nas ferramentas do navegador, em <strong>Application → Local Storage</strong>, procure a chave
+          que começa com <code>sb-</code>: ela existe enquanto você está logado e some quando sai.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="As portas que emperram">
+    <vm-pitfall title="Preencher só um dos ambientes" where="O que aparece no console do navegador" message="supabaseUrl is required.">
+      <vm-code snippet="37/ambiente-vazio" caption="src/environments" />
+      <p>
+        O <code>ng serve</code> usa o <code>environment.development.ts</code>, e não o <code>environment.ts</code>. Com o endereço
+        em branco, o <code>createClient()</code> desiste antes de o app abrir. <strong>Como sair:</strong> o
+        <code>supabaseUrl</code> e o <code>supabasePublishableKey</code> nos dois arquivos.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O link do e-mail vai para o lugar errado"
+      where="O que o navegador mostra ao clicar no link de confirmação"
+      message="ERR_CONNECTION_REFUSED"
+    >
+      <vm-code snippet="37/link-para-o-3000" caption="o endereço que o link abre" />
+      <p>
+        O projeto novo vem com o Site URL <code>http://localhost:3000</code>, e o link volta para lá, onde nada está rodando. A conta
+        foi confirmada assim mesmo, mas a pessoa não chega logada ao app. <strong>Como sair:</strong> em
+        <strong>Authentication → URL Configuration</strong>, o Site URL <code>http://localhost:4200</code>. Na publicação, ele passa a
+        ser o endereço público do app.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Entrar antes de confirmar" where="O que o signInWithPassword devolve" message="Email not confirmed">
+      <p>
+        Com a confirmação ligada, a conta só aceita login depois do clique no link. O <code>error.code</code> é
+        <code>email_not_confirmed</code>. <strong>Como sair:</strong> confirmar pelo e-mail. Para testar sem caixa de entrada, dá
+        para desligar a confirmação no projeto, em <strong>Authentication → Sign In / Providers → Email</strong>, desmarcando
+        <strong>Confirm email</strong>; aí o <code>signUp</code> já devolve a sessão. Num app que vai para o mundo, deixe ligada.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O erro em inglês na tela" where="O que aparece na tela de entrar" message="Invalid login credentials">
+      <vm-code snippet="37/mensagem-em-ingles" caption="auth.ts" />
+      <p>
+        A <code>message</code> do erro é para quem programa, não para quem usa: vem em inglês e pode mudar quando a biblioteca
+        atualiza. <strong>Como sair:</strong> escolher a frase pelo <code>error.code</code>, como o <code>messageFor</code> do
+        service, com uma frase genérica para os códigos que você não conhece.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="A sessão lida uma vez só" where="O que aparece no cabeçalho" message='(depois do login, continua "Entrar")'>
+      <vm-code snippet="37/sessao-lida-uma-vez" caption="auth.ts" />
+      <p>
+        O <code>getSession()</code> responde o que havia no momento da pergunta. O login acontece depois, e ninguém avisa o signal:
+        o cabeçalho só muda quando a página é recarregada. <strong>Como sair:</strong> o <code>onAuthStateChange</code>, que avisa
+        cada mudança, inclusive a primeira.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="37-login-com-supabase" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O app já sabe quem entrou, mas ainda não usa isso para nada: "Meu passaporte" abre do mesmo jeito
+      para quem não entrou. O próximo passo é trancar essa porta, e quem tranca rotas no Angular é o guard: o
+      <vm-see-chapter [number]="38" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>

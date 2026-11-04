@@ -2,18 +2,18 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-10-30 (capítulo 36 publicado; a caixa sobre o `max` da data vai num PR à parte).
+> Última atualização: 2026-11-04 (capítulo 37 em revisão).
 
 ## Publicado
 
 - **Capítulos 1 a 36**, em seis trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados e Formulários. Todos com `verifiedWithAngular: '22.2'`.
 - **Último capítulo novo:** 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Em revisão:** no capítulo 36, a caixa "Por que só a data tem o max escrito à mão", na branch `capitulo-36-max-da-data` (o commit dela não chegou ao PR #31; ver os cuidados). Próximo capítulo novo: 37, login com Supabase, que abre a trilha Back-end.
+- **Em revisão:** capítulo 37, Login com Supabase, que abre a trilha Back-end, na branch `trilha-back-end-1` (PR aberto, esperando a autorização do merge). A caixa do `max` da data no 36 já está publicada (PR #32).
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
-## O Passaporte, na etapa 36
+## O Passaporte, na etapa 37
 
-`passaporte/etapas/36-signal-forms/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
+`passaporte/etapas/37-login-com-supabase/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
 
 - `/paises`: lista, destaque, progresso mundial, filtro; dados da API de países do livro (`site/public/api/paises.json`).
 - `/paises/:code`: rotas filhas com visão geral, anotações e o tempo (Open-Meteo).
@@ -21,12 +21,12 @@
 - `core/passport.ts`: o estado salvo (visitados, desejados, anotações, `trips?`), PUT no json-server (`npm run api`, `db.json`) e cópia no `localStorage` por um `effect` (capítulo 33).
 - **Desde o 35, o formulário valida:** `Validators.required`/`min`/`max`/`maxLength`/`pattern` e um validador próprio (`notInFuture`, em `trip-validators.ts`, junto com `today()` e `NAME_PATTERN`). Mensagem quando o campo é inválido e `touched` (`showError`), com `aria-invalid`, `aria-describedby` e borda `aria-invalid:border-danger`; token novo `--color-danger`. O botão fica desligado enquanto o formulário for inválido, com um aviso embaixo, e o `submit()` confere de novo.
 - **Desde o 36, o formulário é Signal Forms** (`@angular/forms/signals`, estável desde a 22): modelo `trip = signal<Trip>(blankTrip())`, `tripForm = form(trip, schema, { submission: { action } })`; regras e frases no schema (`required`/`min`/`max`/`maxLength`/`pattern` com `message`; `notInFuture(path, { message })` com `validate`); template com `[formRoot]` e `[formField]`, mensagem pelo `errorOf(campo)`; o `action` registra e chama `field().reset(blankTrip())`. A aparência é a mesma do 35. Daqui em diante, formulários novos do Passaporte usam Signal Forms.
+- **Desde o 37, há login com o Supabase Auth** (`@supabase/supabase-js`): `core/supabase.ts` (o `InjectionToken` `SUPABASE`, com `createClient` a partir do `environment`), `core/auth.ts` (o service `Auth`: sessão num signal alimentado pelo `onAuthStateChange`, `user`/`signedIn` em `computed`, `ready` depois do `INITIAL_SESSION`, `signIn`/`signUp`/`signOut` devolvendo `AuthOutcome`, erros traduzidos pelo `error.code`), a tela `/entrar` (`features/auth/sign-in-page`, Signal Forms, entrar e criar conta na mesma tela, `submitting()` no botão) e o cabeçalho com "Entrar" ou o e-mail e "Sair". `src/environments` com valores de exemplo (cada leitor usa o seu projeto). Testes com `testing/fake-supabase.ts`. **Os dados do passaporte continuam no json-server** até o 40; nenhuma rota é protegida até o 38 (o `ready` existe para o guard).
 
 ## Próximos capítulos (catálogo)
 
 | Nº | Slug | Pergunta |
 | --- | --- | --- |
-| 37 | `37-login-com-supabase` | Como fazer login com Supabase Auth? |
 | 38 | `38-guards` | Como proteger rotas com guards? |
 | 39 | `39-interceptors` | Como enviar o token em toda requisição com interceptors? |
 | 40 | `40-crud-com-supabase` | Como criar, ler, atualizar e apagar dados no Supabase? |
@@ -56,7 +56,7 @@ As perguntas e descrições completas estão em `site/src/app/catalog/catalog.ts
 
 ## Cuidados que apareceram no caminho
 
-- **Largura em 375 px (problema conhecido, fora dos capítulos):** a dica do `<vm-term>` (`span` invisível com `w-72`, centrado no termo) passa da borda direita quando o termo fica perto dela e alarga a página. Em 2026-10-30, 17 capítulos tinham `scrollWidth` maior que 375 (1, 2, 4, 7, 8, 15, 16, 17, 18, 21, 22, 24, 25, 28, 30, 34 e 36). A correção é no `site/src/app/glossary/term.ts`, numa branch própria; o 18 (569 px) pode ter outra causa além dessa.
+- **Largura em 375 px (problema conhecido, fora dos capítulos):** a dica do `<vm-term>` (`span` invisível com `w-72`, centrado no termo) passa da borda direita quando o termo fica perto dela e alarga a página. Em 2026-10-30, 17 capítulos tinham `scrollWidth` maior que 375 (1, 2, 4, 7, 8, 15, 16, 17, 18, 21, 22, 24, 25, 28, 30, 34 e 36); o 37 também (436 px, termos `promise` e `jwt`). A correção é no `site/src/app/glossary/term.ts`, numa branch própria; o 18 (569 px) pode ter outra causa além dessa.
 
 - **Porta 3000:** o json-server das etapas usa a 3000. Ao rodar capturas de tela, parar só os processos iniciados pela própria sessão, nunca o que já estava rodando.
 - **`input[value=…]` com `formControlName`:** o `[value]` do rádio vai para a diretiva, e o atributo no DOM não é o valor. Nos testes, achar os rádios pelo texto do rótulo.

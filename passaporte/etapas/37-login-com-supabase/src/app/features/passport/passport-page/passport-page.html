@@ -1,0 +1,23 @@
+<h1 class="mb-4 text-2xl font-extrabold text-ink">Meu passaporte</h1>
+
+<div class="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+  <app-trip-form />
+
+  <section class="rounded-card border border-line bg-card p-5 text-ink shadow-sm">
+    <h2 class="mb-3 text-xl font-extrabold">📓 Diário de viagens</h2>
+    <ol class="flex flex-col gap-2">
+      @for (trip of diary(); track $index) {
+        <li class="rounded-lg bg-surface px-3 py-2">
+          <strong>{{ trip.country | flag }} {{ trip.name }}</strong>
+          <span class="block text-sm text-ink-muted">
+            Chegada em {{ trip.arrival | date: 'dd/MM/yyyy' }} · {{ trip.days }} dias · {{ transportLabels[trip.transport] }}{{ trip.companion ? ' · com ' + trip.companion : '' }}
+          </span>
+        </li>
+      } @empty {
+        <li class="text-ink-muted">Nenhuma viagem registrada ainda.</li>
+      }
+    </ol>
+  </section>
+</div>
+
+<app-stamp-book class="mt-6 block" [countries]="passport.countries()" />

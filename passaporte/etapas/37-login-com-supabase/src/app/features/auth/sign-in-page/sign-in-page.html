@@ -1,0 +1,58 @@
+<section class="mx-auto max-w-md">
+  <form [formRoot]="signInForm" class="rounded-card border border-line bg-card p-6 text-ink shadow-sm">
+    <h1 class="mb-1 text-2xl font-extrabold">{{ mode() === 'entrar' ? '🔑 Entrar' : '🛂 Criar conta' }}</h1>
+    <p class="mb-5 text-ink-muted">
+      {{ mode() === 'entrar' ? 'Entre para guardar o seu passaporte na nuvem.' : 'Uma conta por pessoa, com e-mail e senha.' }}
+    </p>
+
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="sign-in-email" class="font-bold">E-mail</label>
+        <input
+          id="sign-in-email"
+          type="email"
+          autocomplete="email"
+          [formField]="signInForm.email"
+          [attr.aria-invalid]="errorOf(signInForm.email) ? true : null"
+          [attr.aria-describedby]="errorOf(signInForm.email) ? 'sign-in-email-error' : null"
+          class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+        />
+        @if (errorOf(signInForm.email); as message) {
+          <p id="sign-in-email-error" class="text-sm font-bold text-danger">{{ message }}</p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="sign-in-password" class="font-bold">Senha</label>
+        <input
+          id="sign-in-password"
+          type="password"
+          [attr.autocomplete]="mode() === 'entrar' ? 'current-password' : 'new-password'"
+          [formField]="signInForm.password"
+          [attr.aria-invalid]="errorOf(signInForm.password) ? true : null"
+          [attr.aria-describedby]="errorOf(signInForm.password) ? 'sign-in-password-error' : null"
+          class="rounded-lg border border-line bg-surface px-3 py-2 aria-invalid:border-2 aria-invalid:border-danger"
+        />
+        @if (errorOf(signInForm.password); as message) {
+          <p id="sign-in-password-error" class="text-sm font-bold text-danger">{{ message }}</p>
+        }
+      </div>
+    </div>
+
+    <p data-feedback role="status" aria-live="polite" class="mt-4 min-h-6 font-bold" [class]="feedback()?.kind === 'error' ? 'text-danger' : 'text-ink'">
+      {{ feedback()?.text }}
+    </p>
+
+    <button
+      type="submit"
+      [disabled]="signInForm().submitting()"
+      class="mt-2 w-full rounded-lg bg-primary px-4 py-2 font-bold text-on-primary disabled:opacity-60"
+    >
+      {{ signInForm().submitting() ? 'Aguarde…' : mode() === 'entrar' ? 'Entrar' : 'Criar conta' }}
+    </button>
+
+    <button type="button" class="mt-3 w-full text-sm font-bold text-primary underline" (click)="switchMode()">
+      {{ mode() === 'entrar' ? 'Ainda não tem conta? Criar uma' : 'Já tem conta? Entrar' }}
+    </button>
+  </form>
+</section>

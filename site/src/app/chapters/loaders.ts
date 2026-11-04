@@ -41,4 +41,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '34-reactive-forms': () => import('./34-reactive-forms/chapter').then((m) => m.Chapter34),
   '35-validacao': () => import('./35-validacao/chapter').then((m) => m.Chapter35),
   '36-signal-forms': () => import('./36-signal-forms/chapter').then((m) => m.Chapter36),
+  '37-login-com-supabase': () => import('./37-login-com-supabase/chapter').then((m) => m.Chapter37),
 };
