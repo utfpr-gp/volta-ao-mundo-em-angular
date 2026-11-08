@@ -37,6 +37,7 @@ import { CHAPTER_36 } from './36-signal-forms/content';
 import { CHAPTER_37 } from './37-login-com-supabase/content';
 import { CHAPTER_38 } from './38-guards/content';
 import { CHAPTER_39 } from './39-interceptors/content';
+import { CHAPTER_40 } from './40-crud-com-supabase/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -80,4 +81,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '37-login-com-supabase': CHAPTER_37,
   '38-guards': CHAPTER_38,
   '39-interceptors': CHAPTER_39,
+  '40-crud-com-supabase': CHAPTER_40,
 };

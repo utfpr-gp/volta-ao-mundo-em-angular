@@ -557,6 +557,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Leve o seu passaporte para a nuvem: crie a tabela no Supabase, proteja os dados de cada pessoa e faça o CRUD completo pelo app.',
     minutes: 45,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '41-resolvers',
