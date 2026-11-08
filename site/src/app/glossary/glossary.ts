@@ -61,6 +61,12 @@ export const GLOSSARY = {
       'Um conjunto de código pronto que você chama quando precisa, como uma caixa de ferramentas. Quem decide a hora de usar é o seu código.',
     chapter: 1,
   },
+  'cabecalho-http': {
+    term: 'Cabeçalho HTTP',
+    definition:
+      'Uma linha de informação que vai junto com a requisição ou a resposta, fora do corpo, no formato Nome: valor. O token de acesso vai no cabeçalho Authorization: Bearer <token>.',
+    chapter: 39,
+  },
   classe: {
     term: 'Classe',
     definition:
@@ -195,6 +201,12 @@ export const GLOSSARY = {
       'O jeito do Angular de entregar a um componente aquilo de que ele depende, como um service: em vez de criar com new, o componente pede com inject(), e o Angular entrega o objeto certo.',
     chapter: 28,
   },
+  interceptor: {
+    term: 'Interceptor',
+    definition:
+      'Uma função por onde passa toda requisição do HttpClient, na ida e na volta. Serve para o que vale para todas: pôr o token, contar as requisições a caminho, avisar quando a API falha.',
+    chapter: 39,
+  },
   interface: {
     term: 'Interface',
     definition:
@@ -278,6 +290,12 @@ export const GLOSSARY = {
     term: 'Property binding',
     definition: 'Os colchetes [ ] no template, como [src]="url": dão a uma propriedade do elemento o valor de uma expressão da classe.',
     chapter: 7,
+  },
+  preflight: {
+    term: 'Preflight',
+    definition:
+      'A pergunta que o navegador faz antes de certas requisições para outro endereço, com o método OPTIONS: "você aceita este método e estes cabeçalhos, vindos daqui?". Sem um sim, a requisição de verdade nem sai.',
+    chapter: 39,
   },
   projecao: {
     term: 'Projeção de conteúdo',

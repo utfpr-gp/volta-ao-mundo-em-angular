@@ -545,6 +545,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Coloque o token em toda requisição do HttpClient, trate erros num lugar só e mostre um indicador de carregamento com interceptors.',
     minutes: 30,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '40-crud-com-supabase',

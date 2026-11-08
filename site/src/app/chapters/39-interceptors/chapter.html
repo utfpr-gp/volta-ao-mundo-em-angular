@@ -1,0 +1,297 @@
+<vm-chapter-page slug="39-interceptors">
+  <vm-view kind="mission" title="Cada pedido com crachá">
+    <p class="lead">
+      O Passaporte sabe quem entrou, mas o servidor ainda não sabe: as requisições saem sem dizer quem as fez. Neste capítulo,
+      toda requisição para a API do Passaporte passa a levar o token de quem entrou, sem que nenhum service precise lembrar
+      disso. De quebra, o app ganha uma barra de carregamento e passa a saber, num lugar só, quando a API não respondeu.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-39/barra-de-carregamento.png"
+      width="1150"
+      height="640"
+      alt="A tela de países do Passaporte enquanto os países ainda não chegaram: logo abaixo do cabeçalho azul-marinho, uma barra dourada corre da esquerda para a direita, e a lista diz Carregando os países."
+    />
+    <p>
+      Ao final do capítulo, você vai saber escrever um <vm-term name="interceptor">interceptor</vm-term>, registrá-lo no
+      <code>HttpClient</code>, mexer na requisição na ida e na resposta na volta, e escolher para quais endereços o token vai.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A sala de expedição">
+    <vm-analogy emoji="📮" title="Toda carta passa pelas mesmas mesas">
+      <p>
+        Numa empresa grande, ninguém leva a própria carta até o correio: deixa na sala de expedição. Lá, toda carta passa pelas
+        mesmas mesas, sempre na mesma ordem. A primeira anota no livro que uma carta saiu. A segunda põe o selo da empresa, mas só
+        nas cartas para a matriz: carta para outra empresa não leva o selo interno. Quando a resposta chega, ela atravessa as
+        mesmas mesas, de trás para a frente: se veio uma devolução, alguém avisa o andar inteiro; e o livro anota que a carta
+        voltou.
+      </p>
+      <p>
+        Quem escreveu a carta não precisa lembrar de nada disso. Os interceptors são as mesas da expedição do
+        <code>HttpClient</code>: toda requisição passa por eles na ida, e toda resposta, na volta.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O interceptor por dentro">
+    <h3>Uma função no meio do caminho</h3>
+    <p>
+      Um interceptor é uma função do tipo <code>HttpInterceptorFn</code>. Ela recebe a requisição (<code>req</code>) e o próximo
+      passo do caminho (<code>next</code>), e devolve o <vm-term name="observable">Observable</vm-term> da resposta. O mais simples
+      dos três do Passaporte conta as requisições a caminho:
+    </p>
+    <vm-code snippet="39/etapa/src/app/core/http/loading-interceptor.ts" caption="loading-interceptor.ts" />
+    <ul>
+      <li>
+        O que vem <strong>antes</strong> do <code>next(req)</code> acontece na ida: o <code>start()</code> soma uma requisição ao
+        contador do service <code>Loading</code>.
+      </li>
+      <li>
+        <code>next(req)</code> entrega a requisição ao próximo interceptor, ou, se ele for o último, à rede. O que ele devolve é a
+        resposta que ainda vai chegar.
+      </li>
+      <li>
+        Os operadores no <code>pipe</code> acontecem na <strong>volta</strong>. O <code>finalize</code> roda quando a requisição
+        termina, de qualquer jeito: com resposta, com erro ou cancelada. É ali que o <code>stop()</code> desconta.
+      </li>
+      <li>
+        Como o guard do <vm-see-chapter [number]="38" />, o interceptor pode usar o <code>inject()</code>: o Angular o chama num
+        contexto de injeção.
+      </li>
+    </ul>
+    <p>
+      O <code>Loading</code> é um service com um <code>signal</code> que conta, e um <code>busy</code> que diz se há alguma a
+      caminho. No <code>app.html</code>, enquanto <code>busy()</code> valer <code>true</code>, uma barra corre sob o cabeçalho:
+    </p>
+    <vm-code snippet="39/etapa/src/app/app.html" caption="app.html" />
+
+    <h3>Registrar os interceptors</h3>
+    <p>
+      Desde o Angular 22, o <code>HttpClient</code> já vem pronto, sem configurar nada. Para pôr interceptors no caminho, é
+      preciso configurá-lo com o <code>provideHttpClient</code> e a lista de interceptors no <code>withInterceptors</code>:
+    </p>
+    <vm-code snippet="39/etapa/src/app/app.config.ts" caption="app.config.ts" />
+    <p>
+      A ordem da lista é a ordem da ida. Na volta, a resposta passa pelos mesmos interceptors na ordem contrária, como as mesas da
+      expedição. O <code>loadingInterceptor</code> vem primeiro para contar todas as requisições, inclusive as que outro
+      interceptor fizer esperar.
+    </p>
+
+    <h3>O token, só para a API do Passaporte</h3>
+    <p>
+      O token de acesso, o <vm-term name="jwt">JWT</vm-term> que você conheceu no <vm-see-chapter [number]="37" />, vai num
+      <vm-term name="cabecalho-http">cabeçalho HTTP</vm-term> chamado <code>Authorization</code>, no formato
+      <code>Bearer &lt;token&gt;</code>. O <code>Auth</code> ganhou um <code>computed</code> que o lê da sessão:
+    </p>
+    <vm-code snippet="39/etapa/src/app/core/auth.ts" caption="auth.ts" />
+    <p>E o interceptor o põe em toda requisição para a API do Passaporte:</p>
+    <vm-code snippet="39/etapa/src/app/core/http/auth-interceptor.ts" caption="auth-interceptor.ts" />
+    <ul>
+      <li>
+        O <code>isApiRequest</code>, em <code>core/api.ts</code>, confere se o endereço começa com o da API do Passaporte. A API
+        de países e o Open-Meteo são de outras pessoas: o token de quem entrou não é da conta delas.
+      </li>
+      <li>
+        A requisição é <strong>imutável</strong>: ninguém a altera depois de criada. Para mudar alguma coisa, o
+        <code>req.clone(…)</code> faz uma cópia com a mudança, e o <code>setHeaders</code> acrescenta o cabeçalho.
+      </li>
+      <li>
+        O <code>from(auth.whenReady())</code> transforma a Promise do capítulo 38 num Observable, e o <code>switchMap</code>, que
+        você viu no <vm-see-chapter [number]="30" />, só solta a requisição quando ela se resolve. Sem essa espera, o primeiro
+        pedido do app sai antes de a sessão ser lida, e sem token (está nas armadilhas).
+      </li>
+    </ul>
+    <vm-code snippet="39/etapa/src/app/core/api.ts" caption="api.ts" />
+
+    <vm-interceptor-sim />
+
+    <h3>Os erros num lugar só</h3>
+    <p>
+      Até aqui, o <code>Passport</code> cuidava dos próprios erros: um signal para o GET que falhou, outro para o PUT. Com um
+      interceptor, toda falha da API passa por um lugar só:
+    </p>
+    <vm-code snippet="39/etapa/src/app/core/http/error-interceptor.ts" caption="error-interceptor.ts" />
+    <ul>
+      <li>
+        O <code>tap</code> olha cada evento que volta, sem mudar nada. Quando chega a resposta (<code>HttpEventType.Response</code>),
+        a API está de pé, e o aviso some.
+      </li>
+      <li>
+        O <code>catchError</code> acende o aviso e <strong>devolve o mesmo erro</strong> com <code>throwError</code>. O interceptor
+        avisa o app, mas quem fez a requisição continua sabendo que ela falhou.
+      </li>
+      <li>
+        O aviso mora no service <code>ApiStatus</code>, e o <code>app.html</code> o lê. O <code>Passport</code> ficou mais curto:
+        perdeu o <code>putFailed</code> e o <code>saveFailed</code>.
+      </li>
+    </ul>
+
+    <vm-deep-dive title="Por que o PUT ganhou um OPTIONS antes">
+      <p>
+        Abra a aba Rede do navegador depois de entrar: antes de cada requisição com o token para o json-server, aparece uma do tipo
+        <code>OPTIONS</code>. É o <vm-term name="preflight">preflight</vm-term>. Um cabeçalho como o <code>Authorization</code>, numa
+        requisição para outro endereço, faz o navegador perguntar antes ao servidor: "você aceita este cabeçalho, vindo de
+        <code>localhost:4200</code>?". O json-server responde que sim (<code>204</code>), e a requisição de verdade sai. Um servidor
+        que não responde à pergunta bloqueia a requisição, e é por isso que o token não pode ir para qualquer endereço.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="O Supabase não passa pelos interceptors">
+      <p>
+        Os interceptors só veem as requisições do <code>HttpClient</code>. O <code>&#64;supabase/supabase-js</code> usa o
+        <code>fetch</code> do navegador direto, por fora dele: o login, o logout e a renovação do token não passam pelo
+        <code>authInterceptor</code>, nem acendem a barra de carregamento. E nem precisam: o cliente do Supabase põe o próprio token
+        nas requisições que faz.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="Os interceptors de classe, dos tutoriais antigos">
+      <p>
+        Em tutoriais mais antigos, o interceptor é uma classe que implementa <code>HttpInterceptor</code>, com o método
+        <code>intercept</code>, registrada no token <code>HTTP_INTERCEPTORS</code>. Ainda funciona, com
+        <code>withInterceptorsFromDi()</code>, mas a própria documentação do Angular recomenda as funções e avisa que o suporte às
+        classes pode ser retirado numa versão futura.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A expedição montada">
+    <vm-steps label="Pôr os interceptors no caminho do HttpClient">
+      <ng-template vmStep="O endereço e o token">
+        <p>
+          Crie o <code>core/api.ts</code> com o <code>API_URL</code> e o <code>isApiRequest</code>, e use o <code>API_URL</code> no
+          <code>PASSPORT_URL</code> do <code>Passport</code>. No <code>Auth</code>, acrescente o <code>accessToken</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A barra de carregamento">
+        <p>
+          Em <code>core/http/</code>, crie o service <code>Loading</code> e o <code>loadingInterceptor</code>. No
+          <code>styles.css</code>, dentro do <code>&#64;theme</code>, declare a animação da barra:
+        </p>
+        <vm-code snippet="39/etapa/src/styles.css" caption="styles.css" />
+        <p>
+          No <code>app.html</code>, ponha a barra entre o cabeçalho e o aviso. O <code>motion-safe:</code> faz a barra correr só
+          para quem não pediu menos movimento ao sistema; para os demais, ela aparece inteira e parada.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O token">
+        <p>Crie o <code>authInterceptor</code>, com o <code>isApiRequest</code>, o <code>whenReady()</code> e o <code>clone</code>.</p>
+      </ng-template>
+      <ng-template vmStep="Os erros">
+        <p>
+          Crie o service <code>ApiStatus</code> e o <code>errorInterceptor</code>. No <code>Passport</code>, apague o
+          <code>putFailed</code> e o <code>saveFailed</code>: o <code>save()</code> fica com um <code>error</code> vazio, e o
+          <code>catchError</code> das anotações só devolve <code>EMPTY</code>, para a fila não morrer. No <code>app.html</code>, o
+          aviso passa a ler <code>apiStatus.failed()</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O registro">
+        <p>
+          No <code>app.config.ts</code>, acrescente o <code>provideHttpClient(withInterceptors([…]))</code>, com os três
+          interceptors nesta ordem.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> recarregue a página e veja a barra dourada correr sob o cabeçalho enquanto os países
+          chegam. Entre na sua conta, abra a aba Rede do navegador (F12) e marque um país: o <code>PUT</code> para
+          <code>localhost:3000</code> leva o cabeçalho <code>Authorization</code>, e o <code>GET</code> do
+          <code>paises.json</code>, não. Por fim, pare o <code>npm run api</code> e marque outro país: o aviso amarelo aparece, e a
+          barra some mesmo com o erro.
+        </p>
+        <p>
+          O json-server não confere o token: ele aceita qualquer pedido. Quem vai conferir é o Supabase, quando os dados do
+          passaporte forem para lá.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="As cartas que se perdem">
+    <vm-pitfall
+      title="O primeiro pedido sai sem token"
+      where="O que a aba Rede mostra, ao recarregar a página já logado"
+      message="(o GET do passaporte sai sem Authorization; o PUT seguinte sai com ele)"
+    >
+      <vm-code snippet="39/token-sem-esperar" caption="auth-interceptor.ts" />
+      <p>
+        Esse interceptor parece certo, e funciona depois do login. Mas, ao recarregar a página, o <code>Passport</code> pede o
+        passaporte logo que nasce, antes de o Supabase terminar de ler a sessão guardada. Nesse instante,
+        <code>accessToken()</code> vale <code>null</code>:
+      </p>
+      <vm-code snippet="39/rede-sem-esperar" caption="aba Rede do navegador" />
+      <p>
+        <strong>Como sair:</strong> esperar a sessão, com <code>from(auth.whenReady())</code> e <code>switchMap</code>, antes de
+        ler o token. É a mesma pressa do guard que decidia antes da hora, no capítulo 38.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O token para qualquer endereço"
+      where="O que aparece no console do navegador, só para quem entrou"
+      message="Access to fetch at 'https://utfpr-gp.github.io/volta-ao-mundo-em-angular/api/paises.json' from origin 'http://localhost:4200' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+    >
+      <vm-code snippet="39/token-para-todos" caption="auth-interceptor.ts" />
+      <p>
+        Sem conferir o endereço, o token vai também para a API de países. O cabeçalho <code>Authorization</code> faz o navegador
+        mandar antes o <code>OPTIONS</code> do preflight; o GitHub Pages, que hospeda a API, responde <code>405</code>, e o
+        navegador bloqueia a requisição. A lista mostra "Não foi possível carregar os países", mas só para quem entrou: sem login,
+        não há token, e tudo funciona. Um erro que depende de quem usa o app é dos mais difíceis de achar.
+      </p>
+      <p>
+        O Open-Meteo, ao contrário, aceita o cabeçalho, e aí o problema é pior porque não aparece: o seu token vai parar no
+        servidor de outra pessoa. <strong>Como sair:</strong> pôr o token só nas requisições para a sua API, com o
+        <code>isApiRequest</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Mudar a requisição em vez de cloná-la"
+      where="O que aparece no terminal do ng serve, na tentativa 1"
+      message="TS2540: Cannot assign to 'headers' because it is a read-only property."
+    >
+      <vm-code snippet="39/mudar-a-requisicao" caption="auth-interceptor.ts" />
+      <p>
+        A requisição e os cabeçalhos são imutáveis. A tentativa 1 nem compila. A tentativa 2 compila, e é pior: o
+        <code>set</code> devolve uma cópia dos cabeçalhos com o token, que ninguém usa, e a requisição sai como estava, sem erro
+        nenhum. <strong>Como sair:</strong> <code>next(req.clone(&#123; setHeaders: &#123; Authorization: … &#125; &#125;))</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Engolir o erro"
+      where="O que o httpResource do passaporte guarda como erro"
+      message="NG0991: Resource completed before producing a value."
+    >
+      <vm-code snippet="39/engolir-o-erro" caption="error-interceptor.ts" />
+      <p>
+        Devolver <code>EMPTY</code> no <code>catchError</code> transforma o erro num "terminou sem nada". Quem fez o
+        <code>subscribe</code> não recebe nem o valor nem o erro, só o fim, e acha que deu certo. O <code>httpResource</code> vai
+        para o estado de erro com o <code>NG0991</code>, e o erro de rede verdadeiro, que explicaria o problema, some.
+        <strong>Como sair:</strong> o interceptor avisa o que precisa e devolve o mesmo erro, com
+        <code>throwError(() =&gt; error)</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="A barra que não some" where="O que aparece na tela, com o json-server parado" message="(a barra de carregamento fica correndo para sempre)">
+      <vm-code snippet="39/barra-com-tap" caption="loading-interceptor.ts" />
+      <p>
+        Com o <code>tap</code>, o <code>stop()</code> só roda quando chega uma resposta. Uma requisição que dá erro nunca chega lá,
+        e uma cancelada também não (o <code>switchMap</code> das anotações cancela o PUT anterior a cada letra). O contador nunca
+        volta a zero. <strong>Como sair:</strong> <code>finalize</code>, que roda em qualquer fim.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="39-interceptors" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Cada requisição para a API já diz quem a fez, mas a API do Passaporte ainda é o json-server, que
+      não confere nada. No <vm-see-chapter [number]="40" />, os dados do passaporte vão para o Supabase, que confere o token em
+      cada pedido e só entrega a cada pessoa o que é dela.
+    </p>
+  </vm-view>
+</vm-chapter-page>

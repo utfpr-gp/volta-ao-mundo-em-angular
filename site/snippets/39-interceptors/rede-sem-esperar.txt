@@ -1,0 +1,2 @@
+GET  http://localhost:3000/passport                                  ← o app acabou de abrir: sem Authorization
+PUT  http://localhost:3000/passport   Authorization: Bearer eyJhbG…  ← a sessão já tinha chegado
