@@ -430,6 +430,12 @@ export const GLOSSARY = {
       'Gravar uma linha criando-a se ainda não existe, ou atualizando-a se já existe. A palavra junta update e insert.',
     chapter: 40,
   },
+  vitest: {
+    term: 'Vitest',
+    definition:
+      'A ferramenta que roda os testes de um projeto Angular, pelo comando ng test. Lê os arquivos .spec.ts, executa cada teste e mostra o que passou e o que falhou.',
+    chapter: 42,
+  },
   validador: {
     term: 'Validador',
     definition:

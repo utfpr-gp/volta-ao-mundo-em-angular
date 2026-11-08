@@ -582,6 +582,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Escreva testes para services e componentes com Vitest, simule requisições HTTP e use os testes para mudar o código sem medo.',
     minutes: 45,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '43-erros-e-devtools',

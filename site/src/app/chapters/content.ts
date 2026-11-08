@@ -39,6 +39,7 @@ import { CHAPTER_38 } from './38-guards/content';
 import { CHAPTER_39 } from './39-interceptors/content';
 import { CHAPTER_40 } from './40-crud-com-supabase/content';
 import { CHAPTER_41 } from './41-resolvers/content';
+import { CHAPTER_42 } from './42-testes-com-vitest/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -84,4 +85,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '39-interceptors': CHAPTER_39,
   '40-crud-com-supabase': CHAPTER_40,
   '41-resolvers': CHAPTER_41,
+  '42-testes-com-vitest': CHAPTER_42,
 };
