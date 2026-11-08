@@ -1,0 +1,236 @@
+<vm-chapter-page slug="38-guards">
+  <vm-view kind="mission" title="Uma porta com porteiro">
+    <p class="lead">
+      O Passaporte já sabe quem entrou, mas ainda não faz nada com isso: "Meu passaporte" abre igual para quem entrou e para quem
+      não entrou. Neste capítulo, essa porta ganha um porteiro. Quem não entrou é levado para a tela de entrar, e, depois do login,
+      volta exatamente para onde queria ir.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-38/desviado-para-entrar.png"
+      width="1150"
+      height="640"
+      alt="A tela Entrar do Passaporte, aberta depois de alguém sem login tentar ir para Meu passaporte. Acima dos campos de e-mail e senha, um aviso: Essa página é só para quem entrou. Entre, e você volta para ela."
+    />
+    <p>
+      Ao final do capítulo, você vai saber escrever um <vm-term name="guard">guard</vm-term> funcional, ligá-lo a uma rota,
+      desviar a pessoa para outra tela levando o endereço de volta, e esperar a sessão estar pronta antes de decidir.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="O porteiro do prédio">
+    <vm-analogy emoji="🛎️" title="Quem decide é o porteiro, antes da porta abrir">
+      <p>
+        Num prédio, o porteiro não espera você chegar ao apartamento para conferir quem é: ele confere na entrada. Se você mora
+        lá, ele libera. Se não, ele não fecha a porta na sua cara e some; ele aponta a recepção, onde você se identifica. E um bom
+        porteiro, no primeiro dia de serviço, olha a lista de moradores antes de dizer "não conheço você".
+      </p>
+      <p>
+        O guard é esse porteiro. O roteador o chama antes de abrir a rota, e ele responde "pode passar" ou "vá para a tela de
+        entrar". A lista de moradores é a sessão, e olhar a lista antes de decidir é esperar o Supabase terminar de lê-la.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O guard por dentro">
+    <h3>Um guard é uma função</h3>
+    <p>
+      No Angular atual, um guard é uma função comum, do tipo <code>CanActivateFn</code>. O roteador a chama antes de ativar a rota,
+      e o que ela devolve decide o caminho:
+    </p>
+    <ul>
+      <li><code>true</code>: a rota abre;</li>
+      <li>um <code>UrlTree</code>, um endereço montado pelo roteador: a navegação é trocada por outra, para esse endereço;</li>
+      <li>uma <vm-term name="promise">Promise</vm-term> de um dos dois: o roteador espera a resposta.</li>
+    </ul>
+    <p>Os dois guards do Passaporte:</p>
+    <vm-code snippet="38/etapa/src/app/core/auth-guards.ts" caption="auth-guards.ts" />
+    <ul>
+      <li>
+        O <code>authGuard</code> deixa passar quem entrou. Quem não entrou recebe o endereço <code>/entrar?voltar=/passaporte</code>,
+        montado pelo <code>createUrlTree</code>: o <code>state.url</code> é para onde a pessoa queria ir.
+      </li>
+      <li>
+        O <code>guestGuard</code> faz o contrário, na tela de entrar: quem já entrou não tem o que fazer lá, e vai direto para o
+        passaporte.
+      </li>
+      <li>
+        O guard é uma função, e não um componente, mas pode usar o <code>inject()</code>: o roteador a chama num contexto de
+        injeção. É assim que ela pede o <code>Auth</code> e o <code>Router</code>.
+      </li>
+    </ul>
+
+    <h3>Ligar o guard à rota</h3>
+    <p>Na rota, o <code>canActivate</code> recebe a lista de guards que precisam deixar passar:</p>
+    <vm-code snippet="38/etapa/src/app/app.routes.ts" caption="app.routes.ts" />
+    <p>Só a rota que tem o guard é protegida: as outras, como <code>/paises</code>, continuam abertas a todos.</p>
+
+    <h3>Esperar a sessão antes de decidir</h3>
+    <p>
+      Quando o app abre, o Supabase ainda precisa ler a sessão guardada no navegador, e, se o token venceu enquanto o app estava
+      fechado, renová-lo pela rede. Até lá, o <code>signedIn()</code> vale <code>false</code>, mesmo para quem está logado. Um guard
+      que olhasse o signal nesse instante decidiria "ninguém logado" por pura pressa.
+    </p>
+    <p>Por isso o <code>Auth</code> ganhou o <code>whenReady()</code>, uma Promise que se resolve no primeiro aviso do Supabase:</p>
+    <vm-code snippet="38/etapa/src/app/core/auth.ts" caption="auth.ts" />
+    <ul>
+      <li>
+        O <code>ready</code>, um signal, serve a quem quer mostrar alguma coisa enquanto espera. A Promise serve a quem precisa
+        <strong>esperar</strong>, como o guard, com <code>await</code>.
+      </li>
+      <li>
+        A função que resolve a Promise é guardada numa variável do construtor, e chamada dentro do
+        <code>onAuthStateChange</code>, junto com o <code>ready.set(true)</code>. A partir daí, todo <code>whenReady()</code>
+        devolve uma Promise já resolvida.
+      </li>
+    </ul>
+    <vm-deep-dive title="Por que a variável no construtor, e não um campo da classe">
+      <p>
+        Parece natural guardar a função de resolver num campo, <code>private resolveReady!: () =&gt; void</code>, declarado logo
+        depois da Promise. Só que os campos de uma classe são criados na ordem em que aparecem: a Promise preenche o campo, e logo
+        em seguida a declaração do campo, sem valor, o apaga. No primeiro aviso do Supabase, o erro é
+        <code>this.resolveReady is not a function</code>. Uma variável local no construtor não tem esse problema, e deixa a ordem
+        óbvia para quem lê.
+      </p>
+    </vm-deep-dive>
+
+    <vm-guard-sim />
+
+    <h3>O caminho de volta</h3>
+    <p>
+      O <code>?voltar=/passaporte</code> é um <strong>parâmetro de consulta</strong>, a parte do endereço depois do
+      <code>?</code>. O <code>withComponentInputBinding()</code>, ligado no <vm-see-chapter [number]="24" />, entrega também esses
+      parâmetros aos <code>input()</code> do componente da rota:
+    </p>
+    <vm-code snippet="38/etapa/src/app/features/auth/sign-in-page/sign-in-page.ts" caption="sign-in-page.ts" />
+    <ul>
+      <li>
+        O <code>alias: 'voltar'</code> diz o nome que o input tem na URL. Por dentro, o código usa o nome em inglês,
+        <code>returnUrl</code>, como o resto do app.
+      </li>
+      <li>
+        Depois do login, o <code>navigateByUrl</code> vai para esse endereço. Sem <code>?voltar</code>, vai para
+        <code>/passaporte</code>.
+      </li>
+      <li>
+        O endereço vem da URL, e qualquer um escreve uma URL. O <code>safeReturnUrl</code> só aceita um caminho deste app, que
+        começa com uma barra só; qualquer outra coisa vira <code>/passaporte</code>.
+      </li>
+      <li>
+        No template, quando há <code>returnUrl</code>, um aviso explica por que a tela de entrar apareceu: ninguém gosta de ser
+        levado para outro lugar sem saber o motivo.
+      </li>
+    </ul>
+
+    <vm-deep-dive title="O guard protege a tela, não os dados">
+      <p>
+        O guard roda no navegador, e o navegador é da pessoa: ela pode desligar o JavaScript, editar o código ou chamar o servidor
+        direto, sem passar por tela nenhuma. O guard é a sinalização do prédio, ótima para quem segue as placas. Quem tranca os
+        dados de verdade é o servidor, e é isso que o <vm-see-chapter [number]="40" /> faz, com as regras do banco no Supabase.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O porteiro no lugar">
+    <vm-steps label="Proteger Meu passaporte com um guard">
+      <ng-template vmStep="O whenReady">
+        <p>
+          No <code>core/auth.ts</code>, crie a Promise no construtor, resolva-a no <code>onAuthStateChange</code> e acrescente o
+          método <code>whenReady()</code>, como na seção anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Os guards">
+        <p>
+          Crie o <code>core/auth-guards.ts</code> com o <code>authGuard</code> e o <code>guestGuard</code>. Os dois
+          <code>inject()</code> vêm primeiro; o <code>await auth.whenReady()</code>, depois.
+        </p>
+      </ng-template>
+      <ng-template vmStep="As rotas">
+        <p>
+          No <code>app.routes.ts</code>, ponha <code>canActivate: [authGuard]</code> na rota <code>passaporte</code> e
+          <code>canActivate: [guestGuard]</code> na rota <code>entrar</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O caminho de volta">
+        <p>
+          Na tela de entrar, crie o input <code>returnUrl</code> com o <code>alias: 'voltar'</code>, a função
+          <code>safeReturnUrl</code>, e troque o <code>navigateByUrl('/passaporte')</code> pelo endereço de volta. No template,
+          acrescente o aviso.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> saia da sua conta e clique em "Meu passaporte". Você cai na tela de entrar, com o aviso
+          e o endereço <code>/entrar?voltar=%2Fpassaporte</code>. Entre, e você volta para o passaporte. Agora, já logado, digite
+          <code>/entrar</code> na barra de endereço: o guard manda você de volta ao passaporte. Por fim, saia e digite
+          <code>/entrar?voltar=/paises/JP</code>: depois de entrar, você chega ao Japão.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Os porteiros que falham">
+    <vm-pitfall
+      title="O inject() depois do await"
+      where="O que aparece no console do navegador"
+      message="ERROR RuntimeError: NG0203: The `Router` token injection failed. `inject()` function must be called from an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`."
+    >
+      <vm-code snippet="38/inject-depois-do-await" caption="auth-guards.ts" />
+      <p>
+        O roteador chama o guard num contexto de injeção, mas esse contexto só dura até o primeiro <code>await</code>. Depois
+        dele, o <code>inject()</code> falha, e o link para o passaporte simplesmente não leva a lugar nenhum. <strong>Como
+        sair:</strong> todos os <code>inject()</code> no começo da função, antes de qualquer <code>await</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Devolver false" where="O que aparece na tela" message="(o link não faz nada; digitando o endereço, a tela fica vazia)">
+      <vm-code snippet="38/guard-devolve-false" caption="auth-guards.ts" />
+      <p>
+        <code>false</code> cancela a navegação, e só. Clicando no link, a pessoa fica onde estava, sem saber por quê. Digitando
+        <code>/passaporte</code> na barra de endereço, o app abre em <code>/</code> com o cabeçalho e mais nada: não havia de onde
+        voltar. <strong>Como sair:</strong> devolver um <code>UrlTree</code> com o <code>createUrlTree</code>, que leva a pessoa
+        para a tela de entrar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Decidir antes de a sessão chegar"
+      where="O que o guard vê, ao reabrir o app com o token vencido"
+      message="(quem já entrou passa pela tela de entrar)"
+    >
+      <vm-code snippet="38/guard-sem-esperar" caption="auth-guards.ts" />
+      <p>
+        Na maior parte das vezes, a sessão guardada é lida a tempo, e o erro fica escondido. Mas, se o token venceu enquanto o app
+        estava fechado, o Supabase o renova pela rede antes de anunciar a sessão, e o guard decide antes disso. Um registro no
+        guard mostra o que acontece:
+      </p>
+      <vm-code snippet="38/sessao-ainda-nao-lida" caption="console do navegador" />
+      <p>
+        A pessoa, logada, é mandada para a tela de entrar, e só volta porque o <code>guestGuard</code>, que espera, a devolve. Sem
+        ele, ficaria parada no login. <strong>Como sair:</strong> <code>await auth.whenReady()</code> antes de olhar o
+        <code>signedIn()</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O nome do input não bate com a URL" where="O que acontece depois de entrar" message="(sempre vai para /passaporte)">
+      <vm-code snippet="38/input-sem-alias" caption="sign-in-page.ts" />
+      <p>
+        O <code>withComponentInputBinding()</code> liga cada parâmetro ao input de <strong>mesmo nome</strong>. A URL diz
+        <code>voltar</code>, o input se chama <code>returnUrl</code>, e ninguém reclama: o input só fica vazio, e o login sempre
+        vai para o passaporte. <strong>Como sair:</strong> <code>input&lt;string | undefined&gt;(undefined, &#123; alias: 'voltar'
+        &#125;)</code>, ou um input chamado <code>voltar</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="38-guards" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O app sabe quem entrou e não deixa entrar quem não deve. Falta o servidor saber: cada chamada
+      precisa levar o token, para ele reconhecer a pessoa. No Angular, quem acrescenta alguma coisa a toda requisição é o
+      interceptor: o <vm-see-chapter [number]="39" />.
+    </p>
+  </vm-view>
+</vm-chapter-page>
