@@ -150,8 +150,6 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Etapas a partir da 29:** o `Passport` faz requisições ao nascer. Todo spec que monta uma tela com ele usa
   `provideHttpClientTesting()` e `startPassport()` (de `src/testing/passport-testing.ts`); sem isso, o teste vai à rede de
   verdade. Para rodar o app: `npm run api` (json-server) e `ng serve`.
-- **Capítulo 41 (resolvers):** o título da página do país mostra o código quando os países ainda não chegaram da API;
-  um resolver espera os dados antes de abrir a tela.
 - **Testar httpResource e effects:** os resources só pedem dados quando o Angular roda os efeitos. Sequência nos specs:
   `TestBed.tick()`, `HttpTestingController` (`expectOne`/`flush`) e `await ApplicationRef.whenStable()`. Não chamar
   `whenStable()` com requisição pendente (trava). `vi.useFakeTimers()` não se dá bem com `toObservable`/effects: usar o
@@ -222,3 +220,12 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Chrome headless com Signal Forms:** depois de um `reset()`, `el.value = …` + `new Event('input')` deixa de chegar ao
   `[formField]` (campo número e select), embora a digitação de verdade funcione. Para roteiros de captura, use teclado
   (`Input.insertText` do protocolo do DevTools) ou crie os dados pela API. No jsdom (Vitest), o evento sintético funciona.
+- **Capítulo 41 (Resolvers), verificado no Angular 22.2.3:** o roteador usa o **primeiro** valor de um Observable devolvido
+  pelo resolver (não precisa completar); um Observable que nunca emite prende a navegação sem erro do Angular (tela vazia,
+  título do `index.html`). Resolver que lança erro na navegação inicial: o app termina em `/` com a tela vazia e o console
+  mostra `ERROR HttpErrorResponse`. Chave do `resolve` com nome diferente do `input()`: o input fica `undefined` sem aviso.
+  `RedirectCommand` com `skipLocationChange: true` mantém na barra o endereço **anterior** (no teste, `Location.path()` dá
+  `''`); use `browserUrl: state.url` (que já vem com o `redirectTo` das filhas, como `/paises/XX/visao-geral`). Com
+  `browserUrl`, o `router.url` é o da página de destino, e o `Location.path()` é o pedido. `urlUpdateStrategy` padrão é
+  `'deferred'`: a barra só muda no fim da navegação. Os `resources` de rota (`withRouterResources`, `nonBlocking`) são
+  `@developerPreview 22.2`.

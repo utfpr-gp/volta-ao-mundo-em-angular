@@ -326,6 +326,12 @@ export const GLOSSARY = {
       'Um molde para texto, escrito entre barras, como /^[0-9]+$/. Serve para conferir se um texto segue uma forma: só letras, um CEP, um e-mail.',
     chapter: 35,
   },
+  resolver: {
+    term: 'Resolver',
+    definition:
+      'Uma função que o roteador chama antes de abrir uma rota para carregar os dados dela. A tela só abre quando o resolver termina, e recebe os dados prontos.',
+    chapter: 41,
+  },
   resource: {
     term: 'Resource',
     definition:
