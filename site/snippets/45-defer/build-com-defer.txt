@@ -1,0 +1,5 @@
+                    | Initial total  | 574.59 kB |               146.44 kB
+
+Lazy chunk files    | Names          |  Raw size | Estimated transfer size
+chunk-C-zY3Zo4.js   | trip-chart     | 153.73 kB |                47.45 kB
+chunk-Byz3SLjt.js   | passport-page  |  14.33 kB |                 4.44 kB

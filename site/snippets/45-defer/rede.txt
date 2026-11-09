@@ -1,0 +1,5 @@
+GET chunk-VYPE56Z6.js     ← a página do passaporte
+GET chunk-WO6QYHMR.js
+GET chunk-3KJR52X2.js
+--- (a pessoa rola a página até o fim)
+GET chunk-ELL5KLS2.js     ← o trip-chart, com o Chart.js

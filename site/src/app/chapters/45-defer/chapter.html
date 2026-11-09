@@ -1,0 +1,204 @@
+<vm-chapter-page slug="45-defer">
+  <vm-view kind="mission" title="O gráfico que chega na hora certa">
+    <p class="lead">
+      O passaporte ganha um gráfico: quantos dias você passou fora de casa em cada ano. Para desenhá-lo, o Passaporte usa uma
+      biblioteca, o Chart.js, que sozinha pesa dez vezes mais que o resto da página. Neste capítulo, o gráfico continua lá, no
+      fim da página, mas o código dele só é baixado quando a pessoa rola até ele.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-45/grafico-de-viagens.png"
+      width="1150"
+      height="640"
+      alt="O fim da página Meu passaporte: os últimos carimbos e, abaixo, o painel Dias fora de casa, por ano, com duas barras douradas: 2025 com 5 dias e 2026 com 15."
+    />
+    <p>
+      Ao final do capítulo, você vai saber adiar uma parte da tela com o <vm-term name="defer"><code>&#64;defer</code></vm-term>,
+      escolher o gatilho certo,
+      preparar o <code>&#64;placeholder</code>, o <code>&#64;loading</code> e o <code>&#64;error</code>, e ler no build quanto
+      a página ficou mais leve.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A sobremesa">
+    <vm-analogy emoji="🍨" title="Ninguém traz a sobremesa com a entrada">
+      <p>
+        Num restaurante, a sobremesa não chega junto com a entrada. Ela está no cardápio desde o começo, mas a cozinha só a
+        prepara quando você chega lá. Se você for embora antes, ela nem sai da geladeira. E, se você já avisou na chegada que vai
+        querer o pudim, o garçom pode deixá-lo separado, para trazer na hora.
+      </p>
+      <p>
+        O <code>&#64;defer</code> faz isso com uma parte da tela: ela está no template, mas o código dela só é baixado quando um
+        gatilho dispara, como a pessoa chegar até ela. Avisar na chegada é o <code>prefetch</code>.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O @defer por dentro">
+    <h3>Um bloco que espera o momento</h3>
+    <p>
+      Você já carregou telas inteiras sob demanda no <vm-see-chapter [number]="26" />, com o <code>loadComponent</code> das
+      rotas. O <code>&#64;defer</code> faz o mesmo com um pedaço de uma tela:
+    </p>
+    <vm-code snippet="45/etapa/src/app/features/passport/passport-page/passport-page.html" caption="passport-page.html" />
+    <ul>
+      <li>
+        O conteúdo do <code>&#64;defer</code>, aqui o <code>&lt;app-trip-chart&gt;</code>, vai para um pedaço de JavaScript
+        separado, junto com tudo que só ele usa, como o Chart.js.
+      </li>
+      <li>
+        <code>(on viewport)</code> é o gatilho: o bloco carrega quando o <code>&#64;placeholder</code> entra na área visível da
+        tela. Sem gatilho, o padrão é <code>on idle</code>, quando o navegador termina o que tinha para fazer.
+      </li>
+      <li>
+        O <code>&#64;placeholder</code> aparece antes do gatilho. Aqui, é um espaço vazio da altura do gráfico: o
+        <code>on viewport</code> observa justamente ele, e a página não pula quando o gráfico chega.
+      </li>
+      <li>
+        O <code>&#64;loading</code> aparece enquanto o código baixa. O <code>(minimum 300ms)</code> evita que ele pisque numa
+        conexão rápida.
+      </li>
+      <li>O <code>&#64;error</code> aparece se o download falhar, por exemplo sem internet.</li>
+    </ul>
+
+    <h3>O que o build mostra</h3>
+    <p>
+      A página do passaporte já era carregada sob demanda. Na etapa anterior, o pedaço dela tinha 13,42 kB. Com o gráfico
+      direto no template, sem <code>&#64;defer</code>:
+    </p>
+    <vm-code snippet="45/build-sem-defer" caption="ng build (trecho)" />
+    <p>Com o <code>&#64;defer</code>:</p>
+    <vm-code snippet="45/build-com-defer" caption="ng build (trecho)" />
+    <p>
+      A página voltou a 14,33 kB, e o gráfico virou um pedaço próprio, o <code>trip-chart</code>, com 153,73 kB. Quem abre o
+      passaporte e não rola até o fim nunca baixa esses 153 kB. Um detalhe honesto: o pacote inicial do app cresceu cerca de 10
+      kB, de 564,61 kB para 574,59 kB. É o código que faz o <code>&#64;defer</code> funcionar, e entra uma vez só, por mais
+      blocos que o app tenha. Na aba Rede do navegador, o pedaço do gráfico só aparece depois de rolar:
+    </p>
+    <vm-code snippet="45/rede" caption="aba Rede do navegador" />
+
+    <vm-defer-sim />
+
+    <h3>Os gatilhos</h3>
+    <ul>
+      <li><code>on idle</code>: quando o navegador fica ocioso. É o padrão, bom para o que não é urgente mas logo será usado.</li>
+      <li><code>on viewport</code>: quando o espaço entra na tela. Bom para o que fica longe do topo, como o gráfico.</li>
+      <li><code>on interaction</code>: num clique ou numa tecla no espaço. Bom para o que só abre quando alguém pede.</li>
+      <li><code>on hover</code>, <code>on timer(2s)</code> e <code>on immediate</code> completam a lista; e <code>when</code> recebe uma condição, como <code>when showChart()</code>.</li>
+    </ul>
+    <p>
+      O <code>prefetch</code> separa baixar de mostrar: <code>&#64;defer (on interaction; prefetch on idle)</code> baixa quando o
+      navegador fica ocioso, e mostra no clique, sem espera.
+    </p>
+
+    <h3>O gráfico, acessível</h3>
+    <p>
+      Um <code>&lt;canvas&gt;</code> é só desenho: o leitor de tela não tem o que ler nele. Seguindo o
+      <vm-see-chapter [number]="44" />, o gráfico tem <code>aria-hidden</code>, e os mesmos números vão numa tabela
+      <code>sr-only</code>. As cores vêm dos tokens, e a animação do Chart.js é desligada para quem pediu menos movimento.
+    </p>
+    <vm-code snippet="45/etapa/src/app/features/passport/trip-chart/trip-chart.ts" caption="trip-chart.ts" />
+    <vm-code snippet="45/etapa/src/app/features/passport/trip-chart/trip-chart.html" caption="trip-chart.html" />
+
+    <vm-deep-dive title="Registrar só o que o gráfico usa">
+      <p>
+        O Chart.js oferece um atalho que registra a biblioteca inteira. O Passaporte registra só as peças do gráfico de barras, e
+        a diferença aparece no build:
+      </p>
+      <vm-code snippet="45/chart-auto" caption="trip-chart.ts" />
+      <p>
+        Esqueça uma peça, e o gráfico não aparece: o console mostra <code>Error: "bar" is not a registered controller.</code>, e
+        o aviso do <vm-see-chapter [number]="43" /> sobe na tela.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="O @defer nos testes">
+      <p>
+        Por padrão, nos testes, um <code>&#64;defer</code> se comporta como no navegador. Com
+        <code>deferBlockBehavior: DeferBlockBehavior.Manual</code> no <code>TestBed</code>, o teste decide o estado: o
+        <code>fixture.getDeferBlocks()</code> devolve os blocos, e o <code>render(DeferBlockState.Complete)</code> (ou
+        <code>Loading</code>, <code>Error</code>) mostra cada um. Os testes da etapa conferem o placeholder, o "Carregando o
+        gráfico…", o gráfico e o aviso de erro.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O gráfico sob demanda">
+    <vm-steps label="Adiar o gráfico com @defer">
+      <ng-template vmStep="O Chart.js">
+        <vm-code snippet="45/instalar-chart" caption="terminal" />
+        <p>O Chart.js tem licença MIT. Instale na pasta do Passaporte.</p>
+      </ng-template>
+      <ng-template vmStep="O gráfico">
+        <p>
+          Crie o <code>features/passport/trip-chart/</code> com o componente e a função <code>daysPerYear</code>, como na seção
+          anterior. Ponha o <code>TripChart</code> no <code>imports</code> da <code>PassportPage</code> e o
+          <code>&lt;app-trip-chart&gt;</code> no fim do template. Rode o <code>ng build</code> e anote o tamanho do
+          <code>passport-page</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O @defer">
+        <p>
+          Envolva o <code>&lt;app-trip-chart&gt;</code> com o <code>&#64;defer (on viewport)</code>, o
+          <code>&#64;placeholder</code>, o <code>&#64;loading</code> e o <code>&#64;error</code>. Rode o
+          <code>ng build</code> de novo e compare: apareceu o pedaço <code>trip-chart</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> nada, à primeira vista. Abra o passaporte com a aba Rede aberta (F12) e repare que
+          nenhum pedaço novo chega. Role até o fim: o pedaço do gráfico é baixado nesse momento, e as barras aparecem. Registre
+          uma viagem num ano novo: o gráfico ganha uma barra.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="As sobremesas que chegam cedo (ou não chegam)">
+    <vm-pitfall title="Citar o componente fora do bloco" where="O que o ng build mostra" message="(o pedaço trip-chart some, e a página volta a 168,23 kB, sem aviso)">
+      <vm-code snippet="45/viewchild-fora" caption="passport-page.ts" />
+      <vm-code snippet="45/build-viewchild" caption="ng build (trecho)" />
+      <p>
+        Para ir para um pedaço separado, um componente só pode aparecer dentro do <code>&#64;defer</code>. Usá-lo fora dele, num
+        <code>viewChild</code> ou em outra parte do template, faz o Angular carregá-lo junto com a página, e o build não reclama.
+        <strong>Como sair:</strong> confira no build se o pedaço apareceu; e deixe o componente adiado só dentro do bloco.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O on viewport sem placeholder"
+      where="O que o terminal do ng serve mostra"
+      message="NG8019: Trigger with no target can only be placed on an @defer that has a @placeholder block"
+    >
+      <vm-code snippet="45/sem-placeholder" caption="passport-page.html" />
+      <p>
+        O <code>on viewport</code> precisa de alguma coisa na tela para observar, e, sem dizer qual, ele observa o placeholder.
+        Sem placeholder, não há o que observar. <strong>Como sair:</strong> um <code>&#64;placeholder</code>, de preferência com
+        o tamanho do conteúdo que vai chegar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O placeholder com duas raízes"
+      where="O que o terminal do ng serve mostra"
+      message="NG8020: Trigger with no target can only be placed on an @defer that has a @placeholder block with exactly one root element node"
+    >
+      <vm-code snippet="45/duas-raizes" caption="passport-page.html" />
+      <p>
+        O gatilho observa um elemento só. Com dois na raiz do placeholder, o Angular não sabe qual. <strong>Como sair:</strong>
+        um elemento envolvendo os outros.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="45-defer" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte ficou mais leve para quem o usa. Falta quem procura: o Google, e os aplicativos de
+      mensagem que montam a prévia de um link. No <vm-see-chapter [number]="46" />, você vê o que eles enxergam numa SPA, e como
+      mostrar a eles uma página de verdade.
+    </p>
+  </vm-view>
+</vm-chapter-page>

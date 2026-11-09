@@ -254,3 +254,9 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   `/paises` sem `h1`; `text-primary` com contraste 1,06:1 no escuro; 195 botões "Visitar"; filtro só pela cor; foco que
   fica no menu depois de navegar; e `<a href="#conteudo">` com `<base href="/">` leva a `/paises#conteudo`. O `not-sr-only`
   do Tailwind zera o padding (use `focus:px-4 focus:py-2`). Os botões °C/°F já tinham `aria-pressed`.
+- **Capítulo 45 (@defer), verificado no Angular 22.2.3:** `NG8019: Trigger with no target can only be placed on an @defer
+  that has a @placeholder block`; `NG8020: … with exactly one root element node`; citar o componente adiado fora do bloco
+  (até num `viewChild`) o põe de volta na página, sem aviso. Para conferir o download sob demanda, use um build estático (o
+  `ng serve` pede metadados dos componentes mais cedo) e a aba Rede: o pedaço só chega ao rolar. O Chart.js sem uma peça
+  registrada dá `Error: "bar" is not a registered controller.`; `chart.js/auto` custa ~55 kB a mais. Os testes de
+  `site/src/app/pages/track.spec.ts` procuram trilhas e capítulos não publicados no catálogo (e pulam quando não houver).

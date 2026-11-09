@@ -119,6 +119,12 @@ export const GLOSSARY = {
       'Uma marcação com @ em cima de uma classe, como @Component, que acrescenta informações e transforma a classe em algo especial para o Angular.',
     chapter: 4,
   },
+  defer: {
+    term: '@defer',
+    definition:
+      'Um bloco de template cujo conteúdo, e tudo que só ele usa, vai para um pedaço de JavaScript separado, baixado só quando um gatilho dispara, como aparecer na tela.',
+    chapter: 45,
+  },
   'design-token': {
     term: 'Design token',
     definition: 'Um valor visual com nome de papel, como --color-primary ou --radius-card. Mudar o valor do token muda todo lugar que o usa, inclusive no modo escuro.',

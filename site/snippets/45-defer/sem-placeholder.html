@@ -1,0 +1,5 @@
+@defer (on viewport) { <!-- [!code highlight] -->
+  <app-trip-chart [trips]="passport.trips()" />
+} @loading {
+  <p>Carregando o gráfico…</p>
+}
