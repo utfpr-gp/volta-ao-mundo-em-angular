@@ -631,6 +631,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Faça o Google e as redes sociais entenderem o seu app com pré-renderização, título e descrição por página, Open Graph e sitemap.',
     minutes: 40,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '47-pwa',

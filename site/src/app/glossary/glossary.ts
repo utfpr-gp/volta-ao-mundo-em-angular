@@ -204,6 +204,12 @@ export const GLOSSARY = {
     definition: 'Um tipo que recebe outro tipo como parâmetro, entre < >. Array<string> é um array de textos; signal<number> é um signal de número.',
     chapter: 4,
   },
+  hidratacao: {
+    term: 'Hidratação',
+    definition:
+      'O momento em que o Angular, no navegador, assume uma página que veio pronta do build: liga os eventos e os signals ao HTML que já está na tela, sem desenhá-lo de novo.',
+    chapter: 46,
+  },
   input: {
     term: 'Input',
     definition: 'O que um componente filho recebe do pai, declarado com input(). É um signal só de leitura: o filho lê e quem passa o valor é o pai.',
@@ -418,6 +424,12 @@ export const GLOSSARY = {
     term: 'Tailwind CSS',
     definition: 'Uma biblioteca de CSS com classes pequenas e prontas, como p-4 e rounded-xl, que você junta direto no HTML para montar o visual.',
     chapter: 13,
+  },
+  ssg: {
+    term: 'SSG (pré-renderização)',
+    definition:
+      'Static site generation: gerar no build o HTML pronto de cada página, rodando o app uma vez por página. Quem pede a página recebe o conteúdo, sem esperar o JavaScript.',
+    chapter: 46,
   },
   subject: {
     term: 'Subject',

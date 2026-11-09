@@ -1,0 +1,14 @@
+dist/passaporte/
+├── prerendered-routes.json      ← a lista das rotas geradas
+└── browser/
+    ├── index.html               ← o redirecionamento de / para /paises
+    ├── index.csr.html           ← o "casco" das rotas Client (passaporte, entrar…)
+    ├── paises/
+    │   ├── index.html           ← a lista de países, pronta
+    │   └── JP/
+    │       ├── index.html       ← o redirecionamento para a visão geral
+    │       └── visao-geral/
+    │           └── index.html   ← o Japão, pronto
+    ├── sobre/index.html
+    ├── sitemap.xml
+    └── robots.txt

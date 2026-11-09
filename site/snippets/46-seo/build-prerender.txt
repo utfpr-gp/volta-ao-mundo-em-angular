@@ -1,0 +1,2 @@
+Prerendered 393 static routes.
+sitemap.xml com 197 páginas, e robots.txt.
