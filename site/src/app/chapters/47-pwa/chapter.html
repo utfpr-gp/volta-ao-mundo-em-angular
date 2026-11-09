@@ -1,0 +1,220 @@
+<vm-chapter-page slug="47-pwa">
+  <vm-view kind="mission" title="Um app de verdade, até sem internet">
+    <p class="lead">
+      O Passaporte ganha um ícone na tela do celular e do computador. Instalado, ele abre numa janela própria, sem a barra do
+      navegador, e continua abrindo quando a internet cai: as páginas e a lista de países ficam guardadas. Quando você publica uma
+      versão nova, quem está com o app aberto recebe um aviso para atualizar.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-47/versao-nova.png"
+      width="1150"
+      height="640"
+      alt="A página do Japão no Passaporte. Logo abaixo do cabeçalho, uma faixa diz: Uma versão nova do Passaporte está pronta, com o botão dourado Atualizar."
+    />
+    <p>
+      Ao final do capítulo, você vai saber transformar um app Angular num <vm-term name="pwa">PWA</vm-term>, escrever o
+      manifesto, decidir o que o service worker guarda, testar tudo sem internet e avisar quem usa o app quando houver uma versão
+      nova.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A mochila de viagem">
+    <vm-analogy emoji="🎒" title="O que vai na mochila">
+      <p>
+        Antes de uma trilha sem sinal de celular, você arruma a mochila: o mapa impresso, a lanterna, os documentos. No caminho,
+        não precisa voltar para casa para buscar nada. E tem coisa que não vai na mochila de jeito nenhum: a carteira de outra
+        pessoa.
+      </p>
+      <p>
+        O service worker é essa mochila. Ele guarda o que o app precisa para abrir sem rede, como os arquivos e a lista de países,
+        e entrega na hora em que o app pede. Mas o que é de cada pessoa, como as viagens de quem entrou, fica de fora.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O PWA por dentro">
+    <h3>Duas peças: o manifesto e o service worker</h3>
+    <p>
+      Um PWA continua sendo um site. O que muda são duas peças. O <vm-term name="manifesto">manifesto</vm-term> é um arquivo JSON
+      que diz ao navegador como o app instalado se apresenta: o nome, os ícones, as cores, e se ele abre numa janela própria
+      (<code>"display": "standalone"</code>):
+    </p>
+    <vm-code snippet="47/etapa/public/manifest.webmanifest" caption="public/manifest.webmanifest" />
+    <p>O <code>index.html</code> aponta para ele, e a <code>theme-color</code> pinta a barra do navegador com a cor do app:</p>
+    <vm-code snippet="47/etapa/src/index.html" caption="src/index.html" />
+    <p>
+      A outra peça é o <vm-term name="service-worker">service worker</vm-term>: um script que o navegador instala ao lado do site
+      e que fica entre o app e a rede. Cada pedido do app passa por ele, e ele decide: responde com uma cópia guardada ou deixa o
+      pedido seguir. O Angular traz o seu, o <code>ngsw-worker.js</code>, e ele é registrado no <code>app.config.ts</code>:
+    </p>
+    <vm-code snippet="47/etapa/src/app/app.config.ts" caption="src/app/app.config.ts" />
+    <ul>
+      <li>
+        <code>enabled: !isDevMode()</code> desliga o service worker no <code>ng serve</code>: guardar cópias atrapalharia ver as
+        suas mudanças a cada salvamento.
+      </li>
+      <li>
+        <code>registerWhenStable:30000</code> espera o app terminar de carregar (ou 30 segundos) para registrar o service worker,
+        sem disputar a rede com a primeira tela.
+      </li>
+    </ul>
+
+    <h3>O que vai na mochila: o ngsw-config.json</h3>
+    <p>O que o service worker guarda está escrito no <code>ngsw-config.json</code>, na raiz do projeto:</p>
+    <vm-code snippet="47/etapa/ngsw-config.json" caption="ngsw-config.json" />
+    <ul>
+      <li>
+        Os <code>assetGroups</code> são os arquivos do app. O grupo <code>app</code>, com o HTML, o CSS e o JavaScript, é baixado
+        inteiro na primeira visita (<code>"installMode": "prefetch"</code>). O grupo <code>assets</code>, com imagens e fontes, só
+        guarda o que for pedido (<code>"lazy"</code>).
+      </li>
+      <li>
+        Os <code>dataGroups</code> são respostas de APIs. A lista de países muda pouco, então usa a estratégia
+        <code>performance</code>: se há cópia, ela é usada, e nenhum pedido sai para a rede, por até 7 dias. O tempo agora muda o
+        tempo todo, então usa <code>freshness</code>: vai à rede primeiro, e só cai na cópia se a rede falhar ou passar de 5
+        segundos.
+      </li>
+    </ul>
+
+    <vm-cache-sim />
+
+    <h3>As versões do app</h3>
+    <p>
+      O build escreve um <code>ngsw.json</code> com o resumo (um hash) de cada arquivo. Toda vez que o app abre, o service worker
+      pede esse arquivo ao servidor. Se ele mudou, há uma versão nova: o service worker baixa os arquivos novos em segundo plano,
+      mas continua servindo a versão que já estava guardada, inteira. A versão nova só entra quando a página carrega de novo.
+    </p>
+    <p>
+      Para que a pessoa saiba disso, o <code>SwUpdate</code> avisa cada passo no <code>versionUpdates</code>. O
+      <code>VERSION_READY</code> diz que a versão nova já está baixada, e o Passaporte mostra a faixa da imagem do começo:
+    </p>
+    <vm-code snippet="47/etapa/src/app/core/app-updates.ts" caption="src/app/core/app-updates.ts" />
+    <vm-code snippet="47/etapa/src/app/app.html" caption="src/app/app.html (trecho)" />
+    <p>
+      A faixa tem <code>role="status"</code>, então o leitor de tela anuncia a novidade sem tirar o foco de onde a pessoa está.
+      Atualizar sem perguntar também seria possível, mas trocar a tela de alguém no meio de um formulário é falta de educação.
+    </p>
+
+    <vm-deep-dive title="Os outros avisos do versionUpdates">
+      <p>
+        Além do <code>VERSION_READY</code>, o <code>versionUpdates</code> anuncia o <code>VERSION_DETECTED</code> (achou uma
+        versão nova e começou a baixar), o <code>NO_NEW_VERSION_DETECTED</code> e o <code>VERSION_INSTALLATION_FAILED</code>. O
+        <code>SwUpdate</code> também tem o <code>checkForUpdate()</code>, para procurar uma versão nova fora de hora (num app que
+        fica aberto o dia todo, por exemplo), e o <code>activateUpdate()</code>, que troca a versão sem recarregar a página.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="Arrumando a mochila">
+    <vm-steps label="Transformar o Passaporte num PWA">
+      <ng-template vmStep="O ng add">
+        <vm-code snippet="47/instalar" caption="terminal" />
+        <p>
+          Na pasta do Passaporte, o comando instala o <code>&#64;angular/service-worker</code> e faz o resto: cria o
+          <code>ngsw-config.json</code>, o <code>public/manifest.webmanifest</code> e os ícones em <code>public/icons/</code>,
+          acrescenta o <code>provideServiceWorker</code> ao <code>app.config.ts</code> e o link do manifesto ao
+          <code>index.html</code>. No <code>angular.json</code>, ele liga o service worker só no build de produção:
+        </p>
+        <vm-code snippet="47/angular-sw" caption="angular.json (trecho)" />
+      </ng-template>
+      <ng-template vmStep="A cara do app">
+        <p>
+          O <code>ng add</code> escreve o manifesto só com o nome do projeto (<code>passaporte</code>, em minúsculas) e ícones com
+          o logo do Angular. Ponha o nome com maiúscula, uma descrição, o <code>lang</code> e as cores do Passaporte, e troque os
+          ícones pelos seus, nos mesmos tamanhos. No <code>index.html</code>, acrescente a <code>theme-color</code> e o <code>apple-touch-icon</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O que guardar">
+        <p>
+          No <code>ngsw-config.json</code>, acrescente os dois <code>dataGroups</code>: a lista de países e o tempo. Crie o
+          <code>core/app-updates.ts</code>, injete o <code>AppUpdates</code> no <code>App</code> e ponha a faixa no
+          <code>app.html</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A prova">
+        <vm-code snippet="47/servir" caption="terminal" />
+        <p>
+          O <code>http-server</code> é um servidor estático pequeno, que o <code>npx</code> roda sem instalar; o
+          <code>-c-1</code> desliga o cache dele, para não confundir com o do service worker. Abra
+          <code>http://localhost:8080</code> e comece pela página inicial (ele não sabe devolver o app num endereço como
+          <code>/passaporte</code>; isso fica para o <vm-see-chapter [number]="48" />).
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> na barra de endereço do Chrome aparece o ícone de instalar. Instale: o Passaporte
+          abre numa janela própria, com o globo dourado. Agora pare o <code>http-server</code> (Ctrl+C) e navegue: os países
+          continuam abrindo. Ligue o servidor de novo, mude um texto do "Sobre", rode o <code>npm run build</code> e recarregue a
+          página: a faixa "Uma versão nova do Passaporte está pronta." aparece. Clique em Atualizar, e o texto novo chega.
+        </p>
+        <p>
+          Nas ferramentas do Chrome (F12), a aba Application mostra o manifesto, o service worker e o que está guardado no
+          cache.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="O que não vai na mochila">
+    <vm-pitfall
+      title="A API do Supabase no cache"
+      where="O que o Bruno vê depois que a Ana sai"
+      message="3 viagens · 20 dias fora · 2 países · transporte favorito: 🚢 navio"
+    >
+      <vm-code snippet="47/supabase-no-cache" caption="ngsw-config.json (não faça isso)" />
+      <p>
+        Parece uma boa ideia: guardar o diário para ele abrir sem internet. No Supabase local, a Ana entrou, viu as 3 viagens
+        dela e saiu. O Bruno, que não tem nenhuma viagem, entrou no mesmo navegador e viu o resumo acima: as viagens da Ana. O
+        cache do service worker guarda pela URL, e o pedido das viagens tem a mesma URL para todo mundo, porque quem separa as
+        viagens de cada pessoa é o RLS, no servidor (<vm-see-chapter [number]="40" />). Com a cópia na mão, o service worker nem
+        pergunta ao servidor. <strong>Como sair:</strong> nada que dependa de quem entrou vai para um <code>dataGroup</code>. O
+        Passaporte guarda só o que é igual para todo mundo: a lista de países e o tempo.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O service worker que não aparece" where="O que o Chrome mostra no ng serve" message="navigator.serviceWorker.getRegistrations(): []">
+      <vm-code snippet="47/ng-serve" caption="Chrome" />
+      <p>
+        No <code>ng serve</code>, o <code>enabled: !isDevMode()</code> desliga o registro, e o endereço do
+        <code>ngsw-worker.js</code> devolve o <code>index.html</code>, como qualquer rota. Não é defeito: é o que deixa você ver
+        cada mudança na hora. <strong>Como sair:</strong> teste o PWA com o build e o <code>http-server</code>. O
+        <code>ng serve --configuration=production</code> também liga o service worker, mas lembre de voltar ao modo normal depois,
+        para não ficar vendo cópias velhas.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Os testes sem o SwUpdate" where="O que o ng test mostra" message="NG0201: No provider found for `SwUpdate`. Source: DynamicTestModule. Path: _AppUpdates -> SwUpdate. Find more at https://v22.angular.dev/errors/NG0201">
+      <p>
+        O <code>App</code> injeta o <code>AppUpdates</code>, que injeta o <code>SwUpdate</code>. No app, quem fornece o
+        <code>SwUpdate</code> é o <code>provideServiceWorker</code> do <code>app.config.ts</code>, que os testes não leem.
+        <strong>Como sair:</strong> nos testes que montam o <code>App</code>, forneça o service worker desligado. O
+        <code>isEnabled</code> fica <code>false</code>, e o <code>AppUpdates</code> não escuta nada:
+      </p>
+      <vm-code snippet="47/sem-provider" caption="src/app/app.spec.ts" />
+      <p>Para testar o próprio <code>AppUpdates</code>, a etapa usa um <code>SwUpdate</code> falso, com um <code>Subject</code>.</p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O aviso do orçamento" where="O que o ng build mostra" message="bundle initial exceeded maximum budget. Budget 600.00 kB was not met by 6.89 kB with a total of 606.89 kB.">
+      <vm-code snippet="47/orcamento-aviso" caption="ng build" />
+      <p>
+        O <code>angular.json</code> tem um orçamento (<code>budgets</code>): um limite de tamanho que, passado, vira aviso. O
+        pacote inicial estava em 599,91 kB na etapa anterior, e o código que registra o service worker e a faixa de atualização
+        somaram uns 7 kB. É um aviso, e não um erro: o build sai. <strong>Como sair:</strong> antes de mexer no limite, confira
+        se o que cresceu vale o peso. Aqui vale, e o Passaporte sobe o aviso para 650 kB:
+      </p>
+      <vm-code snippet="47/orcamento" caption="angular.json (trecho)" />
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="47-pwa" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte está pronto para viajar, mas ainda mora no seu computador. No
+      <vm-see-chapter [number]="48" />, você o publica no Render, com um endereço que qualquer pessoa abre, e o HTTPS que o PWA
+      precisa para ser instalado fora do <code>localhost</code>.
+    </p>
+  </vm-view>
+</vm-chapter-page>

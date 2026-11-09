@@ -1,0 +1,3 @@
+ng serve                              → navigator.serviceWorker.getRegistrations(): []
+                                        /ngsw-worker.js responde 200 text/html (é o index.html)
+ng serve --configuration=production   → 1 registro, service worker ativo

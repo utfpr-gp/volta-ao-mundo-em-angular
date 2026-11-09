@@ -1,0 +1,12 @@
+"dataGroups": [
+  …
+  {
+    "name": "supabase",
+    "urls": ["https://SEU-PROJETO.supabase.co/rest/v1/**"], // [!code highlight]
+    "cacheConfig": {
+      "strategy": "performance",
+      "maxSize": 50,
+      "maxAge": "1d"
+    }
+  }
+]

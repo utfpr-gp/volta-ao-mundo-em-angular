@@ -20,6 +20,7 @@ const LANGUAGES = {
   svelte: 'svelte',
   css: 'css',
   json: 'json',
+  webmanifest: 'json',
   sh: 'bash',
   sql: 'sql',
 };
@@ -66,7 +67,8 @@ export async function extractAll(root) {
 
 /**
  * Os arquivos de cada etapa do Passaporte (passaporte/etapas/NN-slug), com a chave
- * NN/etapa/<caminho>: o package.json, a pasta src e, quando houver, as pastas supabase (o SQL do banco) e scripts.
+ * NN/etapa/<caminho>: o package.json, a pasta src e, quando houver, as pastas supabase (o SQL do banco) e scripts, o
+ * ngsw-config.json (o service worker) e o manifesto do PWA em public/.
  * Assim o capítulo mostra o código que de fato compila na etapa.
  */
 export async function extractStages(root) {
@@ -76,7 +78,10 @@ export async function extractStages(root) {
     const base = join(root, stage);
     if (!/^\d{2}-/.test(stage) || !statSync(base).isDirectory()) continue;
     const files = [];
-    if (existsSync(join(base, 'package.json'))) files.push(join(base, 'package.json'));
+    for (const name of ['package.json', 'ngsw-config.json']) if (existsSync(join(base, name))) files.push(join(base, name));
+    if (existsSync(join(base, 'public'))) {
+      for (const name of readdirSync(join(base, 'public')).sort()) if (name.endsWith('.webmanifest')) files.push(join(base, 'public', name));
+    }
     const walk = (dir) => {
       for (const name of readdirSync(dir).sort()) {
         const full = join(dir, name);

@@ -36,7 +36,7 @@ describe('Track page', () => {
 
   it.skipIf(!unpublished)('marks unpublished chapters as "Em breve"', async () => {
     const element = await render(unpublished!.track);
-    const item = [...element.querySelectorAll('[data-chapter-item]')].find((li) => li.textContent!.includes(unpublished!.shortTitle));
+    const item = [...element.querySelectorAll('[data-chapter-item]')].find((li) => li.textContent!.includes(`Capítulo ${unpublished!.number} ·`));
     expect(item?.textContent).toContain('Em breve');
   });
 

@@ -2,18 +2,19 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-11-09 (capítulos 39 a 46 em revisão).
+> Última atualização: 2026-11-09 (capítulos 40 a 46 no PR #44; 47 em revisão).
 
 ## Publicado
 
 - **Capítulos 1 a 38**, em sete trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários e o começo de Back-end. Todos com `verifiedWithAngular: '22.2'`.
 - **Último capítulo novo:** 38, Guards (PR #34). Antes dele, o 37, Login com Supabase (PR #33), e o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Em revisão (PRs empilhados, cada um sobre a branch do anterior):** capítulo 39, Interceptors (PR #35, `trilha-back-end-3`); capítulo 40, CRUD com Supabase (PR #36, `trilha-back-end-4`); capítulo 41, Resolvers (PR #38, `trilha-back-end-5`); capítulo 42, Testes com Vitest (PR #39, `trilha-qualidade-1`); capítulo 43, Erros e DevTools (PR #40, `trilha-qualidade-2`); capítulo 44, Acessibilidade (PR #41, `trilha-qualidade-3`); capítulo 45, @defer (PR #42, `trilha-producao-1`); capítulo 46, SEO (`trilha-producao-2`). Fora da pilha, o PR #37 (`correcao-dica-do-termo`) corrige as páginas mais largas que 375 px. O merge automático pelo agente foi bloqueado pela permissão do modo automático: os merges ficam com o professor.
+- **Aceitos, mas ainda fora da `main`:** os PRs #35 a #43 (capítulos 39 a 46) foram aceitos em 2026-11-09, mas, empilhados, entraram cada um na branch do anterior; só o 39 (#35) e a correção de largura (#37) chegaram à `main`. O **PR #44** (`trilha-producao-2` → `main`) leva os capítulos 40 a 46. **Daqui em diante, todo PR aponta para a `main`.**
+- **Em revisão:** capítulo 47, PWA (`trilha-producao-3`, PR para a `main`; até o #44 entrar, o diff mostra também os capítulos 40 a 46). O merge automático pelo agente é bloqueado pela permissão do modo automático: os merges ficam com o professor.
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
-## O Passaporte, na etapa 46
+## O Passaporte, na etapa 47
 
-`passaporte/etapas/46-seo/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
+`passaporte/etapas/47-pwa/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
 
 - `/paises`: lista, destaque, progresso mundial, filtro; dados da API de países do livro (`site/public/api/paises.json`).
 - `/paises/:code`: rotas filhas com visão geral, anotações e o tempo (Open-Meteo).
@@ -31,12 +32,12 @@
 - **Desde o 44, acessível (auditado com axe-core e teclado, zero violações nos dois modos):** o `Panel` tem `h2` no título; a tela de países, `<h1 class="sr-only">Países</h1>`; emojis de títulos em `<span aria-hidden="true">`; o botão "Visitar" leva o país num `sr-only`; o rodapé da lista tem `role="status"`; o filtro usa o `ngListbox`/`ngOption` do `@angular/aria` (dependência da etapa desde o 44; `selected = signal<Filter[]>`, `filter` é `computed`); token `--color-link` (claro `#1f6fb2`, escuro `#7db8ee`) nos botões-link ("Editar", "Cancelar edição", "Criar conta"); `core/page-focus.ts` (`PageFocus.focusPage()` foca o `h1` do `main` com `tabindex=-1` via `afterNextRender`; `pageOf(url)` junta as abas do país) e, no `App`, o `NavigationEnd` (sem a primeira página) e o botão "Pular para o conteúdo" (`sr-only focus:not-sr-only focus:px-4 focus:py-2`).
 - **Desde o 45, o passaporte tem um gráfico adiado:** `features/passport/trip-chart/` (`TripChart` com Chart.js 4.6.1, MIT, dependência da etapa; registra só `BarController`, `BarElement`, `CategoryScale`, `LinearScale`, `Tooltip`; cores lidas dos tokens; sem animação com movimento reduzido; `canvas` com `aria-hidden` e tabela `sr-only`; `daysPerYear(trips)`), no fim da `PassportPage` dentro de `@defer (on viewport)` com `@placeholder` (altura do gráfico), `@loading (minimum 300ms)` e `@error`. Build: `passport-page` 14,33 kB e `trip-chart` 153,73 kB (sem `@defer`, 167,46 kB numa peça só); o pacote inicial ganhou ~10 kB do mecanismo do `@defer`. Nos testes, `DeferBlockBehavior.Manual` e `vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)` (o jsdom não tem canvas). A descrição do 45 no catálogo passou de "mapa e gráficos" para "o gráfico das viagens".
 - **Desde o 46, pré-renderizado (SSG):** `@angular/ssr` e `@angular/platform-server`; `angular.json` com `server: src/main.server.ts` e `outputMode: "static"`; `app.routes.server.ts` com `Prerender` em `''`, `paises`, `paises/:code` (redirecionamento) e `paises/:code/visao-geral` (os dois com `getPrerenderParams` buscando a API de países no build), `sobre`, e `Client` no resto (`/passaporte`, `/entrar`, abas `clima`/`anotacoes`); `provideClientHydration(withEventReplay())`. O build gera 393 rotas, `index.csr.html` (o casco das rotas Client) e páginas de redirecionamento. `core/site.ts` (`SITE_URL` de exemplo, `DEFAULT_DESCRIPTION`); `core/seo-title-strategy.ts` (`SeoTitleStrategy extends TitleStrategy`: `<title>`, `description`, `og:title`, `og:description`, `og:url`, `og:image`); `data.description` nas rotas e o `countryDescriptionResolver`; tags fixas no `index.html`; `public/og.png` (1200×630). `npm run build` = `ng build && node scripts/sitemap.mjs` (gera `sitemap.xml` com 197 páginas e `robots.txt`). Lighthouse SEO: 100. O extrator de trechos lê também a pasta `scripts/` das etapas.
+- **Desde o 47, PWA:** `@angular/service-worker` (instalado à mão: o `ng add @angular/pwa` falha no `npm install` dele por causa do `allow-scripts` do npm local; o `@angular/pwa` tem `save: false` e não fica no `package.json`). `angular.json` com `serviceWorker: "ngsw-config.json"` na produção e orçamento inicial com aviso em 650 kB (o pacote foi de 599,91 para 606,89 kB). `ngsw-config.json`: grupos `app` (prefetch) e `assets` (lazy), e `dataGroups` `paises` (`performance`, 7d) e `tempo` (Open-Meteo, `freshness`, 5s, 1h). **Nunca a API do Supabase:** reproduzido, o Bruno viu as viagens da Ana. `public/manifest.webmanifest` em português, ícones novos em `public/icons/` (o globo dourado), `theme-color` e `apple-touch-icon` no `index.html`. `provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode(), registrationStrategy: 'registerWhenStable:30000' })`. `core/app-updates.ts` (`AppUpdates`, `ready` com o `VERSION_READY`, `reload()`); faixa `role="status"` no `app.html`. Specs do `App` com `provideServiceWorker('ngsw-worker.js', { enabled: false })`. Para testar: `npm run build` e `npx http-server -p 8080 -c-1 dist/passaporte/browser` (sem fallback: `/passaporte` direto dá 404 antes do service worker). O extrator de trechos lê também o `ngsw-config.json` e o `public/*.webmanifest` das etapas.
 
 ## Próximos capítulos (catálogo)
 
 | Nº | Slug | Pergunta |
 | --- | --- | --- |
-| 47 | `47-pwa` | Como transformar o app em um PWA instalável? |
 | 48 | `48-deploy-no-render` | Como gerar o build e publicar o app no Render? |
 | 49 | `49-github-actions` | Como automatizar testes e publicação com GitHub Actions? |
 | 50 | `50-pwabuilder` | Como levar o PWA para as lojas de aplicativos com o PWABuilder? |
@@ -47,7 +48,7 @@ As perguntas e descrições completas estão em `site/src/app/catalog/catalog.ts
 
 ## Como um capítulo é publicado
 
-1. Branch a partir da `main` (até aqui, uma por trilha: `trilha-formularios-1`, `trilha-formularios-2`…; correções com nome próprio, como `cap20-escalas-xl`).
+1. Branch a partir da `main`, e PR de volta para a `main` (nunca empilhar PRs: o merge de um PR empilhado não chega à `main`). Uma por trilha: `trilha-formularios-1`, `trilha-formularios-2`…; correções com nome próprio, como `cap20-escalas-xl`).
 2. Capítulo, etapa do Passaporte, trechos, glossário, catálogo, capturas de tela (`scripts/capturar-tela.mjs`, com `--lang=pt-BR`).
 3. `npm test`, `npm run build`, `npm run check`, e conferência no navegador (claro e escuro, 375 px, teclado, movimento reduzido).
 4. Commit `Capítulo NN: <título>`, push, Pull Request.
