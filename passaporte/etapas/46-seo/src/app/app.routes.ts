@@ -1,0 +1,39 @@
+import { Routes } from '@angular/router';
+import { authGuard, guestGuard } from './core/auth-guards';
+
+export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'paises' },
+  {
+    path: 'paises',
+    loadComponent: () => import('./features/countries/countries-page/countries-page').then((m) => m.CountriesPage),
+    title: 'Países · Passaporte',
+    data: { description: 'Os 195 países do mundo, com capital e população. Marque os que você já visitou e veja quanto do mundo você conhece.' }, // [!code highlight]
+  },
+  {
+    path: 'paises/:code',
+    loadChildren: () => import('./features/country-detail/country.routes').then((m) => m.COUNTRY_ROUTES),
+  },
+  {
+    path: 'passaporte',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/passport/passport-page/passport-page').then((m) => m.PassportPage),
+    title: 'Meu passaporte · Passaporte',
+  },
+  {
+    path: 'entrar',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./features/auth/sign-in-page/sign-in-page').then((m) => m.SignInPage),
+    title: 'Entrar · Passaporte',
+  },
+  {
+    path: 'sobre',
+    loadComponent: () => import('./features/about/about-page/about-page').then((m) => m.AboutPage),
+    title: 'Sobre · Passaporte',
+    data: { description: 'O Passaporte é o app de exemplo do livro Volta ao Mundo em Angular: países visitados, desejados e um diário de viagens.' },
+  },
+  {
+    path: '**',
+    loadComponent: () => import('./core/not-found-page/not-found-page').then((m) => m.NotFoundPage),
+    title: 'Página não encontrada · Passaporte',
+  },
+];

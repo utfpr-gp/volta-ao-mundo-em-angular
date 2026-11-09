@@ -37,6 +37,13 @@ import { CHAPTER_36 } from './36-signal-forms/content';
 import { CHAPTER_37 } from './37-login-com-supabase/content';
 import { CHAPTER_38 } from './38-guards/content';
 import { CHAPTER_39 } from './39-interceptors/content';
+import { CHAPTER_40 } from './40-crud-com-supabase/content';
+import { CHAPTER_41 } from './41-resolvers/content';
+import { CHAPTER_42 } from './42-testes-com-vitest/content';
+import { CHAPTER_43 } from './43-erros-e-devtools/content';
+import { CHAPTER_44 } from './44-acessibilidade/content';
+import { CHAPTER_45 } from './45-defer/content';
+import { CHAPTER_46 } from './46-seo/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -80,4 +87,11 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '37-login-com-supabase': CHAPTER_37,
   '38-guards': CHAPTER_38,
   '39-interceptors': CHAPTER_39,
+  '40-crud-com-supabase': CHAPTER_40,
+  '41-resolvers': CHAPTER_41,
+  '42-testes-com-vitest': CHAPTER_42,
+  '43-erros-e-devtools': CHAPTER_43,
+  '44-acessibilidade': CHAPTER_44,
+  '45-defer': CHAPTER_45,
+  '46-seo': CHAPTER_46,
 };

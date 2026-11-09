@@ -1,7 +1,28 @@
 {
   "passport": {
-    "visited": ["BR", "PT", "AR"],
     "notes": {},
-    "trips": []
-  }
+    "visited": [
+      "BR",
+      "PT",
+      "AR",
+      "JP"
+    ],
+    "trips": [
+      {
+        "country": "JP",
+        "arrival": "2026-10-01",
+        "days": 10,
+        "transport": "aviao",
+        "companion": ""
+      },
+      {
+        "country": "JP",
+        "arrival": "2026-10-01",
+        "days": 7,
+        "transport": "aviao",
+        "companion": ""
+      }
+    ]
+  },
+  "$schema": "./node_modules/json-server/schema.json"
 }

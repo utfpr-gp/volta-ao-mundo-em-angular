@@ -1,0 +1,12 @@
+<section class="rounded-card border border-line bg-card p-5 shadow-sm">
+  <!-- O título do painel é um título de verdade (h2): quem usa leitor de tela navega de título em título. -->
+  <h2 class="mb-4 flex items-center gap-2 border-b border-line pb-3 text-xl font-extrabold text-ink">
+    <ng-content select="[panel-title]" />
+  </h2>
+
+  <ng-content />
+
+  <footer class="mt-4 text-sm text-ink-muted">
+    <ng-content select="[panel-footer]" />
+  </footer>
+</section>

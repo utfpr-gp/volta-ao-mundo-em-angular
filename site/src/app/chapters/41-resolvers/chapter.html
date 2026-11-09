@@ -1,0 +1,221 @@
+<vm-chapter-page slug="41-resolvers">
+  <vm-view kind="mission" title="O país abre pronto">
+    <p class="lead">
+      Abra um país direto pelo endereço, com <code>/paises/JP</code>, e repare em dois detalhes: por um instante a tela diz
+      "Carregando o país…", e o título da aba fica "JP · Passaporte" para sempre, porque foi calculado antes de os países
+      chegarem. Neste capítulo, a página do país passa a abrir pronta: com o país na tela e o nome certo na aba, de uma vez.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-41/pais-pronto.png"
+      width="1150"
+      height="640"
+      alt="A página do Japão no Passaporte, aberta pelo endereço: a bandeira, o nome, as abas Visão geral, Clima e Anotações, e a visão geral com a capital Tóquio e a população. Nenhuma mensagem de carregando."
+    />
+    <p>
+      Ao final do capítulo, você vai saber escrever um <vm-term name="resolver">resolver</vm-term>, entregar o que ele carrega
+      ao componente como <code>input()</code>, desviar para outra página quando o dado não existe, e decidir quando vale a pena
+      esperar antes de abrir a tela.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A mesa posta">
+    <vm-analogy emoji="🍽️" title="Entrar no salão quando a mesa está pronta">
+      <p>
+        Em alguns restaurantes, você senta logo, e a comida vai chegando: primeiro o pão, depois o prato, e você vê a mesa se
+        montar. Em outros, o garçom pede que você espere um pouco no bar e só o leva ao salão quando a mesa está posta, com tudo
+        no lugar. Nenhum dos dois está errado: no primeiro, você não fica parado; no segundo, a mesa nunca aparece pela metade.
+      </p>
+      <p>
+        Até aqui, o Passaporte era o primeiro restaurante: a tela abria, e os dados chegavam depois. O resolver é o garçom do
+        segundo: o roteador espera por ele, e só abre a tela quando os dados estão na mão. Enquanto isso, a tela anterior fica, e a
+        barra de carregamento do <vm-see-chapter [number]="39" /> é o aviso de que a mesa está sendo posta.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O resolver por dentro">
+    <h3>Um resolver é uma função que entrega dados</h3>
+    <p>
+      Como o guard do <vm-see-chapter [number]="38" />, um resolver é uma função que o roteador chama antes de abrir a rota. O
+      guard responde "pode passar ou não"; o resolver responde "aqui estão os dados". Ele é do tipo <code>ResolveFn</code>, e o
+      que ele devolve, direto, numa Promise ou num Observable, fica guardado para a tela:
+    </p>
+    <vm-code snippet="41/etapa/src/app/features/country-detail/country-resolvers.ts" caption="country-resolvers.ts" />
+    <ul>
+      <li>
+        O <code>countryResolver</code> espera os países chegarem da API (<code>await passport.whenCountriesLoaded()</code>) e
+        devolve o país do endereço.
+      </li>
+      <li>Se a API falhou, ele devolve <code>undefined</code>, e a tela explica o problema.</li>
+      <li>
+        Se o código não existe, ele devolve um <code>RedirectCommand</code>, que troca a navegação por outra, para a página de
+        "não encontrado". O <code>browserUrl: state.url</code> mantém na barra de endereço o país que a pessoa pediu.
+      </li>
+      <li>
+        O <code>countryTitleResolver</code> faz o mesmo para o título da aba: o <code>title</code> de uma rota também aceita uma
+        <code>ResolveFn</code>, e o roteador espera por ela.
+      </li>
+    </ul>
+    <p>
+      O <code>whenCountriesLoaded()</code> é novo no <code>Passport</code>. Os países moram num <code>httpResource</code>, e o
+      <code>toObservable</code> do <vm-see-chapter [number]="31" /> transforma o status dele num Observable, do qual o
+      <code>firstValueFrom</code> espera o primeiro valor que não seja "carregando":
+    </p>
+    <vm-code snippet="41/etapa/src/app/core/passport.ts" caption="passport.ts" />
+
+    <h3>Ligar o resolver à rota, e o dado ao componente</h3>
+    <p>Na rota, o <code>resolve</code> é um objeto: cada chave é o nome de um dado, e o valor é o resolver que o carrega.</p>
+    <vm-code snippet="41/etapa/src/app/features/country-detail/country.routes.ts" caption="country.routes.ts" />
+    <p>
+      O <code>withComponentInputBinding()</code>, que liga os parâmetros da URL aos <code>input()</code> desde o
+      <vm-see-chapter [number]="24" />, liga também os dados resolvidos, pelo nome da chave. A chave <code>country</code> chega ao
+      input <code>country</code>:
+    </p>
+    <vm-code snippet="41/etapa/src/app/features/country-detail/country-page.ts" caption="country-page.ts" />
+    <p>
+      Antes, a tela pedia o país ao <code>Passport</code> e precisava tratar três casos: carregando, encontrado e não encontrado.
+      Agora, quando ela abre, o país já está ali; sobra só o caso de a API ter falhado.
+    </p>
+
+    <vm-resolver-sim />
+
+    <h3>Resolver ou buscar no componente?</h3>
+    <p>As duas abordagens funcionam. O que muda é o que a pessoa vê enquanto espera:</p>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr><th></th><th>O componente busca</th><th>Um resolver espera antes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Depois do clique</td><td>A tela nova abre na hora, ainda vazia</td><td>A tela anterior fica, até os dados chegarem</td></tr>
+          <tr><td>Enquanto espera</td><td>O componente mostra o próprio "carregando"</td><td>Só a barra de carregamento avisa</td></tr>
+          <tr><td>Título e endereço</td><td>Mudam antes dos dados</td><td>Mudam junto com a tela, já certos</td></tr>
+          <tr><td>Dado que não existe</td><td>A tela trata</td><td>O resolver desvia antes de abrir</td></tr>
+          <tr><td>Dado que muda depois</td><td>Acompanha, se vier de um signal</td><td>É uma foto do momento da navegação</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Um resolver combina com dados <strong>rápidos e indispensáveis</strong>, sem os quais a tela nem faz sentido, como o país
+      da página do país. Para dados lentos, ou que só ocupam uma parte da tela, como a previsão do tempo, é melhor abrir a tela e
+      mostrar o "carregando" no lugar certo: esperar três segundos sem nada mudar parece que o clique não funcionou. Por isso a
+      aba "Clima" continua buscando o tempo dentro do componente.
+    </p>
+
+    <vm-deep-dive title="Os resources de rota, em prévia">
+      <p>
+        A versão 22.2 do roteador traz, em prévia (<em>developer preview</em>), uma forma nova de carregar dados por rota: os
+        <code>resources</code>, ligados com <code>withRouterResources()</code>, e a função <code>nonBlocking</code>, que diz ao
+        roteador para <strong>não</strong> esperar um deles. Uma API em prévia ainda pode mudar entre versões; por isso o livro
+        usa o <code>resolve</code>, que é estável. Vale acompanhar a documentação.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O garçom no lugar">
+    <vm-steps label="Carregar o país antes de abrir a tela">
+      <ng-template vmStep="Esperar os países">
+        <p>
+          No <code>Passport</code>, crie o <code>catalogStatus</code> com o <code>toObservable</code> e o método
+          <code>whenCountriesLoaded()</code>, como na seção anterior.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Os resolvers">
+        <p>
+          Crie o <code>features/country-detail/country-resolvers.ts</code>, com o <code>countryResolver</code> e o
+          <code>countryTitleResolver</code>. A função <code>countryTitle</code>, que ficava no <code>country.routes.ts</code>, sai.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A rota">
+        <p>
+          No <code>country.routes.ts</code>, ponha <code>resolve: &#123; country: countryResolver &#125;</code> e
+          <code>title: countryTitleResolver</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A tela">
+        <p>
+          Na <code>CountryPage</code>, troque o input <code>code</code> e o <code>computed</code> pelo input <code>country</code>.
+          No template, apague o caso "Carregando o país…" e troque o "Não encontramos o país" pelo aviso de que os países não
+          carregaram. As abas filhas continuam recebendo o <code>code</code> pela URL.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> digite <code>/paises/JP</code> na barra de endereço. Por um instante, só o cabeçalho
+          e a barra de carregamento; depois, o Japão inteiro, com "Japão · Passaporte" na aba. Digite <code>/paises/XX</code>: a
+          página de "não encontrado" aparece, e a barra continua mostrando o país que você pediu. Use o "Sortear outro destino": o
+          resolver roda de novo a cada país, mas os países já estão carregados, e a troca é imediata.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Os garçons que se perdem">
+    <vm-pitfall
+      title="O resolver que nunca responde"
+      where="O que aparece com a API de países fora do ar"
+      message="(a tela fica vazia, e nenhum erro do Angular aparece no console)"
+    >
+      <vm-code snippet="41/nunca-responde" caption="country-resolvers.ts" />
+      <p>
+        O roteador espera o primeiro valor do Observable. Com a API fora do ar, a lista de países nunca deixa de ser vazia, o
+        <code>filter</code> nunca deixa nada passar, e a navegação espera para sempre: só o cabeçalho na tela, o título
+        "Passaporte", e no console apenas a falha de rede. <strong>Como sair:</strong> o resolver precisa responder também quando
+        dá errado. O <code>whenCountriesLoaded()</code> resolve com o erro, e o resolver devolve <code>undefined</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O resolver que lança o erro"
+      where="O que aparece no console, ao abrir /paises/JP com a API fora do ar"
+      message="ERROR HttpErrorResponse"
+    >
+      <vm-code snippet="41/lanca-erro" caption="country-resolvers.ts" />
+      <p>
+        Um erro dentro do resolver cancela a navegação. Abrindo pelo endereço, o app termina em <code>/</code>, com a tela vazia,
+        e a pessoa fica sem saber o que houve. <strong>Como sair:</strong> tratar o erro dentro do resolver e devolver um valor que a
+        tela saiba mostrar, ou um <code>RedirectCommand</code> para uma página que explique.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="A chave e o input com nomes diferentes"
+      where="O que aparece na tela, com os países carregados"
+      message="(&quot;Não foi possível carregar os países&quot;, sem erro nenhum)"
+    >
+      <vm-code snippet="41/chave-diferente" caption="as duas pontas" />
+      <p>
+        O <code>withComponentInputBinding()</code> liga a chave <code>data</code> a um input chamado <code>data</code>, que não
+        existe. O input <code>country</code> fica <code>undefined</code>, e a tela mostra o aviso de falha da API, que é mentira.
+        <strong>Como sair:</strong> o mesmo nome nas duas pontas, como no capítulo 38 com o <code>?voltar</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O dado resolvido é uma foto"
+      where="O que aparece depois de clicar em Marcar como visitado"
+      message="(a visão geral diz Visitado, e o selo do cabeçalho não aparece)"
+    >
+      <vm-code snippet="41/foto-template" caption="country-page.html" />
+      <p>
+        O resolver roda uma vez por navegação, e o que ele entrega é o país naquele instante. Marcar o país como visitado muda o
+        passaporte, mas não o objeto que a tela recebeu. <strong>Como sair:</strong> para o que muda enquanto a tela está aberta,
+        leia do signal do service (<code>passport.find(code)</code>), como a visão geral faz; use o dado resolvido para o que
+        não muda, como o nome e a bandeira.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="41-resolvers" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> A trilha Back-end termina aqui: o Passaporte tem login, rotas protegidas, token em toda
+      requisição, dados na nuvem e telas que abrem prontas. O app cresceu, e com ele os testes. Na trilha Qualidade, o
+      <vm-see-chapter [number]="42" /> olha para eles de frente: como testar componentes e services com o Vitest, e usar os
+      testes para mudar o código sem medo.
+    </p>
+  </vm-view>
+</vm-chapter-page>

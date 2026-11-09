@@ -1,0 +1,4 @@
+$ curl "https://SEU-PROJETO.supabase.co/rest/v1/trips?select=id,country" -H "apikey: sb_publishable_…"
+[{"id":13,"country":"JP"},
+ {"id":14,"country":"PT"},
+ {"id":15,"country":"IT"}]

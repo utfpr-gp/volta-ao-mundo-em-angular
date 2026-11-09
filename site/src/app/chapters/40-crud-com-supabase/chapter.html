@@ -1,0 +1,298 @@
+<vm-chapter-page slug="40-crud-com-supabase">
+  <vm-view kind="mission" title="O passaporte na nuvem">
+    <p class="lead">
+      Até aqui, o passaporte morava no json-server, no seu computador: um passaporte só, de quem estivesse na frente da tela.
+      Neste capítulo, ele vai para o Supabase. Cada conta ganha o próprio passaporte e o próprio diário de viagens, que agora dá
+      para editar e apagar, e que acompanha a pessoa em qualquer navegador. E o banco garante que ninguém lê o passaporte de
+      outra pessoa.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-40/diario-na-nuvem.png"
+      width="1150"
+      height="640"
+      alt="A página Meu passaporte com a Ana logada. À esquerda, o formulário em modo Editar viagem, com o Japão escolhido, os botões Salvar mudanças e Cancelar edição. À direita, o diário com duas viagens, Japão e Portugal, cada uma com os botões Editar e Apagar."
+    />
+    <p>
+      Ao final do capítulo, você vai saber criar tabelas no Supabase, proteger as linhas de cada pessoa com regras do banco, e
+      fazer o <vm-term name="crud">CRUD</vm-term> completo pelo <code>HttpClient</code>: criar, ler, atualizar e apagar.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="As caixas do cofre">
+    <vm-analogy emoji="🏦" title="O prédio é de todos; cada caixa, de um só">
+      <p>
+        No cofre de um banco, as caixas de segurança ficam todas na mesma sala. O prédio é um só, mas cada cliente só abre a
+        própria caixa, e a regra não depende da boa vontade de ninguém: a cada pedido, o funcionário confere o documento e só
+        traz a caixa daquela pessoa. Dentro dela, o cliente faz quatro coisas: guarda, olha, troca e retira.
+      </p>
+      <p>
+        O Supabase é o prédio, e cada tabela é a sala das caixas. O token de quem entrou é o documento, e as regras por linha do
+        banco são o funcionário que confere. Guardar, olhar, trocar e retirar são as quatro letras do CRUD. Um cofre sem a regra
+        seria uma sala com as caixas destrancadas: a porta do prédio, a tela de entrar, não adiantaria nada.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O CRUD por dentro">
+    <h3>As tabelas</h3>
+    <p>
+      O Supabase guarda os dados num banco <strong>PostgreSQL</strong>, em tabelas, como uma planilha com colunas fixas. O
+      Passaporte usa duas: <code>passports</code>, com uma linha por conta (os países visitados e as anotações), e
+      <code>trips</code>, com uma linha por viagem do diário. Elas nascem de um arquivo SQL, que você roda uma vez no
+      <strong>SQL Editor</strong> do painel:
+    </p>
+    <vm-code snippet="40/etapa/supabase/passaporte.sql" caption="supabase/passaporte.sql" />
+    <ul>
+      <li>
+        <code>user_id … default auth.uid()</code>: o <code>auth.uid()</code> é o id de quem fez o pedido, que o banco tira do
+        token. O app nem manda essa coluna: o banco a preenche sozinho.
+      </li>
+      <li>
+        Os <code>check</code> repetem no banco as regras do formulário do <vm-see-chapter [number]="36" />: de 1 a 365 dias,
+        transporte de uma lista, no máximo 40 letras. O formulário ajuda quem preenche; o banco garante, mesmo para quem não usa
+        o formulário.
+      </li>
+      <li>
+        <code>enable row level security</code> liga as <vm-term name="rls">regras por linha</vm-term> (RLS). A partir daí,
+        ninguém lê nem escreve linha nenhuma, a não ser que uma <strong>política</strong> deixe.
+      </li>
+      <li>
+        A política de <code>trips</code> vale para tudo (<code>for all</code>) e diz: uma linha é sua se o <code>user_id</code>
+        dela é o seu <code>auth.uid()</code>. O <code>using</code> confere as linhas que já existem (para ler, mudar e apagar); o
+        <code>with check</code>, as que você quer gravar.
+      </li>
+    </ul>
+
+    <h3>A API REST que o Supabase monta</h3>
+    <p>
+      Você não escreve um servidor. Para cada tabela, o Supabase oferece uma API REST no endereço
+      <code>&lt;projeto&gt;/rest/v1/&lt;tabela&gt;</code>, e cada letra do CRUD é um método HTTP:
+    </p>
+    <div class="not-prose my-6 overflow-x-auto">
+      <table class="w-full min-w-[30rem] border-collapse text-left text-sm text-ink">
+        <thead>
+          <tr class="border-b-2 border-line">
+            <th class="py-2 pr-4">Letra</th>
+            <th class="py-2 pr-4">Requisição</th>
+            <th class="py-2">O que o banco faz</th>
+          </tr>
+        </thead>
+        <tbody class="font-mono text-xs">
+          <tr class="border-b border-line"><td class="py-2 pr-4 font-sans text-sm">C (create)</td><td class="pr-4">POST /rest/v1/trips</td><td>insert</td></tr>
+          <tr class="border-b border-line"><td class="py-2 pr-4 font-sans text-sm">R (read)</td><td class="pr-4">GET /rest/v1/trips?select=…&amp;order=arrival.desc</td><td>select … order by arrival desc</td></tr>
+          <tr class="border-b border-line"><td class="py-2 pr-4 font-sans text-sm">U (update)</td><td class="pr-4">PATCH /rest/v1/trips?id=eq.7</td><td>update … where id = 7</td></tr>
+          <tr><td class="py-2 pr-4 font-sans text-sm">D (delete)</td><td class="pr-4">DELETE /rest/v1/trips?id=eq.7</td><td>delete … where id = 7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Os parâmetros dizem o resto: <code>select</code> escolhe as colunas, <code>order</code> ordena, e <code>id=eq.7</code> é um
+      filtro, "onde o id é igual a 7". Cada pedido leva dois cabeçalhos: o <code>apikey</code>, a chave publicável que diz de
+      qual projeto é o pedido, e o <code>Authorization</code>, com o token de quem pede. É aqui que o interceptor do
+      <vm-see-chapter [number]="39" /> passa a valer de verdade: o <code>API_URL</code> agora aponta para o Supabase, e o
+      interceptor põe os dois.
+    </p>
+    <vm-code snippet="40/etapa/src/app/core/api.ts" caption="api.ts" />
+    <vm-code snippet="40/etapa/src/app/core/http/auth-interceptor.ts" caption="auth-interceptor.ts" />
+
+    <vm-rls-sim />
+
+    <h3>O Passport fala com o Supabase</h3>
+    <p>O service muda por dentro, e as telas quase não percebem. O arquivo inteiro, com as linhas novas destacadas:</p>
+    <vm-code snippet="40/etapa/src/app/core/passport.ts" caption="passport.ts" />
+    <ul>
+      <li>
+        <strong>R:</strong> os dois <code>httpResource</code> devolvem <code>undefined</code> quando ninguém entrou. Você viu no
+        <vm-see-chapter [number]="32" />: sem requisição, o resource fica <code>'idle'</code>. Quando a pessoa entra ou sai, o
+        <code>signedIn()</code> muda, e o resource pede de novo, sozinho.
+      </li>
+      <li>
+        A API sempre devolve uma <strong>lista</strong>, mesmo quando só pode haver uma linha. O <code>parse</code> do
+        <code>httpResource</code> transforma a lista na linha de quem entrou, ou em <code>null</code>, se a pessoa ainda não
+        salvou nada.
+      </li>
+      <li>
+        <strong>C:</strong> o <code>POST</code> leva o cabeçalho <code>Prefer: return=representation</code>, que pede ao Supabase
+        a linha criada, já com o <code>id</code> que o banco deu. Sem o id, não daria para editar nem apagar a viagem depois.
+      </li>
+      <li>
+        <strong>U:</strong> o <code>PATCH</code> leva o id no filtro (<code>id=eq.7</code>) e só as mudanças no corpo. O id é da
+        linha, e não pode mudar.
+      </li>
+      <li><strong>D:</strong> o <code>DELETE</code> também leva o filtro. Sem ele, o Supabase recusa: apagar a tabela inteira por engano não dá.</li>
+      <li>
+        O passaporte é salvo com um <vm-term name="upsert">upsert</vm-term>: um <code>POST</code> com
+        <code>Prefer: resolution=merge-duplicates</code> cria a linha na primeira vez e a atualiza nas seguintes.
+      </li>
+      <li>
+        O <code>firstValueFrom</code>, do RxJS, transforma o Observable do <code>HttpClient</code> numa
+        <vm-term name="promise">Promise</vm-term> da primeira resposta. Assim, quem chama pode usar <code>await</code>, e o erro
+        vira uma exceção, que se trata com <code>try</code>/<code>catch</code>.
+      </li>
+    </ul>
+
+    <vm-deep-dive title="A cópia no navegador, agora uma por conta">
+      <p>
+        A cópia do <code>localStorage</code>, do <vm-see-chapter [number]="33" />, continua: se o Supabase não responder, o app
+        mostra a última versão conhecida. Mas agora a chave tem o id de quem entrou (<code>passaporte:&lt;id&gt;</code>), e sem
+        login não há cópia. Num computador compartilhado, a próxima pessoa não vê o passaporte de quem usou antes.
+      </p>
+    </vm-deep-dive>
+
+    <h3>Editar e apagar na tela</h3>
+    <p>
+      No diário, cada viagem ganhou os botões "Editar" e "Apagar". O "Apagar" chama o <code>deleteTrip</code>. O "Editar" usa o
+      <code>viewChild</code> do <vm-see-chapter [number]="18" /> para alcançar o formulário e chamar o método
+      <code>edit</code> dele, que põe a viagem nos campos e leva o foco até lá:
+    </p>
+    <vm-code snippet="40/etapa/src/app/features/passport/passport-page/passport-page.ts" caption="passport-page.ts" />
+    <p>
+      No formulário, uma viagem com <code>id</code> veio do banco: o título vira "Editar viagem", e o envio chama o
+      <code>updateTrip</code> no lugar do <code>addTrip</code>. Se o Supabase não responder, o que a pessoa digitou fica nos
+      campos, com um aviso:
+    </p>
+    <vm-code snippet="40/etapa/src/app/features/passport/trip-form/trip-form.ts" caption="trip-form.ts" />
+
+    <vm-deep-dive title="E o supabase.from()?">
+      <p>
+        O cliente do Supabase, que o Passaporte já usa para o login, também sabe fazer o CRUD, com métodos no lugar das URLs:
+      </p>
+      <vm-code snippet="40/supabase-from" caption="com o cliente do Supabase" />
+      <p>
+        Por baixo, ele faz as mesmas requisições para o <code>/rest/v1</code>, com os mesmos cabeçalhos. O livro usa o
+        <code>HttpClient</code> porque o resto do app já fala com ele: os <code>httpResource</code>, os interceptors e os testes
+        com o <code>HttpTestingController</code> continuam valendo. As duas formas estão certas; o importante é escolher uma e
+        manter.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A mudança para a nuvem">
+    <vm-steps label="Levar o passaporte para o Supabase">
+      <ng-template vmStep="As tabelas">
+        <p>
+          No painel do seu projeto, abra o <strong>SQL Editor</strong>, cole o arquivo <code>supabase/passaporte.sql</code> da
+          etapa e clique em <strong>Run</strong>. No <strong>Table Editor</strong>, as tabelas <code>passports</code> e
+          <code>trips</code> aparecem, vazias.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Adeus, json-server">
+        <p>
+          No <code>core/api.ts</code>, troque o <code>API_URL</code> pelo endereço da API REST do Supabase. No
+          <code>authInterceptor</code>, ponha o <code>apikey</code> ao lado do token. Depois, desinstale o json-server e apague o
+          <code>db.json</code> e o script <code>api</code> do <code>package.json</code>:
+        </p>
+        <vm-code snippet="40/desinstalar" caption="terminal" />
+      </ng-template>
+      <ng-template vmStep="Ler">
+        <p>
+          No <code>Passport</code>, injete o <code>Auth</code> e troque o <code>httpResource</code> do passaporte pelos dois que
+          dependem do <code>signedIn()</code>, com o <code>parse</code>. A cópia do navegador passa a usar a
+          <code>copyKey</code>. No <code>core/trip.ts</code>, a viagem ganha o <code>id?: number</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Escrever">
+        <p>
+          Troque o <code>put</code> pelo <code>upsert</code>, e o <code>addTrip</code> antigo pelos três métodos das viagens:
+          <code>addTrip</code>, <code>updateTrip</code> e <code>deleteTrip</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A tela">
+        <p>
+          No formulário, acrescente o <code>editing</code>, o <code>saveFailed</code>, o <code>edit</code> e o
+          <code>cancel</code>; no diário, os botões "Editar" e "Apagar". No <code>app.html</code>, o aviso passa a falar do
+          Supabase.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> entre na sua conta, marque países e registre uma viagem. Abra o
+          <strong>Table Editor</strong> no painel: as linhas estão lá, com o seu <code>user_id</code>. Edite a viagem e apague-a, e
+          veja a tabela acompanhar. Agora crie uma segunda conta e entre com ela: o passaporte começa vazio, e o da primeira conta
+          continua intacto. Por fim, saia: sem login, você ainda marca países, mas só nesta visita.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="As caixas que não abrem (ou abrem demais)">
+    <vm-pitfall
+      title="RLS ligado, nenhuma política"
+      where="O que o Supabase responde"
+      message="new row violates row-level security policy for table &quot;trips&quot;"
+    >
+      <vm-code snippet="40/rls-sem-politica" caption="SQL Editor" />
+      <vm-code snippet="40/resposta-sem-politica" caption="respostas da API" />
+      <p>
+        Com o RLS ligado e sem política, o banco não deixa nada. Na escrita, ao menos há um erro. Na leitura, não: a resposta é
+        <code>200</code> com uma lista vazia, e o app mostra "Nenhuma viagem registrada ainda", como se tudo estivesse certo.
+        <strong>Como sair:</strong> criar as políticas junto com a tabela, como no <code>passaporte.sql</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Esquecer o RLS"
+      where="O que qualquer pessoa consegue, só com a chave publicável"
+      message="(a tabela inteira, de todas as contas, sem login nenhum)"
+    >
+      <vm-code snippet="40/rls-desligado" caption="terminal" />
+      <p>
+        A chave publicável vai no código do app, e qualquer um a encontra no navegador. Sem o RLS, ela basta para ler, mudar e
+        apagar as linhas de todo mundo, como o simulador mostra. O guard do capítulo 38 não protege nada aqui: ninguém precisa
+        passar pela tela. <strong>Como sair:</strong> <code>enable row level security</code> em toda tabela que o app usa.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Criar sem pedir a linha de volta"
+      where="O que o catch do formulário recebe"
+      message="TypeError: (intermediate value) is not iterable"
+    >
+      <vm-code snippet="40/sem-return-representation" caption="passport.ts" />
+      <p>
+        Sem o <code>Prefer: return=representation</code>, o Supabase cria a linha e responde <code>201</code> com o corpo vazio.
+        O <code>HttpClient</code> entrega <code>null</code>, e desestruturar <code>null</code> quebra. O pior: a viagem
+        <strong>foi</strong> salva, mas o formulário diz que não, e quem clica de novo cria uma segunda.
+        <strong>Como sair:</strong> pedir a linha criada com o cabeçalho.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O upsert que só funciona uma vez"
+      where="O que o Supabase responde no segundo salvamento"
+      message="duplicate key value violates unique constraint &quot;passports_pkey&quot;"
+    >
+      <vm-code snippet="40/upsert-sem-merge" caption="passport.ts" />
+      <p>
+        Um <code>POST</code> comum só cria. O primeiro país marcado cria a linha do passaporte (<code>201</code>); o segundo
+        tenta criar outra com o mesmo <code>user_id</code> e leva um <code>409 Conflict</code>. <strong>Como sair:</strong>
+        <code>Prefer: resolution=merge-duplicates</code>, que transforma o <code>POST</code> em "cria ou atualiza".
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Mandar o id no PATCH"
+      where="O que o Supabase responde"
+      message="column &quot;id&quot; can only be updated to DEFAULT"
+    >
+      <vm-code snippet="40/patch-com-id" caption="passport.ts" />
+      <p>
+        A viagem que vem do formulário tem o <code>id</code>, e mandá-la inteira no corpo é pedir para mudar o id também. A
+        coluna é <code>generated always</code>: o banco recusa com <code>400</code>. <strong>Como sair:</strong> separar o id
+        das mudanças, com <code>const &#123; id, ...changes &#125; = trip</code>, e usar o id só no filtro.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="40-crud-com-supabase" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Os dados chegam do Supabase, mas a tela abre antes deles: por um instante, o passaporte aparece
+      vazio. No <vm-see-chapter [number]="41" />, um resolver carrega os dados antes de a tela abrir, e você compara essa
+      escolha com a de buscar os dados dentro do componente.
+    </p>
+  </vm-view>
+</vm-chapter-page>

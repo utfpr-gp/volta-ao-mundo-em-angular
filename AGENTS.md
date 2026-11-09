@@ -150,8 +150,6 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Etapas a partir da 29:** o `Passport` faz requisições ao nascer. Todo spec que monta uma tela com ele usa
   `provideHttpClientTesting()` e `startPassport()` (de `src/testing/passport-testing.ts`); sem isso, o teste vai à rede de
   verdade. Para rodar o app: `npm run api` (json-server) e `ng serve`.
-- **Capítulo 41 (resolvers):** o título da página do país mostra o código quando os países ainda não chegaram da API;
-  um resolver espera os dados antes de abrir a tela.
 - **Testar httpResource e effects:** os resources só pedem dados quando o Angular roda os efeitos. Sequência nos specs:
   `TestBed.tick()`, `HttpTestingController` (`expectOne`/`flush`) e `await ApplicationRef.whenStable()`. Não chamar
   `whenStable()` com requisição pendente (trava). `vi.useFakeTimers()` não se dá bem com `toObservable`/effects: usar o
@@ -208,3 +206,66 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Inspecionar a rede no Chrome headless:** com o protocolo do DevTools (como em `scripts/capturar-tela.mjs`),
   `Network.enable` mostra cada requisição com os cabeçalhos, `Log.enable` mostra os erros de CORS, e `Fetch.enable` com
   `patterns` segura uma requisição (para capturar a tela no meio do carregamento) até `Fetch.continueRequest`.
+- **Capítulo 40 (CRUD com Supabase), verificado num Supabase local (CLI 3.0) com `supabase-js` 2.118:** a API REST
+  (`/rest/v1/<tabela>`) responde: RLS ligado sem política, `GET` dá `200 []` calado e `POST` dá `403`
+  `new row violates row-level security policy for table "trips"` (`42501`; sem login, `401`); RLS desligado, só a chave
+  publicável lê e muda tudo; `POST` repetido sem `Prefer: resolution=merge-duplicates` dá `409`
+  `duplicate key value violates unique constraint "passports_pkey"`; sem `Prefer: return=representation`, `201` com corpo
+  vazio, e `const [created] = await firstValueFrom(…)` dá `TypeError: (intermediate value) is not iterable` (a linha foi
+  criada); `PATCH` com o `id` no corpo dá `column "id" can only be updated to DEFAULT` (`428C9`); `PATCH`/`DELETE` sem
+  filtro dão `UPDATE requires a WHERE clause`/`DELETE requires a WHERE clause` (`21000`); `check` violado dá `23514`;
+  `PATCH`/`DELETE` em linha de outra pessoa dão `200 []`/`204` sem mudar nada. Tabela recém-criada pode dar `PGRST205`
+  ("Could not find the table … in the schema cache") por um instante. O local aceitou pedido sem `apikey`; não afirmar
+  nada sobre a nuvem sem conferir.
+- **Chrome headless com Signal Forms:** depois de um `reset()`, `el.value = …` + `new Event('input')` deixa de chegar ao
+  `[formField]` (campo número e select), embora a digitação de verdade funcione. Para roteiros de captura, use teclado
+  (`Input.insertText` do protocolo do DevTools) ou crie os dados pela API. No jsdom (Vitest), o evento sintético funciona.
+- **Capítulo 41 (Resolvers), verificado no Angular 22.2.3:** o roteador usa o **primeiro** valor de um Observable devolvido
+  pelo resolver (não precisa completar); um Observable que nunca emite prende a navegação sem erro do Angular (tela vazia,
+  título do `index.html`). Resolver que lança erro na navegação inicial: o app termina em `/` com a tela vazia e o console
+  mostra `ERROR HttpErrorResponse`. Chave do `resolve` com nome diferente do `input()`: o input fica `undefined` sem aviso.
+  `RedirectCommand` com `skipLocationChange: true` mantém na barra o endereço **anterior** (no teste, `Location.path()` dá
+  `''`); use `browserUrl: state.url` (que já vem com o `redirectTo` das filhas, como `/paises/XX/visao-geral`). Com
+  `browserUrl`, o `router.url` é o da página de destino, e o `Location.path()` é o pedido. `urlUpdateStrategy` padrão é
+  `'deferred'`: a barra só muda no fim da navegação. Os `resources` de rota (`withRouterResources`, `nonBlocking`) são
+  `@developerPreview 22.2`.
+- **Capítulo 42 (Testes com Vitest), verificado no Vitest 5.0.5 com `@angular/build:unit-test`:** sem
+  `provideHttpClientTesting()`, o `HttpClient` (provido por padrão na 22) vai à rede de verdade e o teste **passa** (369 ms);
+  `whenStable()` com requisição pendente dá `Error: Test timed out in 5000ms.`; conferir sem esperar a tela dá
+  `AssertionError: expected +0 to be 4 // Object.is equality`; `verify()` com requisição sem resposta dá
+  `Error: Expected no open requests, found 1: POST …`; `--coverage` sem pacote dá `Code coverage requires either
+  "@vitest/coverage-v8" or "@vitest/coverage-istanbul" to be installed.`. Para tirar a cor da saída do `ng test` ao copiar
+  mensagens: `sed 's/\x1b\[[0-9;]*m//g'`.
+- **Capítulo 43 (Erros e DevTools), verificado no Angular 22.2.3:** mensagens reais: `TS2551 … Did you mean 'country'?`
+  (nome errado no template), `NG8001 … is not a known element` com duas hipóteses e `Find more at
+  https://next.angular.dev/errors/NG8001` (erros do compilador apontam para `next.angular.dev`; os de execução, para
+  `v22.angular.dev`), `NG8118: \`country\` is a required \`input\` and does not have a value in this context.` (o
+  compilador da 22 barra ler `input.required` no construtor; não afirmar que dá NG0950), `NG0951` (viewChild.required sem
+  resultado). Em produção, o NG0203 vira `ERROR C: NG0203` com nomes encurtados. Calar o NG8001 com
+  `CUSTOM_ELEMENTS_SCHEMA` compila e deixa o elemento vazio. O `ErrorHandler` padrão faz `console.error('ERROR', erro)`.
+  O objeto `ng` do modo de desenvolvimento tem `getComponent`, `getOwningComponent`, `getInjector`, `getListeners`,
+  `applyChanges`, `isSignal` e outros. O Angular DevTools (extensão) não roda no Chrome headless: o que o livro diz dele vem
+  de angular.dev/tools/devtools (quatro abas, `$ng0`, Show Signal Graph, `debugName`). O `@boundary` aparece nos tipos da 22,
+  mas não na documentação: não usar.
+- **Capítulo 44 (Acessibilidade), auditado no Chrome headless:** axe-core 4.14 (MPL-2.0, instalado só no rascunho; no
+  livro, recomendar o Lighthouse do Chrome) injetado pelo `Runtime.evaluate`; a árvore de acessibilidade pelo
+  `Accessibility.getFullAXTree` (papéis e nomes que o leitor de tela recebe). Teclado pelo `Input.dispatchKeyEvent`: para
+  ativar botões com Enter, mande `rawKeyDown` + `char` (`text: '\r'`) + `keyUp`; links ativam já no keydown. Achados reais:
+  `/paises` sem `h1`; `text-primary` com contraste 1,06:1 no escuro; 195 botões "Visitar"; filtro só pela cor; foco que
+  fica no menu depois de navegar; e `<a href="#conteudo">` com `<base href="/">` leva a `/paises#conteudo`. O `not-sr-only`
+  do Tailwind zera o padding (use `focus:px-4 focus:py-2`). Os botões °C/°F já tinham `aria-pressed`.
+- **Capítulo 45 (@defer), verificado no Angular 22.2.3:** `NG8019: Trigger with no target can only be placed on an @defer
+  that has a @placeholder block`; `NG8020: … with exactly one root element node`; citar o componente adiado fora do bloco
+  (até num `viewChild`) o põe de volta na página, sem aviso. Para conferir o download sob demanda, use um build estático (o
+  `ng serve` pede metadados dos componentes mais cedo) e a aba Rede: o pedaço só chega ao rolar. O Chart.js sem uma peça
+  registrada dá `Error: "bar" is not a registered controller.`; `chart.js/auto` custa ~55 kB a mais. Os testes de
+  `site/src/app/pages/track.spec.ts` procuram trilhas e capítulos não publicados no catálogo (e pulam quando não houver).
+- **Capítulo 46 (SEO), verificado no Angular 22.2.3 com `@angular/ssr` 22.2.4:** rota com parâmetro em `Prerender` sem
+  `getPrerenderParams` dá `The 'paises/:code/visao-geral' route uses prerendering and includes parameters, but
+  'getPrerenderParams' is missing. …`; `localStorage` num componente pré-renderizado dá `ERROR ReferenceError: localStorage
+  is not defined` e `An error occurred while prerendering route '/paises'. Error: The content returned was empty.`. Sem
+  `robots.txt`, um servidor com fallback devolve o `index.csr.html`, e o Lighthouse diz `robots.txt is not valid` (19 erros,
+  "Syntax not understood"). O `ng add @angular/ssr` cria `server.ts` com Express e `outputMode: "server"` (no rascunho, a
+  instalação falhou por causa do `allow-scripts` do npm local). Lighthouse pela linha de comando:
+  `npx -y lighthouse@12 <url> --only-categories=seo --output=json --chrome-flags="--headless=new"`. Servidor estático com
+  fallback para testar: um `node:http` que tenta o arquivo, `<pasta>/index.html` e por fim o `index.csr.html`.

@@ -1,0 +1,11 @@
+<app-panel>
+  <span panel-title>🛂 Meus carimbos</span>
+
+  <ul class="grid grid-cols-3 gap-3 sm:grid-cols-6">
+    @for (country of countries(); track country.code) {
+      <li><app-stamp-card [country]="country" /></li>
+    }
+  </ul>
+
+  <span panel-footer>{{ stamped() }} de {{ countries().length }} carimbos</span>
+</app-panel>

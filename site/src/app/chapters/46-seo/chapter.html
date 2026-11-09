@@ -1,0 +1,221 @@
+<vm-chapter-page slug="46-seo">
+  <vm-view kind="mission" title="Uma página para cada país">
+    <p class="lead">
+      Peça <code>/paises/JP</code> ao Passaporte sem rodar JavaScript, como faz um robô de busca apressado ou o aplicativo de
+      mensagens que monta a prévia de um link, e você recebe um <code>&lt;app-root&gt;</code> vazio e o título "Passaporte".
+      Para quem procura, o Japão não existe. Neste capítulo, o build passa a gerar uma página de verdade para cada um dos 195
+      países, com título, descrição e cartão de compartilhamento próprios.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-46/og.png"
+      width="1200"
+      height="630"
+      alt="A imagem de compartilhamento do Passaporte: a tela de países, com o placar, o país em destaque e a lista começando pelo Afeganistão."
+    />
+    <p>
+      Ao final do capítulo, você vai saber por que uma SPA é quase invisível para buscadores, pré-renderizar páginas no build
+      (<vm-term name="ssg">SSG</vm-term>), dar a cada uma título, descrição e tags Open Graph, gerar o
+      <code>sitemap.xml</code> e o <code>robots.txt</code>, e conferir tudo com a auditoria de SEO do Lighthouse.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A vitrine">
+    <vm-analogy emoji="🏬" title="Loja com vitrine, e loja com a porta fechada">
+      <p>
+        Imagine duas lojas na mesma rua. A primeira tem a vitrine montada: quem passa vê o que há lá dentro, e o guia da cidade
+        consegue listar o que ela vende. A segunda tem uma placa na porta, "entre para ver": lá dentro há tudo, mas o guia, que não
+        entra em loja nenhuma, anota só a placa.
+      </p>
+      <p>
+        Uma SPA comum é a loja da placa: o HTML que chega é o <code>&lt;app-root&gt;</code> vazio, e o conteúdo só aparece depois
+        que o JavaScript roda. Pré-renderizar é montar a vitrine: o build visita cada página e guarda o HTML pronto, que chega
+        inteiro a quem pede.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O SEO por dentro">
+    <h3>O que uma SPA entrega</h3>
+    <p>Este é o <code>index.html</code> do build da etapa anterior, o mesmo para qualquer endereço:</p>
+    <vm-code snippet="46/index-spa" caption="dist/passaporte/browser/index.html (etapa 45)" />
+    <p>
+      Uma pessoa não percebe nada: o JavaScript monta a página em seguida. Mas quem não roda JavaScript, ou não espera por ele,
+      fica com isso. O Google roda JavaScript, mas numa segunda etapa, que pode demorar; os aplicativos de mensagem que
+      montam a prévia de um link, em geral, nem tentam.
+    </p>
+
+    <h3>Pré-renderizar no build</h3>
+    <p>
+      A pré-renderização (SSG, de <em>static site generation</em>) roda o app no build, uma vez para cada página, e guarda o HTML
+      de cada uma. Ela precisa de dois pacotes do Angular e de três arquivos. O primeiro diz como cada rota sai:
+    </p>
+    <vm-code snippet="46/etapa/src/app/app.routes.server.ts" caption="app.routes.server.ts" />
+    <ul>
+      <li><code>RenderMode.Prerender</code>: o build gera o HTML completo da rota. Vale para o que o Google deve achar.</li>
+      <li>
+        Uma rota com parâmetro, como <code>:code</code>, precisa do <code>getPrerenderParams</code>, que diz quais valores gerar.
+        O Passaporte pergunta à API dos países no build, e o build gera 195 páginas.
+      </li>
+      <li>
+        <code>RenderMode.Client</code>: a rota fica como numa SPA, montada no navegador. É o caso do passaporte e da tela de
+        entrar, que dependem de quem entrou e não interessam ao Google.
+      </li>
+    </ul>
+    <p>Os outros dois arquivos ligam essa configuração ao app, e o <code>angular.json</code> ganha duas opções:</p>
+    <vm-code snippet="46/etapa/src/main.server.ts" caption="main.server.ts" />
+    <vm-code snippet="46/etapa/src/app/app.config.server.ts" caption="app.config.server.ts" />
+    <vm-code snippet="46/angular-opcoes" caption="angular.json (trecho)" />
+    <p>
+      No <code>app.config.ts</code>, o <code>provideClientHydration</code> liga a <vm-term name="hidratacao">hidratação</vm-term>: o navegador
+      aproveita o HTML que veio pronto, liga os eventos nele, e não desenha a página de novo. O
+      <code>withEventReplay()</code> guarda os cliques que a pessoa der antes de o JavaScript chegar, e os repete depois.
+    </p>
+    <vm-code snippet="46/build-prerender" caption="npm run build" />
+    <vm-code snippet="46/pasta-dist" caption="o que o build gera" />
+
+    <vm-google-sim />
+
+    <h3>Título, descrição e cartão de compartilhamento</h3>
+    <p>
+      O <code>&lt;title&gt;</code> de cada página já vinha do <code>title</code> das rotas, que você usou desde o
+      <vm-see-chapter [number]="23" />. Quem escreve esse título é o <code>TitleStrategy</code> do roteador; o Passaporte troca o
+      padrão por um seu, que escreve também a descrição e as tags <strong>Open Graph</strong>, as que os aplicativos de mensagem
+      e as redes sociais leem para montar o cartão de um link:
+    </p>
+    <vm-code snippet="46/etapa/src/app/core/seo-title-strategy.ts" caption="seo-title-strategy.ts" />
+    <ul>
+      <li>O <code>Title</code> e o <code>Meta</code> são services do Angular que mexem no <code>&lt;head&gt;</code>; o <code>updateTag</code> cria a tag ou troca o conteúdo dela.</li>
+      <li>A descrição vem do <code>data</code> da rota mais funda; a das páginas fixas fica escrita na rota.</li>
+      <li>
+        A descrição de cada país vem de um resolver, como o título do <vm-see-chapter [number]="41" />, que espera os países e
+        monta a frase com a capital e a população.
+      </li>
+      <li>
+        O Open Graph pede endereços completos. O <code>SITE_URL</code>, em <code>core/site.ts</code>, ainda tem um endereço de
+        exemplo: você o troca pelo seu quando publicar o app, no <vm-see-chapter [number]="48" />.
+      </li>
+    </ul>
+    <vm-code snippet="46/etapa/src/app/features/country-detail/country-resolvers.ts" caption="country-resolvers.ts" />
+    <p>O <code>&lt;head&gt;</code> que o build gerou para o Japão:</p>
+    <vm-code snippet="46/head-japao" caption="dist/passaporte/browser/paises/JP/visao-geral/index.html" />
+
+    <h3>O mapa para o robô: sitemap.xml e robots.txt</h3>
+    <p>
+      O <code>sitemap.xml</code> lista as páginas que o site quer ver no Google; o <code>robots.txt</code> diz aos robôs o que eles
+      podem visitar, e onde fica o sitemap. Os dois saem de um script que roda depois do <code>ng build</code>, a partir da lista
+      de rotas que o build pré-renderizou:
+    </p>
+    <vm-code snippet="46/etapa/scripts/sitemap.mjs" caption="scripts/sitemap.mjs" />
+
+    <h3>A auditoria</h3>
+    <p>
+      A aba Lighthouse das ferramentas do Chrome tem uma auditoria de SEO; pela linha de comando, ela também roda com o
+      <code>npx</code>. Na página do Japão, servida a partir do build, a nota foi 100:
+    </p>
+    <vm-code snippet="46/lighthouse" caption="terminal" />
+
+    <vm-deep-dive title="Pré-renderizar ou renderizar no servidor?">
+      <p>
+        A pré-renderização gera as páginas uma vez, no build, e o resultado é um punhado de arquivos que qualquer hospedagem
+        estática serve. Serve bem quando o conteúdo muda pouco, como a lista de países. Quando cada pedido precisa de uma página
+        diferente, feita na hora, o Angular também sabe renderizar num servidor Node (o <code>ng add &#64;angular/ssr</code>
+        prepara isso, com um <code>server.ts</code> e o Express). Isso pede um servidor rodando o tempo todo, e fica para
+        depois do livro.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="A vitrine montada">
+    <vm-steps label="Pré-renderizar o Passaporte e descrever cada página">
+      <ng-template vmStep="Os pacotes">
+        <vm-code snippet="46/instalar" caption="terminal" />
+        <p>
+          Crie o <code>main.server.ts</code>, o <code>app.config.server.ts</code> e o <code>app.routes.server.ts</code>, e ponha
+          o <code>server</code> e o <code>outputMode</code> no <code>angular.json</code>. No <code>app.config.ts</code>,
+          acrescente o <code>provideClientHydration(withEventReplay())</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="As descrições">
+        <p>
+          Crie o <code>core/site.ts</code> e o <code>core/seo-title-strategy.ts</code>, e registre a estratégia no
+          <code>app.config.ts</code>. Ponha o <code>data: &#123; description &#125;</code> nas rotas de países e do "Sobre", e o
+          <code>countryDescriptionResolver</code> no <code>resolve</code> da página do país. No <code>index.html</code>, as tags
+          fixas: <code>og:type</code>, <code>og:site_name</code>, <code>og:locale</code> e <code>twitter:card</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A imagem e o sitemap">
+        <p>
+          Ponha em <code>public/</code> uma imagem <code>og.png</code> de 1200 × 630 pixels, o tamanho que os cartões usam. Crie o
+          <code>scripts/sitemap.mjs</code>, e troque o script <code>build</code> do <code>package.json</code> por
+          <code>ng build &amp;&amp; node scripts/sitemap.mjs</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A prova">
+        <p>
+          Rode <code>npm run build</code>. Abra o <code>dist/passaporte/browser/paises/JP/visao-geral/index.html</code> num editor
+          de texto: o Japão está lá, no HTML. Sirva a pasta com um servidor estático e rode o Lighthouse.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> nada, para quem usa o app. Mudam o título de cada aba, o código-fonte de cada página
+          (Ctrl+U no navegador) e, depois de publicado, a prévia de um link do Passaporte num aplicativo de mensagens.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="As vitrines vazias">
+    <vm-pitfall
+      title="Rota com parâmetro, sem a lista de valores"
+      where="O que o ng build mostra"
+      message="The 'paises/:code/visao-geral' route uses prerendering and includes parameters, but 'getPrerenderParams' is missing. Please define 'getPrerenderParams' function for this route in your server routing configuration or specify a different 'renderMode'."
+    >
+      <vm-code snippet="46/sem-params" caption="app.routes.server.ts" />
+      <p>
+        O build não tem como adivinhar quais países gerar. <strong>Como sair:</strong> o <code>getPrerenderParams</code>, ou
+        <code>RenderMode.Client</code> para a rota.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O navegador que não existe no build"
+      where="O que o ng build mostra"
+      message="ERROR ReferenceError: localStorage is not defined"
+    >
+      <vm-code snippet="46/localstorage-no-build" caption="countries-page.ts" />
+      <vm-code snippet="46/localstorage-erro" caption="ng build (trecho)" />
+      <p>
+        No build, o app roda no Node.js, e não num navegador: não há <code>localStorage</code>, <code>window</code> nem
+        <code>document</code> de verdade. O código que os usa direto, ao criar um componente, quebra a página inteira.
+        <strong>Como sair:</strong> o que é do navegador vai para o <code>afterNextRender</code> (que só roda no navegador) ou para
+        um <code>try</code>, como a cópia do passaporte faz desde o <vm-see-chapter [number]="33" />.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O robots.txt que é uma página"
+      where="O que o Lighthouse diz, num build sem o robots.txt"
+      message="robots.txt is not valid"
+    >
+      <vm-code snippet="46/robots-invalido" caption="Lighthouse, auditoria de SEO" />
+      <p>
+        Sem o arquivo, o servidor fez o que faz com qualquer endereço desconhecido numa SPA: devolveu o
+        <code>index.csr.html</code>. O robô leu HTML onde esperava as regras. Aconteceu com o build de desenvolvimento, que não
+        roda o script do sitemap. <strong>Como sair:</strong> gerar o <code>robots.txt</code> em todo build que vai ao ar, e
+        conferir com o Lighthouse antes de publicar.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="46-seo" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte tem vitrine. Antes de abri-lo ao mundo, ele ganha um último recurso: ser instalado
+      como um aplicativo e abrir mesmo sem internet. No <vm-see-chapter [number]="47" />, ele vira um PWA.
+    </p>
+  </vm-view>
+</vm-chapter-page>

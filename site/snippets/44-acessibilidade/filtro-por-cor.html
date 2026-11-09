@@ -1,0 +1,7 @@
+<button
+  type="button"
+  [class.bg-highlight]="filter() === option.value" <!-- [!code highlight] -->
+  (click)="filter.set(option.value)"
+>
+  {{ option.label }}
+</button>

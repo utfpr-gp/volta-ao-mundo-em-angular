@@ -1,0 +1,2 @@
+[serious] color-contrast: Elements must meet minimum color contrast ratio thresholds
+  button[aria-label="Editar a viagem: Portugal"] :: Element has insufficient color contrast of 1.06 (foreground color: #0a1622, background color: #0f1c2b, font size: 10.5pt (14px), font weight: bold).

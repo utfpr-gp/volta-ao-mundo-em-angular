@@ -557,6 +557,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Leve o seu passaporte para a nuvem: crie a tabela no Supabase, proteja os dados de cada pessoa e faça o CRUD completo pelo app.',
     minutes: 45,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '41-resolvers',
@@ -566,6 +569,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Carregue os dados de uma tela antes de ela abrir com resolvers, e compare essa abordagem com buscar os dados dentro do componente.',
     minutes: 20,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Qualidade
   {
@@ -576,6 +582,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Escreva testes para services e componentes com Vitest, simule requisições HTTP e use os testes para mudar o código sem medo.',
     minutes: 45,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '43-erros-e-devtools',
@@ -585,6 +594,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Aprenda a ler as mensagens de erro do Angular e do TypeScript, e use o Angular DevTools para inspecionar componentes e signals.',
     minutes: 30,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '44-acessibilidade',
@@ -594,6 +606,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Deixe o Passaporte usável por todo mundo: HTML semântico, teclado, foco visível, contraste, leitores de tela e o Angular Aria.',
     minutes: 40,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Produção
   {
@@ -602,8 +617,11 @@ const ENTRIES: ChapterEntry[] = [
     question: 'Como carregar partes da tela sob demanda com `@defer`?',
     shortTitle: '@defer',
     description:
-      'Carregue o mapa e os gráficos do Passaporte só quando aparecem na tela com @defer, e veja o primeiro carregamento ficar mais leve.',
+      'Carregue o gráfico das viagens do Passaporte só quando ele aparece na tela com @defer, e veja a página do passaporte ficar mais leve.',
     minutes: 25,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '46-seo',
@@ -613,6 +631,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Faça o Google e as redes sociais entenderem o seu app com pré-renderização, título e descrição por página, Open Graph e sitemap.',
     minutes: 40,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '47-pwa',

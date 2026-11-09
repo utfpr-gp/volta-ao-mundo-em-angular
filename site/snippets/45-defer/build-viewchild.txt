@@ -1,0 +1,2 @@
+Lazy chunk files    | Names          |  Raw size | Estimated transfer size
+chunk-BaxQOqdZ.js   | passport-page  | 168.23 kB |                51.40 kB

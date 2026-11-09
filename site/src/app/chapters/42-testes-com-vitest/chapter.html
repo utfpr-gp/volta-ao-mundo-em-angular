@@ -1,0 +1,248 @@
+<vm-chapter-page slug="42-testes-com-vitest">
+  <vm-view kind="mission" title="Mexer sem medo">
+    <p class="lead">
+      O Passaporte tem mais de cem testes, escritos capítulo a capítulo, e até aqui você só os rodou. Neste capítulo, você
+      aprende a lê-los e a escrevê-los. E usa um teste para construir uma novidade: o resumo do diário, com quantas viagens você
+      fez, quantos dias passou fora, quantos países conheceu e o seu transporte favorito.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-42/resumo-do-diario.png"
+      width="1150"
+      height="640"
+      alt="O diário de viagens do Passaporte com um resumo no topo: 3 viagens, 20 dias fora, 2 países, transporte favorito navio. Abaixo, duas viagens ao Japão e uma a Portugal, cada uma com Editar e Apagar."
+    />
+    <p>
+      Ao final do capítulo, você vai saber escrever testes com o <vm-term name="vitest">Vitest</vm-term> para funções, componentes
+      e services, simular a API no lugar da rede, medir a cobertura, e trabalhar no ciclo "vermelho, verde, refatorar".
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A rede do trapézio">
+    <vm-analogy emoji="🎪" title="O salto novo, com a rede embaixo">
+      <p>
+        No circo, o trapezista ensaia o salto novo com uma rede embaixo. A rede não faz o salto por ele, e ninguém na plateia
+        repara nela. Mas é por causa dela que ele tenta: se errar, cai na rede, e não no chão. E ela precisa estar esticada no
+        lugar certo: uma rede frouxa, ou montada ao lado do trapézio, dá uma confiança que não protege.
+      </p>
+      <p>
+        Os testes são a rede do código. Cada um confere uma coisa que o app precisa continuar fazendo. Quando você muda o código,
+        eles rodam em segundos e avisam se algo quebrou, antes de o defeito chegar à tela de alguém. E um teste mal feito, que passa
+        sempre, é a rede frouxa.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O teste por dentro">
+    <h3>Um teste é código que confere código</h3>
+    <p>
+      Um teste chama uma parte do app e confere o resultado. O Angular roda os testes com o Vitest, pelo comando
+      <code>ng test</code>, que você viu na tabela do <vm-see-chapter [number]="5" />. Cada arquivo <code>.spec.ts</code> é um
+      conjunto de testes. Este é o do resumo do diário:
+    </p>
+    <vm-code snippet="42/trip-stats.spec" caption="trip-stats.spec.ts" />
+    <ul>
+      <li><code>describe('tripStats', …)</code> agrupa os testes de uma coisa, e dá nome ao grupo.</li>
+      <li><code>it('adds up the days…', …)</code> é um teste: o nome diz, em inglês como o resto do código, o que deve acontecer.</li>
+      <li>
+        <code>expect(valor).toBe(esperado)</code> confere. Se o valor não for o esperado, o teste falha. Há outras conferências:
+        <code>toEqual</code> compara o conteúdo de objetos e listas, <code>toBeNull</code>, <code>toContain</code>…
+      </li>
+      <li>
+        Os comentários do segundo teste mostram o desenho de quase todo teste, os três A: <strong>Arrange</strong> (preparar os
+        dados), <strong>Act</strong> (chamar o que é testado) e <strong>Assert</strong> (conferir).
+      </li>
+      <li>
+        A função <code>trip</code>, no topo, monta uma viagem só com o que importa ao teste. Teste curto é teste que se lê.
+      </li>
+    </ul>
+
+    <h3>Vermelho, verde, refatorar</h3>
+    <p>
+      O teste acima foi escrito <strong>antes</strong> da função. Rodado assim, ele nem compila: o arquivo
+      <code>trip-stats.ts</code> não existe. O passo seguinte é uma função de mentira, que só devolve zeros:
+    </p>
+    <vm-code snippet="42/de-mentira" caption="trip-stats.ts" />
+    <p>O <code>ng test</code> responde em vermelho, mostrando o que esperava e o que recebeu:</p>
+    <vm-code snippet="42/vermelho" caption="terminal" />
+    <p>
+      Repare no fim: <strong>dois testes passaram</strong>, mesmo com a função errada. "Começa em zero" e "sem favorito no
+      empate" dão certo por acaso, porque a mentira devolve justamente zero e <code>null</code>. É a rede frouxa: um teste
+      passando não prova nada sozinho; é o conjunto que protege. Agora, a função de verdade:
+    </p>
+    <vm-code snippet="42/etapa/src/app/features/passport/trip-stats.ts" caption="trip-stats.ts" />
+    <p>
+      Os cinco ficam verdes. Esse é o ciclo: <strong>vermelho</strong> (um teste que falha diz o que falta),
+      <strong>verde</strong> (o mínimo de código para passar) e <strong>refatorar</strong> (melhorar o código com os testes
+      conferindo que nada quebrou). A <code>tripStats</code> é uma função pura: recebe as viagens e devolve o resumo, sem ler
+      nem mudar nada fora dela. Função pura é a mais fácil de testar, e por isso vale separar a conta da tela.
+    </p>
+
+    <vm-safety-net-sim />
+
+    <h3>Testar um componente</h3>
+    <p>
+      Para testar um componente, o <code>TestBed</code> monta um pequeno app Angular só para o teste, com os providers que você
+      escolher. O <code>createComponent</code> cria o componente, e o <code>fixture</code> dá acesso a ele e ao HTML dele:
+    </p>
+    <vm-code snippet="42/componente-no-teste" caption="passport-page.spec.ts" />
+    <ul>
+      <li>
+        <code>await fixture.whenStable()</code> espera o Angular terminar de atualizar a tela. Depois de qualquer ação (um clique,
+        uma digitação, um dado novo), espere antes de conferir.
+      </li>
+      <li>
+        <code>fixture.nativeElement</code> é o elemento do componente, e o teste o lê como você leria no navegador:
+        <code>querySelector</code>, <code>textContent</code>, <code>click()</code>.
+      </li>
+      <li>
+        O teste confere o que a pessoa vê, o texto do resumo, e não como o componente o calculou. Assim, você pode trocar a conta
+        por dentro, e o teste continua valendo.
+      </li>
+    </ul>
+    <p>
+      Os testes rodam no Node.js, com o <strong>jsdom</strong>, um navegador de mentira que monta o HTML sem desenhar nada. Por
+      isso são rápidos: os 133 da etapa rodam em cerca de três segundos.
+    </p>
+
+    <h3>Testar um service que fala com a API</h3>
+    <p>
+      Um teste não deve ir à internet: ficaria lento e falharia quando a rede caísse. O <code>provideHttpClientTesting()</code>
+      troca a rede por um controle, o <code>HttpTestingController</code>, e o teste faz o papel do servidor:
+    </p>
+    <vm-code snippet="42/service-no-teste" caption="passport.spec.ts" />
+    <ul>
+      <li><code>expectOne(…)</code> confere que saiu uma requisição, e só uma, e a devolve ao teste.</li>
+      <li><code>flush(corpo)</code> responde como o servidor; <code>error(…)</code> simula uma falha de rede.</li>
+      <li>
+        O <code>startPassport()</code>, em <code>src/testing/</code>, monta o <code>Passport</code> com a Ana logada e responde às
+        três requisições do começo. O Supabase falso, que você conheceu no <vm-see-chapter [number]="37" />, entra no lugar do
+        de verdade pelo <code>InjectionToken</code>.
+      </li>
+    </ul>
+
+    <h3>Os comandos e a cobertura</h3>
+    <vm-code snippet="42/comandos" caption="terminal" />
+    <p>
+      A <strong>cobertura</strong> mede quanto do código os testes percorreram. Ela precisa de um pacote a mais, instalado na
+      mesma versão do Vitest do projeto:
+    </p>
+    <vm-code snippet="42/cobertura-sem-pacote" caption="terminal" />
+    <vm-code snippet="42/cobertura" caption="ng test --watch=false --coverage (trecho)" />
+    <p>
+      As colunas são as instruções (<em>Stmts</em>), os caminhos dos <code>if</code> (<em>Branch</em>), as funções e as linhas
+      percorridas, e a última diz quais linhas nenhum teste visitou. A tabela serve para achar o que ficou sem rede, como o
+      <code>weather-description.ts</code>. Não persiga 100%: um teste que só passa por uma linha sem conferir nada aumenta o
+      número e não protege coisa nenhuma.
+    </p>
+  </vm-view>
+
+  <vm-view kind="code" title="O resumo, com o teste primeiro">
+    <vm-steps label="Construir o resumo do diário com testes">
+      <ng-template vmStep="O teste">
+        <p>
+          Em <code>features/passport/</code>, crie o <code>trip-stats.spec.ts</code> com os cinco testes. Rode só ele:
+          <code>ng test --include src/app/features/passport/trip-stats.spec.ts</code>. O terminal reclama que o
+          <code>./trip-stats</code> não existe: é o primeiro vermelho.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A mentira">
+        <p>
+          Crie o <code>trip-stats.ts</code> com a interface <code>TripStats</code> e a função que devolve zeros. Agora compila, e
+          três testes falham com as diferenças entre o esperado e o recebido.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A conta">
+        <p>Escreva a função de verdade e veja os cinco ficarem verdes. O <code>ng test</code> continua olhando: salve, e ele roda de novo.</p>
+      </ng-template>
+      <ng-template vmStep="Na tela">
+        <p>
+          Na <code>PassportPage</code>, crie o <code>stats</code>, um <code>computed</code> que chama a <code>tripStats</code>,
+          e mostre o resumo no diário, só quando houver viagens:
+        </p>
+        <vm-code snippet="42/etapa/src/app/features/passport/passport-page/passport-page.html" caption="passport-page.html" />
+        <p>No <code>passport-page.spec.ts</code>, acrescente os testes "sums up the diary" e "shows no summary".</p>
+      </ng-template>
+      <ng-template vmStep="A cobertura">
+        <p>
+          Instale o <code>&#64;vitest/coverage-v8</code> e rode <code>ng test --watch=false --coverage</code>. Além da tabela, o
+          relatório completo vai para a pasta <code>coverage/</code>: abra o <code>coverage/passaporte/index.html</code> no navegador e
+          veja, linha por linha, o que os testes percorreram.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> no "Meu passaporte", o diário ganha a linha de resumo. Registre uma viagem e veja os
+          números mudarem; apague todas, e o resumo some.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="As redes frouxas">
+    <vm-pitfall title="O teste que vai à internet" where="O que o Vitest mostra" message="(o teste passa, em 369 ms, buscando a API de verdade)">
+      <vm-code snippet="42/teste-pela-rede" caption="countries.spec.ts" />
+      <vm-code snippet="42/resultado-pela-rede" caption="terminal" />
+      <p>
+        Desde o Angular 22, o <code>HttpClient</code> já vem pronto, também nos testes. Sem o
+        <code>provideHttpClientTesting()</code>, ninguém troca a rede, e o teste busca a API de verdade. Ele passa, mas leva
+        centenas de vezes mais tempo que os outros, depende da internet e dos dados lá fora, e falha no dia em que a API mudar.
+        <strong>Como sair:</strong> <code>provideHttpClientTesting()</code> em todo teste que usa HTTP, e as respostas pelo
+        <code>HttpTestingController</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Conferir antes de a tela mudar" where="O que o Vitest mostra" message="AssertionError: expected +0 to be 4 // Object.is equality">
+      <vm-code snippet="42/sem-esperar" caption="star-rating.spec.ts" />
+      <p>
+        O clique muda o signal, mas o Angular ainda não redesenhou o HTML quando o <code>expect</code> roda. <strong>Como
+        sair:</strong> <code>await fixture.whenStable()</code> depois de cada ação.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Esperar uma resposta que só o teste pode dar" where="O que o Vitest mostra, cinco segundos depois" message="Error: Test timed out in 5000ms.">
+      <vm-code snippet="42/whenstable-trava" caption="app.spec.ts" />
+      <p>
+        O <code>whenStable()</code> espera também as requisições em andamento. Mas, no teste, quem responde é o próprio teste, na
+        linha de baixo, que nunca chega. <strong>Como sair:</strong> com requisição pendente, use <code>TestBed.tick()</code> para
+        o Angular rodar e desenhar; responda com o <code>flush</code>; e só então chame o <code>whenStable()</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="A requisição esquecida"
+      where="O que o Vitest mostra"
+      message="Error: Expected no open requests, found 1: POST https://SEU-PROJETO.supabase.co/rest/v1/passports"
+    >
+      <vm-code snippet="42/requisicao-esquecida" caption="passport.spec.ts" />
+      <p>
+        O <code>verify()</code> no <code>afterEach</code> confere que nenhuma requisição ficou sem resposta. Aqui, marcar um país
+        dispara o salvamento, que o teste não esperava. O erro é uma ajuda: sem ele, o teste passaria sem conferir o salvamento.
+        <strong>Como sair:</strong> <code>expectOne</code> e <code>flush</code> para cada requisição que o código faz.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="A cobertura sem o pacote"
+      where="O que o ng test --coverage mostra"
+      message="Code coverage requires either &quot;@vitest/coverage-v8&quot; or &quot;@vitest/coverage-istanbul&quot; to be installed."
+    >
+      <p>
+        O Angular não traz o medidor de cobertura de fábrica. <strong>Como sair:</strong> instalar o
+        <code>&#64;vitest/coverage-v8</code> na mesma versão do <code>vitest</code> do projeto (confira com
+        <code>npm ls vitest</code>). Instalado sem versão, ele pode trazer um Vitest mais novo junto.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="42-testes-com-vitest" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Os testes mostram que algo quebrou; as mensagens de erro dizem onde e por quê, se você souber
+      lê-las. No <vm-see-chapter [number]="43" />, você aprende a ler os erros do Angular e do TypeScript, e a olhar o app por
+      dentro, rodando, com o Angular DevTools.
+    </p>
+  </vm-view>
+</vm-chapter-page>

@@ -1,0 +1,38 @@
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <p class="text-sm font-bold uppercase tracking-wider text-ink-muted">Agora em {{ country()?.capital }}</p>
+  <div class="flex gap-1" role="group" aria-label="Unidade de temperatura">
+    <button
+      type="button"
+      class="rounded-full border px-3 py-0.5 text-sm font-bold"
+      [class]="unit() === 'celsius' ? 'border-highlight bg-highlight text-primary' : 'border-line text-ink'"
+      [attr.aria-pressed]="unit() === 'celsius'"
+      (click)="unit.set('celsius')"
+    >
+      °C
+    </button>
+    <button
+      type="button"
+      class="rounded-full border px-3 py-0.5 text-sm font-bold"
+      [class]="unit() === 'fahrenheit' ? 'border-highlight bg-highlight text-primary' : 'border-line text-ink'"
+      [attr.aria-pressed]="unit() === 'fahrenheit'"
+      (click)="unit.set('fahrenheit')"
+    >
+      °F
+    </button>
+  </div>
+</div>
+
+@if (weather.error()) {
+  <p class="mt-3 text-ink-muted" role="alert">Não foi possível buscar o tempo agora.</p>
+  <button type="button" class="mt-2 rounded-full border border-line px-4 py-1 font-bold" (click)="weather.reload()">
+    Tentar de novo
+  </button>
+} @else if (weather.hasValue()) {
+  <p class="mt-2 text-4xl font-extrabold" [class.opacity-50]="weather.isLoading()">
+    {{ weather.value().current.temperature_2m | number: '1.0-1' }} {{ weather.value().current_units.temperature_2m }}
+  </p>
+  <p class="mt-1 text-lg">{{ description() }}</p>
+  <p class="mt-2 text-xs text-ink-muted">Dados: Open-Meteo</p>
+} @else {
+  <p class="mt-3 text-ink-muted" role="status">Buscando o tempo…</p>
+}

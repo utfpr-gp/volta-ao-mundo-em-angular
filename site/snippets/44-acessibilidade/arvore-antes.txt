@@ -1,0 +1,4 @@
+títulos: ["Japão"]
+botões:  ["Marcar como visitado", "Todos", "Visitados", "Desejados",
+          "Visitar", "Remover Afeganistão", "Visitar", "Remover África do Sul",
+          "Visitar", "Remover Albânia", …]

@@ -1,0 +1,4 @@
+Tab, Tab, Tab, Tab → foco em "Sobre", no menu
+Enter               → a página Sobre abre
+                      foco: ainda em "Sobre", no menu
+Tab                 → foco em "Entrar", no menu

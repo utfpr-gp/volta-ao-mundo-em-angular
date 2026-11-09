@@ -10,11 +10,23 @@ export interface GlossaryEntry {
  * componente <vm-term name="chave">; uma chave inexistente quebra o build.
  */
 export const GLOSSARY = {
+  acessibilidade: {
+    term: 'Acessibilidade',
+    definition:
+      'A qualidade de um app que funciona para todo mundo: quem usa só o teclado, quem usa leitor de tela, quem enxerga pouco contraste. Começa no HTML certo e no nome certo de cada controle.',
+    chapter: 44,
+  },
   'angular-cli': {
     term: 'Angular CLI',
     definition:
       'A ferramenta de terminal do Angular, usada pelo comando ng: cria projetos (ng new), liga o app (ng serve), roda testes (ng test) e gera a versão final (ng build).',
     chapter: 5,
+  },
+  'angular-devtools': {
+    term: 'Angular DevTools',
+    definition:
+      'Uma extensão gratuita do Chrome e do Firefox que mostra um app Angular por dentro, rodando: a árvore de componentes, os inputs e signals de cada um, e onde o app gasta tempo.',
+    chapter: 43,
   },
   angularjs: {
     term: 'AngularJS',
@@ -61,6 +73,12 @@ export const GLOSSARY = {
       'Um conjunto de código pronto que você chama quando precisa, como uma caixa de ferramentas. Quem decide a hora de usar é o seu código.',
     chapter: 1,
   },
+  crud: {
+    term: 'CRUD',
+    definition:
+      'As quatro operações com dados guardados: criar (create), ler (read), atualizar (update) e apagar (delete). Numa API REST, viram POST, GET, PATCH e DELETE.',
+    chapter: 40,
+  },
   'cabecalho-http': {
     term: 'Cabeçalho HTTP',
     definition:
@@ -100,6 +118,12 @@ export const GLOSSARY = {
     definition:
       'Uma marcação com @ em cima de uma classe, como @Component, que acrescenta informações e transforma a classe em algo especial para o Angular.',
     chapter: 4,
+  },
+  defer: {
+    term: '@defer',
+    definition:
+      'Um bloco de template cujo conteúdo, e tudo que só ele usa, vai para um pedaço de JavaScript separado, baixado só quando um gatilho dispara, como aparecer na tela.',
+    chapter: 45,
   },
   'design-token': {
     term: 'Design token',
@@ -179,6 +203,12 @@ export const GLOSSARY = {
     term: 'Genérico',
     definition: 'Um tipo que recebe outro tipo como parâmetro, entre < >. Array<string> é um array de textos; signal<number> é um signal de número.',
     chapter: 4,
+  },
+  hidratacao: {
+    term: 'Hidratação',
+    definition:
+      'O momento em que o Angular, no navegador, assume uma página que veio pronta do build: liga os eventos e os signals ao HTML que já está na tela, sem desenhá-lo de novo.',
+    chapter: 46,
   },
   input: {
     term: 'Input',
@@ -308,11 +338,23 @@ export const GLOSSARY = {
       'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
     chapter: 3,
   },
+  rls: {
+    term: 'RLS (regras por linha)',
+    definition:
+      'Row Level Security: regras do banco que dizem, linha por linha, quem pode ler ou escrever. No Supabase, com a política auth.uid() = user_id, cada pessoa só alcança as próprias linhas.',
+    chapter: 40,
+  },
   regex: {
     term: 'Regex (expressão regular)',
     definition:
       'Um molde para texto, escrito entre barras, como /^[0-9]+$/. Serve para conferir se um texto segue uma forma: só letras, um CEP, um e-mail.',
     chapter: 35,
+  },
+  resolver: {
+    term: 'Resolver',
+    definition:
+      'Uma função que o roteador chama antes de abrir uma rota para carregar os dados dela. A tela só abre quando o resolver termina, e recebe os dados prontos.',
+    chapter: 41,
   },
   resource: {
     term: 'Resource',
@@ -383,6 +425,12 @@ export const GLOSSARY = {
     definition: 'Uma biblioteca de CSS com classes pequenas e prontas, como p-4 e rounded-xl, que você junta direto no HTML para montar o visual.',
     chapter: 13,
   },
+  ssg: {
+    term: 'SSG (pré-renderização)',
+    definition:
+      'Static site generation: gerar no build o HTML pronto de cada página, rodando o app uma vez por página. Quem pede a página recebe o conteúdo, sem esperar o JavaScript.',
+    chapter: 46,
+  },
   subject: {
     term: 'Subject',
     definition:
@@ -405,6 +453,18 @@ export const GLOSSARY = {
     definition:
       'JavaScript com tipos. Os tipos apontam erros enquanto você escreve, antes de o código rodar. O código é convertido em JavaScript para o navegador executar.',
     chapter: 1,
+  },
+  upsert: {
+    term: 'Upsert',
+    definition:
+      'Gravar uma linha criando-a se ainda não existe, ou atualizando-a se já existe. A palavra junta update e insert.',
+    chapter: 40,
+  },
+  vitest: {
+    term: 'Vitest',
+    definition:
+      'A ferramenta que roda os testes de um projeto Angular, pelo comando ng test. Lê os arquivos .spec.ts, executa cada teste e mostra o que passou e o que falhou.',
+    chapter: 42,
   },
   validador: {
     term: 'Validador',

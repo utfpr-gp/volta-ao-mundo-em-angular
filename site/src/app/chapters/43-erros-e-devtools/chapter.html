@@ -1,0 +1,240 @@
+<vm-chapter-page slug="43-erros-e-devtools">
+  <vm-view kind="mission" title="Quando algo quebra">
+    <p class="lead">
+      Até aqui, quando algo dava errado no Passaporte, a pessoa que usa o app não ficava sabendo: o erro ia para o console, que
+      só quem desenvolve abre, e a tela ficava estranha sem explicação. Neste capítulo, todo erro que ninguém tratou passa por
+      um lugar só, que mantém os detalhes no console para você e mostra uma frase clara para quem usa o app.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-43/aviso-de-erro.png"
+      width="1150"
+      height="640"
+      alt="A tela de países do Passaporte com uma faixa vermelha logo abaixo do cabeçalho: Algo deu errado nesta tela. Se ela parecer estranha, recarregue a página. Ao lado, os botões Recarregar e Fechar."
+    />
+    <p>
+      E, mais importante que o aviso: você vai aprender a ler as mensagens de erro do TypeScript e do Angular, a achar nelas a
+      linha do seu código, e a olhar o app por dentro, rodando, com o console e o <vm-term name="angular-devtools">Angular
+      DevTools</vm-term>.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A luz do painel">
+    <vm-analogy emoji="🚗" title="A luz que acende tem um código">
+      <p>
+        Quando uma luz acende no painel do carro, ela não diz "o carro quebrou". Cada luz tem um desenho, e o manual tem uma
+        página para cada desenho: o que significa, se dá para seguir viagem, o que fazer. Na oficina, o mecânico liga um aparelho
+        no carro e lê um código, como P0301, que aponta o cilindro com problema. Quem não conhece os códigos vê uma luz
+        assustadora; quem conhece lê um endereço.
+      </p>
+      <p>
+        As mensagens de erro do Angular são assim. Cada uma tem um código, como <code>NG0203</code>, com uma página própria na
+        documentação, e quase sempre diz o arquivo e a linha. O Angular DevTools é o aparelho do mecânico: mostra o app por
+        dentro, com o motor ligado.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="O erro por dentro">
+    <h3>Três lugares onde um erro aparece</h3>
+    <ul>
+      <li>
+        <strong>No terminal do <code>ng serve</code></strong>, antes de o app rodar. São os erros que o TypeScript e o compilador
+        do Angular acham lendo o código: começam com <code>TS</code> (do TypeScript) ou <code>NG8</code> (dos templates). O app
+        nem chega a abrir com eles.
+      </li>
+      <li>
+        <strong>No console do navegador</strong>, com o app rodando. Os do Angular começam com <code>NG0</code>. Abra com F12 ou
+        Ctrl+Shift+I, na aba Console.
+      </li>
+      <li><strong>No terminal do <code>ng test</code></strong>, quando um teste falha, como no <vm-see-chapter [number]="42" />.</li>
+    </ul>
+
+    <h3>As partes de uma mensagem</h3>
+    <p>Este erro apareceu ao escrever <code>countrie</code> no lugar de <code>country</code> no template do cartão:</p>
+    <vm-code snippet="43/ts2551" caption="terminal do ng serve" />
+    <ul>
+      <li><strong>O código</strong>, <code>TS2551</code>: dá para buscar, e diz de quem é o erro (TS, do TypeScript).</li>
+      <li><strong>O problema</strong>: a propriedade <code>countrie</code> não existe no <code>CountryCard</code>.</li>
+      <li><strong>A dica</strong>: "Did you mean 'country'?". Muitas vezes, a dica já é a correção.</li>
+      <li>
+        <strong>O lugar</strong>: o arquivo, a linha 3 e a coluna 28, com a linha copiada e um til embaixo do trecho. A última
+        parte diz de qual componente é o template.
+      </li>
+    </ul>
+    <p>Um erro com o app rodando tem as mesmas partes, mais o <strong>link</strong> e a pilha de chamadas:</p>
+    <vm-code snippet="43/ng0203-dev" caption="console do navegador" />
+    <p>
+      O link leva à página do erro em angular.dev, com a explicação e os casos comuns. Abaixo, cada linha "at" é uma função que
+      estava rodando; leia de cima para baixo e pare na primeira com um nome seu, aqui o <code>authGuard</code>, que você
+      escreveu no <vm-see-chapter [number]="38" />. As linhas de dentro do Angular raramente são o problema.
+    </p>
+
+    <vm-error-reader-sim />
+
+    <h3>O app por dentro: o console</h3>
+    <p>
+      No <code>ng serve</code>, o Angular deixa no navegador um objeto <code>ng</code> com funções para olhar o app rodando.
+      Digite no console:
+    </p>
+    <vm-code snippet="43/console-ng" caption="console do navegador" />
+    <p>
+      O <code>getComponent</code> devolve a instância do componente, com os signals e os métodos dele. O
+      <code>getOwningComponent</code> responde "de quem é este pedaço da tela?". Essas funções só existem no modo de
+      desenvolvimento.
+    </p>
+
+    <h3>O app por dentro: o Angular DevTools</h3>
+    <p>
+      O Angular DevTools é uma extensão gratuita do Chrome (na Chrome Web Store) e do Firefox (no Firefox Add-ons). Instalada,
+      ela aparece como uma aba "Angular" nas ferramentas do navegador (F12). Segundo a documentação oficial, ela tem quatro abas:
+    </p>
+    <ul>
+      <li>
+        <strong>Components</strong>: a árvore de componentes do app. Escolha um, e o painel ao lado mostra os inputs, os signals e
+        as outras propriedades, que dá para editar ali mesmo. No console, <code>$ng0</code> passa a ser o componente escolhido.
+      </li>
+      <li><strong>Profiler</strong>: grava o que o Angular fez a cada atualização da tela, para achar o que está lento.</li>
+      <li><strong>Injector Tree</strong>: a árvore de injetores, de onde vem cada service.</li>
+      <li><strong>Router Tree</strong>: a árvore de rotas do app.</li>
+    </ul>
+    <p>
+      Na aba Components, o botão <strong>Show Signal Graph</strong> desenha o grafo de signals do componente escolhido: quem lê
+      quem, como no simulador do <vm-see-chapter [number]="9" />, mas do seu app de verdade. Cada nó leva o nome que o Angular
+      conhece do signal. A documentação recomenda dar nomes com o <code>debugName</code>, principalmente aos
+      <code>effect</code>, que não ficam num campo da classe e, sem nome, são difíceis de reconhecer no grafo:
+    </p>
+    <vm-code snippet="43/etapa/src/app/core/passport.ts" caption="passport.ts" />
+
+    <h3>Um lugar só para os erros sem dono</h3>
+    <p>
+      Quando um erro escapa (de um componente, de um <code>effect</code>, de um guard), o Angular o entrega ao
+      <code>ErrorHandler</code>. O padrão só escreve no console. O Passaporte troca o padrão por um seu, que faz o mesmo e mais
+      um pouco:
+    </p>
+    <vm-code snippet="43/etapa/src/app/core/app-error-handler.ts" caption="app-error-handler.ts" />
+    <vm-code snippet="43/etapa/src/app/app.config.ts" caption="app.config.ts" />
+    <ul>
+      <li>
+        O <code>extends ErrorHandler</code> e o <code>super.handleError(error)</code> mantêm o comportamento padrão: o erro
+        completo no console, com o código, o link e a pilha.
+      </li>
+      <li>O <code>ErrorReport</code> é um service com um signal; o <code>app.html</code> mostra a faixa quando ele vale <code>true</code>.</li>
+      <li>
+        O <code>provideBrowserGlobalErrorListeners()</code>, que o CLI já põe nos apps novos, leva ao mesmo lugar os erros que
+        acontecem fora do Angular, como um <code>throw</code> dentro de um <code>setTimeout</code>.
+      </li>
+    </ul>
+
+    <vm-deep-dive title="O erro em produção perde o texto">
+      <p>O mesmo NG0203, num build de produção (<code>ng build</code>):</p>
+      <vm-code snippet="43/ng0203-prod" caption="console do navegador" />
+      <p>
+        Para o app ficar menor, o build de produção tira as frases das mensagens e encurta os nomes: o <code>authGuard</code>
+        virou <code>pe</code>, e a classe do erro virou <code>C</code>. Sobra o código, e é ele que você procura em
+        <code>angular.dev/errors</code>. Para ver a mensagem inteira e os nomes de verdade, reproduza o erro no
+        <code>ng serve</code>. O Angular DevTools também não funciona em builds de produção: a documentação avisa que ele só
+        aceita builds de desenvolvimento.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="O painel do Passaporte">
+    <vm-steps label="Tratar os erros sem dono e dar nome aos signals">
+      <ng-template vmStep="O aviso">
+        <p>
+          Crie o <code>core/error-report.ts</code>, um service com o signal <code>visible</code> e os métodos
+          <code>show()</code> e <code>dismiss()</code>. No <code>app.html</code>, logo depois da barra de carregamento, mostre a
+          faixa com <code>role="alert"</code> enquanto <code>errorReport.visible()</code> valer <code>true</code>, com os botões
+          "Recarregar" e "Fechar".
+        </p>
+      </ng-template>
+      <ng-template vmStep="O ErrorHandler">
+        <p>
+          Crie o <code>core/app-error-handler.ts</code> e registre-o no <code>app.config.ts</code> com
+          <code>&#123; provide: ErrorHandler, useClass: AppErrorHandler &#125;</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Os nomes">
+        <p>
+          No <code>Passport</code>, dê um <code>debugName</code> ao <code>effect</code> da cópia no navegador e ao
+          <code>computed</code> do passaporte que vale.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A prova">
+        <p>Com o <code>ng serve</code> rodando, abra o console do navegador e lance um erro que ninguém trata:</p>
+        <vm-code snippet="43/erro-de-teste" caption="console do navegador" />
+        <p>
+          <strong>O que muda na tela:</strong> a faixa vermelha aparece, e o console mostra
+          <code>ERROR Error: Um erro de teste, lançado no console</code>. Clique em "Fechar". Depois, instale o Angular DevTools,
+          abra a aba Angular e escolha o <code>WorldProgress</code> na árvore: o painel ao lado mostra as propriedades dele, como o
+          <code>visitedCount</code>.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="As luzes mal lidas">
+    <vm-pitfall
+      title="Seguir a dica errada"
+      where="O que aparece depois de calar o NG8001 com o schema"
+      message="ERROR RuntimeError: NG0951: Child query result is required but no value is available."
+    >
+      <vm-code snippet="43/schema-errado" caption="passport-page.ts" />
+      <p>
+        O <code>NG8001</code> ("'app-trip-form' is not a known element") dá duas hipóteses, e a segunda é para Web Components,
+        elementos que não são do Angular. Seguir a segunda cala a mensagem: o app compila, o <code>&lt;app-trip-form&gt;</code>
+        fica vazio na tela, e o erro só volta depois, num clique em "Editar", quando o <code>viewChild.required(TripForm)</code>
+        não acha o formulário. <strong>Como sair:</strong> leia as hipóteses e escolha a que é o seu caso. Aqui, pôr o
+        <code>TripForm</code> no <code>imports</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="Ler o input no construtor"
+      where="O que aparece no terminal do ng serve"
+      message="NG8118: `country` is a required `input` and does not have a value in this context."
+    >
+      <vm-code snippet="43/input-no-construtor" caption="country-card.ts" />
+      <p>
+        O construtor roda quando o componente nasce, e o pai só entrega os inputs depois. O compilador do Angular 22 percebe e
+        recusa. <strong>Como sair:</strong> leia o input onde ele já tem valor: no template, num <code>computed</code>, ou num
+        <code>effect</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O erro de produção, sem texto" where="O que aparece no console, num build de produção" message="ERROR C: NG0203">
+      <p>
+        Sem a frase e com os nomes encurtados, parece impossível de ler. <strong>Como sair:</strong> procure o código em
+        <code>angular.dev/errors</code>, e reproduza o mesmo caminho no <code>ng serve</code>, onde a mensagem vem inteira e a
+        pilha mostra os nomes das suas funções.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O ErrorHandler que esconde tudo"
+      where="O que aparece no console, depois de um erro"
+      message="(nada: a faixa aparece, e o console fica vazio)"
+    >
+      <vm-code snippet="43/handler-sem-super" caption="app-error-handler.ts" />
+      <p>
+        Trocar o <code>ErrorHandler</code> substitui o comportamento padrão. Sem o <code>super.handleError(error)</code>, nenhum
+        erro chega mais ao console: a pessoa vê o aviso, e você não tem pista nenhuma do que aconteceu. <strong>Como
+        sair:</strong> chame o <code>super.handleError(error)</code> antes de qualquer outra coisa.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="43-erros-e-devtools" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> Um app que funciona e avisa quando quebra ainda pode deixar gente de fora: quem usa só o teclado,
+      quem usa um leitor de tela, quem enxerga pouco contraste. No <vm-see-chapter [number]="44" />, o Passaporte passa por uma
+      revisão de acessibilidade.
+    </p>
+  </vm-view>
+</vm-chapter-page>

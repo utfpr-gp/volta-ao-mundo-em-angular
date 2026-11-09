@@ -1,0 +1,4 @@
+✘ [ERROR] NG8118: `country` is a required `input` and does not have a value in this context. [plugin angular-compiler]
+    src/app/features/countries/country-card/country-card.ts:19:32:
+      19 │     console.log('Novo cartão:', this.country().name);
+         ╵                                ~~~~~~~~~~~~

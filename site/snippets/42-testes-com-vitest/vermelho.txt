@@ -1,0 +1,23 @@
+ ❯  passaporte  src/app/features/passport/trip-stats.spec.ts (5 tests | 3 failed) 6ms
+   ❯ tripStats (5)
+     × adds up the days of every trip 3ms
+     × counts a country visited twice only once 0ms
+     × picks the transport used the most 0ms
+
+ FAIL   passaporte  src/app/features/passport/trip-stats.spec.ts > tripStats > adds up the days of every trip
+AssertionError: expected +0 to be 17 // Object.is equality
+
+- Expected
++ Received
+
+- 17
++ 0
+
+ ❯ src/app/features/passport/trip-stats.spec.ts:24:24
+     22|     const stats = tripStats(trips);
+     23|     // Assert: confira o resultado
+     24|     expect(stats.days).toBe(17);
+       |                        ^
+     25|   });
+
+      Tests  3 failed | 2 passed (5)
