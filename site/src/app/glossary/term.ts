@@ -7,6 +7,10 @@ let nextId = 0;
 /**
  * A primeira aparição de um termo técnico num capítulo. Ao passar o mouse ou focar com o
  * teclado, a definição aparece; o link leva ao glossário.
+ *
+ * A dica fica com display: none (hidden) enquanto não aparece. Com visibility: hidden, ela ocupava
+ * espaço fora da tela quando o termo estava perto da borda e alargava a página no celular.
+ * O aria-describedby continua valendo: o leitor de tela lê a descrição mesmo escondida.
  */
 @Component({
   selector: 'vm-term',
@@ -21,7 +25,7 @@ let nextId = 0;
     ><ng-content /></a><span
       role="tooltip"
       [id]="tooltipId"
-      class="pointer-events-none invisible absolute bottom-full left-1/2 z-20 mb-2 w-72 -translate-x-1/2 rounded-xl bg-primary px-4 py-3 text-left text-sm font-normal leading-snug text-on-primary opacity-0 shadow-xl motion-safe:transition-opacity group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100"
+      class="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 hidden w-72 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-xl bg-primary px-4 py-3 text-left text-sm font-normal leading-snug text-on-primary shadow-xl group-focus-within:block group-hover:block"
     ><strong class="mb-1 block text-highlight">{{ entry().term }}</strong>{{ entry().definition }}</span>`,
 })
 export class Term {

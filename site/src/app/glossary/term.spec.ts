@@ -23,4 +23,15 @@ describe('Term', () => {
     expect(description?.textContent).toContain(GLOSSARY.spa.definition);
     expect(description?.getAttribute('role')).toBe('tooltip');
   });
+
+  it('keeps the hint out of the layout until it shows up, so it never widens the page', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(Host);
+    await fixture.whenStable();
+    const hint = (fixture.nativeElement as HTMLElement).querySelector('[role="tooltip"]')!;
+    // hidden é display: none; com invisible (visibility: hidden), a dica ainda ocupava espaço fora da tela.
+    expect(hint.classList).toContain('hidden');
+    expect(hint.classList).not.toContain('invisible');
+    expect([...hint.classList]).toEqual(expect.arrayContaining(['group-hover:block', 'group-focus-within:block']));
+  });
 });
