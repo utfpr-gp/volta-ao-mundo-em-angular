@@ -569,6 +569,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Carregue os dados de uma tela antes de ela abrir com resolvers, e compare essa abordagem com buscar os dados dentro do componente.',
     minutes: 20,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Qualidade
   {
