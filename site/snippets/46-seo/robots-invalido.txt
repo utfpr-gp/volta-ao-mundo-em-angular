@@ -1,0 +1,5 @@
+robots.txt is not valid — 19 errors found
+  1  <!doctype html>          Syntax not understood
+  2  <html lang="pt-BR">      Syntax not understood
+  3    <head>                 Syntax not understood
+  …

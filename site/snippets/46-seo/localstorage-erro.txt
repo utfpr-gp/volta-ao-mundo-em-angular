@@ -1,0 +1,5 @@
+ERROR ReferenceError: localStorage is not defined
+    at <instance_members_initializer> (…/chunk-ENFCQXB3.mjs:2:34713)
+    …
+✘ [ERROR] An error occurred while prerendering route '/paises'.
+Error: The content returned was empty.

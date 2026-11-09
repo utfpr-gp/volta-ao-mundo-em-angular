@@ -260,3 +260,12 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   `ng serve` pede metadados dos componentes mais cedo) e a aba Rede: o pedaço só chega ao rolar. O Chart.js sem uma peça
   registrada dá `Error: "bar" is not a registered controller.`; `chart.js/auto` custa ~55 kB a mais. Os testes de
   `site/src/app/pages/track.spec.ts` procuram trilhas e capítulos não publicados no catálogo (e pulam quando não houver).
+- **Capítulo 46 (SEO), verificado no Angular 22.2.3 com `@angular/ssr` 22.2.4:** rota com parâmetro em `Prerender` sem
+  `getPrerenderParams` dá `The 'paises/:code/visao-geral' route uses prerendering and includes parameters, but
+  'getPrerenderParams' is missing. …`; `localStorage` num componente pré-renderizado dá `ERROR ReferenceError: localStorage
+  is not defined` e `An error occurred while prerendering route '/paises'. Error: The content returned was empty.`. Sem
+  `robots.txt`, um servidor com fallback devolve o `index.csr.html`, e o Lighthouse diz `robots.txt is not valid` (19 erros,
+  "Syntax not understood"). O `ng add @angular/ssr` cria `server.ts` com Express e `outputMode: "server"` (no rascunho, a
+  instalação falhou por causa do `allow-scripts` do npm local). Lighthouse pela linha de comando:
+  `npx -y lighthouse@12 <url> --only-categories=seo --output=json --chrome-flags="--headless=new"`. Servidor estático com
+  fallback para testar: um `node:http` que tenta o arquivo, `<pasta>/index.html` e por fim o `index.csr.html`.

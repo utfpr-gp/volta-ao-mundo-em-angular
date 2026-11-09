@@ -43,6 +43,7 @@ import { CHAPTER_42 } from './42-testes-com-vitest/content';
 import { CHAPTER_43 } from './43-erros-e-devtools/content';
 import { CHAPTER_44 } from './44-acessibilidade/content';
 import { CHAPTER_45 } from './45-defer/content';
+import { CHAPTER_46 } from './46-seo/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -92,4 +93,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '43-erros-e-devtools': CHAPTER_43,
   '44-acessibilidade': CHAPTER_44,
   '45-defer': CHAPTER_45,
+  '46-seo': CHAPTER_46,
 };
