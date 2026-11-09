@@ -132,8 +132,6 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Capítulo 11 (`@for`):** armadilha do `*ngFor` antigo com a mensagem real do compilador
   (`NG8103: The *ngFor directive was used in the template, but neither the NgFor directive nor the CommonModule was imported...`),
   e o aviso de que `*ngIf`/`*ngFor` estão obsoletos desde a versão 20. Não citar `*ngFor` antes desse capítulo.
-- **Capítulo 39 (interceptors):** deixar claro que interceptors só veem requisições do `HttpClient`; o cliente do
-  Supabase usa `fetch` e põe o token sozinho.
 - **Em todo capítulo:** no máximo duas ou três analogias; termo novo vai ao glossário; partes de curiosidade vão para
   `<vm-deep-dive>`; terminar com "E agora?" apontando a próxima parada.
 - **Bibliotecas externas:** antes de citar a API de uma biblioteca, montar um projeto de teste à parte, rodar o build e
@@ -196,3 +194,17 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   recebe `?voltar=`; sem o alias, o input fica vazio sem erro (conferido com `RouterTestingHarness`). Campo da classe
   declarado depois de uma Promise que o preenche é zerado pela declaração (`useDefineForClassFields`, ES2022): use
   variável local no construtor. Não afirmar que o `canActivate` evita baixar o `loadComponent` (não medido).
+- **Capítulo 39 (Interceptors), verificado no Angular 22.2.3, com json-server e Supabase local:** o `HttpClient` já vem
+  pronto, mas interceptors exigem `provideHttpClient(withInterceptors([...]))`. Interceptors só veem o `HttpClient`: o
+  `supabase-js` usa `fetch` e põe o próprio token (visto na aba Rede). Sem esperar `whenReady()`, o primeiro `GET` do app,
+  ao recarregar já logado, sai sem `Authorization`. Com o token em toda requisição, o GitHub Pages responde `405` ao
+  preflight e o console mostra `Access to fetch at '…/api/paises.json' from origin 'http://localhost:4200' has been blocked
+  by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header
+  is present on the requested resource.`; o Open-Meteo aceita `authorization` no preflight (o token vazaria calado).
+  `req.headers = …` dá `TS2540: Cannot assign to 'headers' because it is a read-only property.`; `req.headers.set(...)`
+  sem usar o resultado não manda nada. `catchError(() => EMPTY)` no interceptor: o `subscribe` só recebe `complete`, e o
+  `httpResource` vai para erro com `NG0991: Resource completed before producing a value.`. Barra com `tap` no lugar de
+  `finalize` fica para sempre com o servidor parado.
+- **Inspecionar a rede no Chrome headless:** com o protocolo do DevTools (como em `scripts/capturar-tela.mjs`),
+  `Network.enable` mostra cada requisição com os cabeçalhos, `Log.enable` mostra os erros de CORS, e `Fetch.enable` com
+  `patterns` segura uma requisição (para capturar a tela no meio do carregamento) até `Fetch.continueRequest`.

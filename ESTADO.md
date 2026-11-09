@@ -2,18 +2,18 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-11-04 (capítulo 38 em revisão).
+> Última atualização: 2026-11-08 (capítulo 39 em revisão).
 
 ## Publicado
 
-- **Capítulos 1 a 37**, em sete trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários e o começo de Back-end. Todos com `verifiedWithAngular: '22.2'`.
-- **Último capítulo novo:** 37, Login com Supabase (PR #33). Antes dele, o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Em revisão:** capítulo 38, Guards, na branch `trilha-back-end-2` (PR aberto, esperando a autorização do merge).
+- **Capítulos 1 a 38**, em sete trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários e o começo de Back-end. Todos com `verifiedWithAngular: '22.2'`.
+- **Último capítulo novo:** 38, Guards (PR #34). Antes dele, o 37, Login com Supabase (PR #33), e o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
+- **Em revisão:** capítulo 39, Interceptors, na branch `trilha-back-end-3`.
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
-## O Passaporte, na etapa 38
+## O Passaporte, na etapa 39
 
-`passaporte/etapas/38-guards/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
+`passaporte/etapas/39-interceptors/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
 
 - `/paises`: lista, destaque, progresso mundial, filtro; dados da API de países do livro (`site/public/api/paises.json`).
 - `/paises/:code`: rotas filhas com visão geral, anotações e o tempo (Open-Meteo).
@@ -23,12 +23,12 @@
 - **Desde o 36, o formulário é Signal Forms** (`@angular/forms/signals`, estável desde a 22): modelo `trip = signal<Trip>(blankTrip())`, `tripForm = form(trip, schema, { submission: { action } })`; regras e frases no schema (`required`/`min`/`max`/`maxLength`/`pattern` com `message`; `notInFuture(path, { message })` com `validate`); template com `[formRoot]` e `[formField]`, mensagem pelo `errorOf(campo)`; o `action` registra e chama `field().reset(blankTrip())`. A aparência é a mesma do 35. Daqui em diante, formulários novos do Passaporte usam Signal Forms.
 - **Desde o 37, há login com o Supabase Auth** (`@supabase/supabase-js`): `core/supabase.ts` (o `InjectionToken` `SUPABASE`, com `createClient` a partir do `environment`), `core/auth.ts` (o service `Auth`: sessão num signal alimentado pelo `onAuthStateChange`, `user`/`signedIn` em `computed`, `ready` depois do `INITIAL_SESSION`, `signIn`/`signUp`/`signOut` devolvendo `AuthOutcome`, erros traduzidos pelo `error.code`), a tela `/entrar` (`features/auth/sign-in-page`, Signal Forms, entrar e criar conta na mesma tela, `submitting()` no botão) e o cabeçalho com "Entrar" ou o e-mail e "Sair". `src/environments` com valores de exemplo (cada leitor usa o seu projeto). Testes com `testing/fake-supabase.ts`. **Os dados do passaporte continuam no json-server** até o 40; nenhuma rota é protegida até o 38 (o `ready` existe para o guard).
 - **Desde o 38, `/passaporte` é protegida:** `core/auth-guards.ts` com `authGuard` (espera `auth.whenReady()`, desvia para `/entrar?voltar=<url>` com `createUrlTree`) e `guestGuard` (quem já entrou sai de `/entrar`). `Auth.whenReady()` é uma Promise resolvida no primeiro `onAuthStateChange`. A tela de entrar recebe `?voltar` por `input(…, { alias: 'voltar' })`, valida com `safeReturnUrl` e mostra o aviso "Essa página é só para quem entrou". O `fake-supabase` aceita `{ session, manualStart }`.
+- **Desde o 39, há três interceptors** em `core/http/`, registrados no `app.config.ts` com `provideHttpClient(withInterceptors([loadingInterceptor, authInterceptor, errorInterceptor]))`. `core/api.ts` tem o `API_URL` (`http://localhost:3000`) e o `isApiRequest`. O `authInterceptor` espera `auth.whenReady()` (`from` + `switchMap`) e põe `Authorization: Bearer <token>` (do `Auth.accessToken`, um `computed`) só nas requisições para a API. O `loadingInterceptor` conta as requisições no service `Loading` (`busy`), com `finalize`; o `app.html` mostra uma barra (`role="progressbar"`, animação `animate-loading` no `@theme`, só com `motion-safe:`). O `errorInterceptor` liga o `ApiStatus.failed` (o aviso amarelo) e devolve o erro com `throwError`; o `Passport` perdeu o `putFailed`/`saveFailed`. Nos specs com os interceptors, o `authInterceptor` solta a requisição numa microtarefa: `await new Promise((r) => setTimeout(r))` antes do `expectOne`.
 
 ## Próximos capítulos (catálogo)
 
 | Nº | Slug | Pergunta |
 | --- | --- | --- |
-| 39 | `39-interceptors` | Como enviar o token em toda requisição com interceptors? |
 | 40 | `40-crud-com-supabase` | Como criar, ler, atualizar e apagar dados no Supabase? |
 | 41 | `41-resolvers` | Como carregar dados antes de abrir a tela com resolvers? |
 | 42 | `42-testes-com-vitest` | Como testar componentes e services com Vitest? |
@@ -41,7 +41,9 @@
 | 49 | `49-github-actions` | Como automatizar testes e publicação com GitHub Actions? |
 | 50 | `50-pwabuilder` | Como levar o PWA para as lojas de aplicativos com o PWABuilder? |
 
-As perguntas e descrições completas estão em `site/src/app/catalog/catalog.ts`. Notas específicas para os capítulos 39 e 41 estão no fim do `AGENTS.md`.
+As perguntas e descrições completas estão em `site/src/app/catalog/catalog.ts`. Notas específicas para o capítulo 41 estão no fim do `AGENTS.md`.
+
+**Decidido no 39 para o 40:** os dados do passaporte vão para o Supabase pela API REST dele (`<supabaseUrl>/rest/v1`, o PostgREST), com o `HttpClient`: o `API_URL` passa a ser esse endereço, e o `authInterceptor` põe o `apikey` e o `Authorization`. Assim o token do 39 passa a ser conferido de verdade, pelas regras do banco (RLS). O `supabase.from()` entra como alternativa num "Aprofundando".
 
 ## Como um capítulo é publicado
 
