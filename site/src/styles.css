@@ -185,6 +185,11 @@
   overflow-wrap: anywhere;
 }
 
+/* Também fora do .prose de fora, como nos passos da prática (um .prose dentro de um .not-prose): o código em linha quebra. */
+:where(code):not(:where(pre *)) {
+  overflow-wrap: anywhere;
+}
+
 .prose :where(code):not(:where(pre *, .not-prose *))::before,
 .prose :where(code):not(:where(pre *, .not-prose *))::after {
   content: none;
