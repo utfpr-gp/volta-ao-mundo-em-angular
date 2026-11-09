@@ -15,7 +15,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, signal, viewChild } fro
         </span>
       </figcaption>
 
-      <div class="grid gap-4 lg:grid-cols-2">
+      <div class="grid gap-4 lg:grid-cols-2 [&>*]:min-w-0">
         <div class="flex flex-col gap-3 rounded-2xl bg-surface-raised p-4 text-ink">
           <label class="font-semibold">País <span class="font-mono text-xs text-ink-muted">#country</span>
             <input #country id="query-country" class="mt-1 block w-full rounded-lg border border-line bg-surface px-2 py-1" value="Japão" />

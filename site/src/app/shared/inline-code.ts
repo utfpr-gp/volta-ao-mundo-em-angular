@@ -23,7 +23,8 @@ export function plainText(text: string): string {
 @Component({
   selector: 'vm-inline-code',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `@for (part of parts(); track $index) {@if (part.code) {<code>{{ part.text }}</code>} @else {{{ part.text }}}}`,
+  // O código quebra só quando não cabe na linha: um nome longo não alarga a página no celular.
+  template: `@for (part of parts(); track $index) {@if (part.code) {<code class="wrap-anywhere">{{ part.text }}</code>} @else {{{ part.text }}}}`,
 })
 export class InlineCode {
   readonly text = input.required<string>();

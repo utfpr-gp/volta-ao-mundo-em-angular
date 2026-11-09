@@ -181,6 +181,8 @@
   border-radius: 0.4em;
   background: color-mix(in srgb, var(--color-inside) 10%, transparent);
   font-weight: 600;
+  /* Um código longo, como withComponentInputBinding(), quebra só quando não cabe na linha: no celular, não alarga a página. */
+  overflow-wrap: anywhere;
 }
 
 .prose :where(code):not(:where(pre *, .not-prose *))::before,
