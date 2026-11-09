@@ -236,3 +236,14 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   `Error: Expected no open requests, found 1: POST …`; `--coverage` sem pacote dá `Code coverage requires either
   "@vitest/coverage-v8" or "@vitest/coverage-istanbul" to be installed.`. Para tirar a cor da saída do `ng test` ao copiar
   mensagens: `sed 's/\x1b\[[0-9;]*m//g'`.
+- **Capítulo 43 (Erros e DevTools), verificado no Angular 22.2.3:** mensagens reais: `TS2551 … Did you mean 'country'?`
+  (nome errado no template), `NG8001 … is not a known element` com duas hipóteses e `Find more at
+  https://next.angular.dev/errors/NG8001` (erros do compilador apontam para `next.angular.dev`; os de execução, para
+  `v22.angular.dev`), `NG8118: \`country\` is a required \`input\` and does not have a value in this context.` (o
+  compilador da 22 barra ler `input.required` no construtor; não afirmar que dá NG0950), `NG0951` (viewChild.required sem
+  resultado). Em produção, o NG0203 vira `ERROR C: NG0203` com nomes encurtados. Calar o NG8001 com
+  `CUSTOM_ELEMENTS_SCHEMA` compila e deixa o elemento vazio. O `ErrorHandler` padrão faz `console.error('ERROR', erro)`.
+  O objeto `ng` do modo de desenvolvimento tem `getComponent`, `getOwningComponent`, `getInjector`, `getListeners`,
+  `applyChanges`, `isSignal` e outros. O Angular DevTools (extensão) não roda no Chrome headless: o que o livro diz dele vem
+  de angular.dev/tools/devtools (quatro abas, `$ng0`, Show Signal Graph, `debugName`). O `@boundary` aparece nos tipos da 22,
+  mas não na documentação: não usar.

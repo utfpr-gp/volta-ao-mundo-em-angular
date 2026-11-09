@@ -594,6 +594,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Aprenda a ler as mensagens de erro do Angular e do TypeScript, e use o Angular DevTools para inspecionar componentes e signals.',
     minutes: 30,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '44-acessibilidade',

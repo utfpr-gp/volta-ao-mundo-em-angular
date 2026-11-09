@@ -1,0 +1,8 @@
+✘ [ERROR] TS2551: Property 'countrie' does not exist on type 'CountryCard'. Did you mean 'country'? [plugin angular-compiler]
+    src/app/features/countries/country-card/country-card.html:3:28:
+      3 │   <span class="text-3xl">{{ countrie().code | flag }}</span>
+        ╵                             ~~~~~~~~
+  Error occurs in the template of component CountryCard.
+    src/app/features/countries/country-card/country-card.ts:9:15:
+      9 │   templateUrl: './country-card.html',
+        ╵                ~~~~~~~~~~~~~~~~~~~~~
