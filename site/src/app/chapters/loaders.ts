@@ -48,4 +48,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '41-resolvers': () => import('./41-resolvers/chapter').then((m) => m.Chapter41),
   '42-testes-com-vitest': () => import('./42-testes-com-vitest/chapter').then((m) => m.Chapter42),
   '43-erros-e-devtools': () => import('./43-erros-e-devtools/chapter').then((m) => m.Chapter43),
+  '44-acessibilidade': () => import('./44-acessibilidade/chapter').then((m) => m.Chapter44),
 };

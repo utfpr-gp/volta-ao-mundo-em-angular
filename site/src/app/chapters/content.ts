@@ -41,6 +41,7 @@ import { CHAPTER_40 } from './40-crud-com-supabase/content';
 import { CHAPTER_41 } from './41-resolvers/content';
 import { CHAPTER_42 } from './42-testes-com-vitest/content';
 import { CHAPTER_43 } from './43-erros-e-devtools/content';
+import { CHAPTER_44 } from './44-acessibilidade/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -88,4 +89,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '41-resolvers': CHAPTER_41,
   '42-testes-com-vitest': CHAPTER_42,
   '43-erros-e-devtools': CHAPTER_43,
+  '44-acessibilidade': CHAPTER_44,
 };

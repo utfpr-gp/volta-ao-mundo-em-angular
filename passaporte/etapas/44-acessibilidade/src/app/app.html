@@ -1,0 +1,31 @@
+<!-- O primeiro Tab da página: some da tela até receber o foco. Leva direto ao conteúdo, pulando o menu. -->
+<button
+  type="button"
+  class="sr-only rounded-full bg-highlight font-bold text-primary shadow-lg focus:not-sr-only focus:absolute focus:top-2 focus:left-4 focus:z-50 focus:px-4 focus:py-2"
+  (click)="skipToContent()"
+> <!-- [!code highlight] -->
+  Pular para o conteúdo
+</button>
+<app-header />
+<!-- A barra de carregamento: o espaço fica sempre reservado, para a página não pular quando ela aparece. -->
+<div class="h-1 bg-primary">
+  @if (loading.busy()) {
+    <div role="progressbar" aria-label="Carregando dados" class="h-full w-full bg-highlight motion-safe:w-1/3 motion-safe:animate-loading"></div>
+  }
+</div>
+@if (apiStatus.failed()) {
+  <p role="status" class="bg-highlight px-4 py-2 text-center text-sm font-bold text-primary">
+    ⚠ O Supabase não respondeu: as mudanças desta visita podem não ter sido salvas.
+  </p>
+}
+@if (errorReport.visible()) {
+  <div role="alert" class="flex flex-wrap items-center justify-center gap-3 bg-danger px-4 py-2 text-sm font-bold text-surface">
+    <span>Algo deu errado nesta tela. Se ela parecer estranha, recarregue a página.</span>
+    <button type="button" class="rounded-full bg-card px-3 py-1 text-ink" (click)="reload()">Recarregar</button>
+    <button type="button" class="underline" (click)="errorReport.dismiss()">Fechar</button>
+  </div>
+}
+<main class="mx-auto max-w-6xl p-4 sm:p-6">
+  <router-outlet />
+</main>
+<app-footer />
