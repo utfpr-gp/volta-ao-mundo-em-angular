@@ -208,3 +208,17 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
 - **Inspecionar a rede no Chrome headless:** com o protocolo do DevTools (como em `scripts/capturar-tela.mjs`),
   `Network.enable` mostra cada requisição com os cabeçalhos, `Log.enable` mostra os erros de CORS, e `Fetch.enable` com
   `patterns` segura uma requisição (para capturar a tela no meio do carregamento) até `Fetch.continueRequest`.
+- **Capítulo 40 (CRUD com Supabase), verificado num Supabase local (CLI 3.0) com `supabase-js` 2.118:** a API REST
+  (`/rest/v1/<tabela>`) responde: RLS ligado sem política, `GET` dá `200 []` calado e `POST` dá `403`
+  `new row violates row-level security policy for table "trips"` (`42501`; sem login, `401`); RLS desligado, só a chave
+  publicável lê e muda tudo; `POST` repetido sem `Prefer: resolution=merge-duplicates` dá `409`
+  `duplicate key value violates unique constraint "passports_pkey"`; sem `Prefer: return=representation`, `201` com corpo
+  vazio, e `const [created] = await firstValueFrom(…)` dá `TypeError: (intermediate value) is not iterable` (a linha foi
+  criada); `PATCH` com o `id` no corpo dá `column "id" can only be updated to DEFAULT` (`428C9`); `PATCH`/`DELETE` sem
+  filtro dão `UPDATE requires a WHERE clause`/`DELETE requires a WHERE clause` (`21000`); `check` violado dá `23514`;
+  `PATCH`/`DELETE` em linha de outra pessoa dão `200 []`/`204` sem mudar nada. Tabela recém-criada pode dar `PGRST205`
+  ("Could not find the table … in the schema cache") por um instante. O local aceitou pedido sem `apikey`; não afirmar
+  nada sobre a nuvem sem conferir.
+- **Chrome headless com Signal Forms:** depois de um `reset()`, `el.value = …` + `new Event('input')` deixa de chegar ao
+  `[formField]` (campo número e select), embora a digitação de verdade funcione. Para roteiros de captura, use teclado
+  (`Input.insertText` do protocolo do DevTools) ou crie os dados pela API. No jsdom (Vitest), o evento sintético funciona.

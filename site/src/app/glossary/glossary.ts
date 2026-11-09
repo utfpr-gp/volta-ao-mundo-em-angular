@@ -61,6 +61,12 @@ export const GLOSSARY = {
       'Um conjunto de código pronto que você chama quando precisa, como uma caixa de ferramentas. Quem decide a hora de usar é o seu código.',
     chapter: 1,
   },
+  crud: {
+    term: 'CRUD',
+    definition:
+      'As quatro operações com dados guardados: criar (create), ler (read), atualizar (update) e apagar (delete). Numa API REST, viram POST, GET, PATCH e DELETE.',
+    chapter: 40,
+  },
   'cabecalho-http': {
     term: 'Cabeçalho HTTP',
     definition:
@@ -308,6 +314,12 @@ export const GLOSSARY = {
       'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
     chapter: 3,
   },
+  rls: {
+    term: 'RLS (regras por linha)',
+    definition:
+      'Row Level Security: regras do banco que dizem, linha por linha, quem pode ler ou escrever. No Supabase, com a política auth.uid() = user_id, cada pessoa só alcança as próprias linhas.',
+    chapter: 40,
+  },
   regex: {
     term: 'Regex (expressão regular)',
     definition:
@@ -405,6 +417,12 @@ export const GLOSSARY = {
     definition:
       'JavaScript com tipos. Os tipos apontam erros enquanto você escreve, antes de o código rodar. O código é convertido em JavaScript para o navegador executar.',
     chapter: 1,
+  },
+  upsert: {
+    term: 'Upsert',
+    definition:
+      'Gravar uma linha criando-a se ainda não existe, ou atualizando-a se já existe. A palavra junta update e insert.',
+    chapter: 40,
   },
   validador: {
     term: 'Validador',

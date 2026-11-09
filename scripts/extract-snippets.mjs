@@ -21,9 +21,10 @@ const LANGUAGES = {
   css: 'css',
   json: 'json',
   sh: 'bash',
+  sql: 'sql',
 };
 
-const NOTATION = /[ \t]*(?:\/\/|<!--|\/\*)[ \t]*\[!code [^\]]+\][ \t]*(?:-->|\*\/)?[ \t]*$/gm;
+const NOTATION = /[ \t]*(?:\/\/|<!--|\/\*|--)[ \t]*\[!code [^\]]+\][ \t]*(?:-->|\*\/)?[ \t]*$/gm;
 
 export function langFor(extension) {
   return LANGUAGES[extension] ?? 'text';
@@ -65,7 +66,8 @@ export async function extractAll(root) {
 
 /**
  * Os arquivos de cada etapa do Passaporte (passaporte/etapas/NN-slug), com a chave
- * NN/etapa/<caminho>. Assim o capítulo mostra o código que de fato compila na etapa.
+ * NN/etapa/<caminho>: o package.json, a pasta src e, quando houver, a pasta supabase (o SQL do banco).
+ * Assim o capítulo mostra o código que de fato compila na etapa.
  */
 export async function extractStages(root) {
   if (!existsSync(root)) return [];
@@ -82,7 +84,7 @@ export async function extractStages(root) {
         else if (!name.endsWith('.spec.ts')) files.push(full);
       }
     };
-    if (existsSync(join(base, 'src'))) walk(join(base, 'src'));
+    for (const folder of ['src', 'supabase']) if (existsSync(join(base, folder))) walk(join(base, folder));
     for (const file of files) {
       const path = relative(base, file).split(sep).join('/');
       const lang = langFor(extname(file).slice(1));

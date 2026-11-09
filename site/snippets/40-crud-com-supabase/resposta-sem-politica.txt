@@ -1,0 +1,5 @@
+GET  /rest/v1/trips?select=*   →  200 OK
+[]
+
+POST /rest/v1/trips            →  403 Forbidden
+{"code":"42501","details":null,"hint":null,"message":"new row violates row-level security policy for table \"trips\""}
