@@ -269,3 +269,15 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   instalação falhou por causa do `allow-scripts` do npm local). Lighthouse pela linha de comando:
   `npx -y lighthouse@12 <url> --only-categories=seo --output=json --chrome-flags="--headless=new"`. Servidor estático com
   fallback para testar: um `node:http` que tenta o arquivo, `<pasta>/index.html` e por fim o `index.csr.html`.
+- **Capítulo 47 (PWA), verificado no Angular 22.2.3 com `@angular/service-worker` 22.2.3, no Chrome headless:** o
+  `ng add @angular/pwa` (22.2.4) chama o schematic `service-worker`, copia manifesto e ícones (logo do Angular) para
+  `public/`, põe `<link rel="manifest">` no `index.html` e só põe o `<noscript>` se não houver um; não põe `theme-color`.
+  O manifesto gerado tem só o nome do projeto. `ng serve`: nenhum registro, e `/ngsw-worker.js` devolve o `index.html`;
+  `ng serve --configuration=production` registra o service worker. `http-server` (`npx http-server -p 8080 -c-1 …`) não
+  tem fallback: `/passaporte` direto dá 404 até o service worker assumir. Versão nova: aparece no carregamento seguinte ao
+  build, com o `VERSION_READY`. Sem o servidor, as páginas e os países abrem do cache. No `ngsw-worker.js`, `freshness`
+  cai na cópia quando a rede falha ou passa do `timeout`; `performance` usa a cópia sem consultar a rede. Um `dataGroup`
+  com a API do Supabase (`performance`) fez o Bruno ver as viagens da Ana (o cache guarda pela URL). Sem
+  `provideServiceWorker` nos specs: `NG0201: No provider found for \`SwUpdate\`. Source: DynamicTestModule. Path:
+  _AppUpdates -> SwUpdate.`. O pacote inicial passou de 599,91 para 606,89 kB (aviso do orçamento de 600 kB). A pasta de
+  rascunho pode ser limpa entre sessões: guarde capturas que vão para o livro direto em `site/public/imagens/`.

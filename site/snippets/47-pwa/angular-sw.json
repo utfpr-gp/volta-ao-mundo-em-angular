@@ -1,0 +1,6 @@
+"configurations": {
+  "production": {
+    "budgets": [ … ],
+    "outputHashing": "all",
+    "serviceWorker": "ngsw-config.json" // [!code highlight]
+  },

@@ -643,6 +643,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Transforme o Passaporte num PWA: instalável no celular e no computador, com ícone próprio e funcionando mesmo sem internet.',
     minutes: 35,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '48-deploy-no-render',

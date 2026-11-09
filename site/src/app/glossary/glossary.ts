@@ -199,6 +199,12 @@ export const GLOSSARY = {
       'Uma versão estável de um software que recebe correções por bastante tempo. No Node.js, são as versões indicadas para estudar e trabalhar.',
     chapter: 2,
   },
+  manifesto: {
+    term: 'Manifesto',
+    definition:
+      'O arquivo manifest.webmanifest, em JSON, que diz ao navegador como o app instalado se apresenta: o nome, os ícones, as cores e se ele abre numa janela própria.',
+    chapter: 47,
+  },
   generico: {
     term: 'Genérico',
     definition: 'Um tipo que recebe outro tipo como parâmetro, entre < >. Array<string> é um array de textos; signal<number> é um signal de número.',
@@ -338,6 +344,12 @@ export const GLOSSARY = {
       'Um objeto que representa um valor que vai chegar depois, como a resposta de um servidor. Com await, o código espera esse valor chegar.',
     chapter: 3,
   },
+  pwa: {
+    term: 'PWA',
+    definition:
+      'Progressive Web App: um site que o navegador deixa instalar como aplicativo, com ícone e janela próprios. O manifesto e o HTTPS o tornam instalável; o service worker o faz abrir sem internet.',
+    chapter: 47,
+  },
   rls: {
     term: 'RLS (regras por linha)',
     definition:
@@ -396,6 +408,12 @@ export const GLOSSARY = {
     definition:
       'Uma classe que guarda dados ou lógica para o app inteiro, fora dos componentes. Os componentes pedem o service com inject() e recebem todos o mesmo objeto.',
     chapter: 28,
+  },
+  'service-worker': {
+    term: 'Service worker',
+    definition:
+      'Um script que o navegador instala ao lado do site, entre o app e a rede: atende os pedidos com cópias guardadas, e por isso o app abre sem internet. No Angular, é o ngsw-worker.js.',
+    chapter: 47,
   },
   signal: {
     term: 'Signal',

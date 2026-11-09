@@ -1,0 +1,6 @@
+"budgets": [
+  {
+    "type": "initial",
+    "maximumWarning": "650kB", // [!code highlight]
+    "maximumError": "1MB"
+  },

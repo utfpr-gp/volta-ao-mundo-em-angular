@@ -74,7 +74,7 @@ test('extractAll returns nothing when the folder does not exist', async () => {
   assert.deepEqual(await extractAll(join(tmpdir(), 'nao-existe-mesmo')), []);
 });
 
-test('extractStages reads the src, supabase and scripts files and package.json of each stage, skipping specs', async () => {
+test('extractStages reads the src, supabase and scripts files, package.json, ngsw-config.json and the web manifest of each stage, skipping specs', async () => {
   const root = mkdtempSync(join(tmpdir(), 'stages-'));
   const stage = join(root, '05-angular-cli');
   mkdirSync(join(stage, 'src', 'app'), { recursive: true });
@@ -86,10 +86,14 @@ test('extractStages reads the src, supabase and scripts files and package.json o
   writeFileSync(join(stage, 'supabase', 'banco.sql'), 'create table t ();\n');
   mkdirSync(join(stage, 'scripts'), { recursive: true });
   writeFileSync(join(stage, 'scripts', 'depois.mjs'), 'console.log();\n');
+  writeFileSync(join(stage, 'ngsw-config.json'), '{}\n');
+  mkdirSync(join(stage, 'public'), { recursive: true });
+  writeFileSync(join(stage, 'public', 'manifest.webmanifest'), '{}\n');
+  writeFileSync(join(stage, 'public', 'favicon.ico'), '');
   mkdirSync(join(stage, 'node_modules', 'x'), { recursive: true });
   writeFileSync(join(stage, 'node_modules', 'x', 'index.js'), '');
   const keys = (await extractStages(root)).map((entry) => entry.key);
-  assert.deepEqual(keys, ['05/etapa/package.json', '05/etapa/scripts/depois.mjs', '05/etapa/src/app/app.html', '05/etapa/src/main.ts', '05/etapa/supabase/banco.sql']);
+  assert.deepEqual(keys, ['05/etapa/ngsw-config.json', '05/etapa/package.json', '05/etapa/public/manifest.webmanifest', '05/etapa/scripts/depois.mjs', '05/etapa/src/app/app.html', '05/etapa/src/main.ts', '05/etapa/supabase/banco.sql']);
 });
 
 test('refuses two snippets whose key differs only by the extension', () => {
