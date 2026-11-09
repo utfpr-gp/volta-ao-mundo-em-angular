@@ -10,6 +10,12 @@ export interface GlossaryEntry {
  * componente <vm-term name="chave">; uma chave inexistente quebra o build.
  */
 export const GLOSSARY = {
+  acessibilidade: {
+    term: 'Acessibilidade',
+    definition:
+      'A qualidade de um app que funciona para todo mundo: quem usa só o teclado, quem usa leitor de tela, quem enxerga pouco contraste. Começa no HTML certo e no nome certo de cada controle.',
+    chapter: 44,
+  },
   'angular-cli': {
     term: 'Angular CLI',
     definition:

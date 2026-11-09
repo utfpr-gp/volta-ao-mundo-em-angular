@@ -1,0 +1,250 @@
+<vm-chapter-page slug="44-acessibilidade">
+  <vm-view kind="mission" title="Um passaporte para todo mundo">
+    <p class="lead">
+      O Passaporte funciona para quem enxerga a tela e usa o mouse. Neste capítulo, ele passa por uma auditoria, e os achados
+      são reais: uma tela sem título principal, um filtro que só a cor explica, 195 botões que o leitor de tela anuncia só como
+      "Visitar", botões quase invisíveis no modo escuro, e o foco esquecido no menu depois de cada troca de página. Ao fim, cada
+      um tem conserto.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-44/pular-para-o-conteudo.png"
+      width="1150"
+      height="640"
+      alt="A tela de países do Passaporte depois do primeiro Tab: no canto do cabeçalho, sobre o logo, aparece um botão dourado arredondado escrito Pular para o conteúdo."
+    />
+    <p>
+      Ao final do capítulo, você vai saber o que torna uma tela <vm-term name="acessibilidade">acessível</vm-term>: HTML
+      semântico, teclado, foco, contraste e o que o leitor de tela recebe; e vai usar o Angular Aria no lugar de um filtro feito
+      à mão.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A rampa ao lado da escada">
+    <vm-analogy emoji="♿" title="O que é feito para alguns serve a todos">
+      <p>
+        A rampa ao lado da escada foi pensada para quem usa cadeira de rodas. Mas quem mais passa por ela é quem empurra um
+        carrinho de bebê, arrasta uma mala ou carrega caixas. A legenda na televisão foi pensada para quem não ouve, e é usada
+        por quem está num bar barulhento. Acessibilidade é isso: a porta que funciona para quem tem menos opções acaba funcionando
+        melhor para todo mundo.
+      </p>
+      <p>
+        No app, as rampas são o teclado, o título de cada página, o nome de cada botão e o contraste das cores. Quem usa leitor de
+        tela depende delas; quem tem a mão machucada, o celular ao sol ou pressa também agradece.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="A acessibilidade por dentro">
+    <h3>A tela que o leitor de tela recebe</h3>
+    <p>
+      O leitor de tela não vê a tela: ele lê a <strong>árvore de acessibilidade</strong>, que o navegador monta a partir do HTML.
+      Cada elemento ali tem um <strong>papel</strong> (botão, link, título, lista), um <strong>nome</strong> (o texto que o
+      representa) e, às vezes, um <strong>estado</strong> (selecionado, marcado). Esta é a árvore da tela de países antes deste
+      capítulo, tirada do Chrome:
+    </p>
+    <vm-code snippet="44/arvore-antes" caption="árvore de acessibilidade, antes" />
+    <ul>
+      <li>O único título da página é "Japão", o país em destaque. A tela não diz que é a lista de países.</li>
+      <li>Os filtros são três botões; nada diz qual deles está escolhido. Na tela, quem diz é a cor dourada.</li>
+      <li>Cada país tem um botão "Visitar", sem dizer qual país. São 195 iguais.</li>
+    </ul>
+
+    <vm-screen-reader-sim />
+
+    <h3>HTML que diz o que é</h3>
+    <p>
+      A primeira ferramenta da acessibilidade é o HTML certo. Um <code>&lt;button&gt;</code> já é um botão para o teclado e para
+      o leitor de tela; um <code>&lt;h1&gt;</code> já é um título que dá para achar de pulo. O Passaporte ganhou um
+      <code>h1</code> na tela de países, escondido da vista com a classe <code>sr-only</code> do Tailwind ("só para leitor de
+      tela"), e o título de cada painel virou um <code>h2</code> de verdade:
+    </p>
+    <vm-code snippet="44/etapa/src/app/shared/panel/panel.html" caption="panel.html" />
+    <p>
+      Os emojis dos títulos viraram <code>&lt;span aria-hidden="true"&gt;</code>. O <code>aria-hidden</code> tira um elemento da
+      árvore: o leitor de tela dizia "🔑 Entrar", e agora diz "Entrar". E o botão "Visitar" ganhou o nome do país, num
+      <code>span</code> que só o leitor de tela lê:
+    </p>
+    <vm-code snippet="44/etapa/src/app/features/countries/country-card/country-card.html" caption="country-card.html" />
+    <p>
+      O texto visível continua no começo do nome ("Visitar Afeganistão"). É uma regra das diretrizes de acessibilidade, as
+      <strong>WCAG</strong>: quem usa comando de voz diz o que vê, "clicar em Visitar", e o nome precisa conter esse texto.
+    </p>
+
+    <h3>O filtro com o Angular Aria</h3>
+    <p>
+      O filtro "Todos, Visitados, Desejados" é uma lista em que se escolhe uma opção, o padrão que as especificações chamam de
+      <strong>listbox</strong>. Fazer um à mão, com papéis, estados e teclado certos, dá trabalho e erra fácil. O Angular Aria,
+      que você conheceu no <vm-see-chapter [number]="22" />, entrega esse comportamento pronto, sem nenhum visual:
+    </p>
+    <vm-code snippet="44/instalar-aria" caption="terminal" />
+    <vm-code snippet="44/etapa/src/app/features/countries/country-list/country-list.html" caption="country-list.html" />
+    <vm-code snippet="44/etapa/src/app/features/countries/country-list/country-list.ts" caption="country-list.ts" />
+    <ul>
+      <li>O <code>ngListbox</code> e o <code>ngOption</code> dão os papéis <code>listbox</code> e <code>option</code>.</li>
+      <li>A opção escolhida ganha <code>aria-selected="true"</code>, e é esse atributo que pinta de dourado, com <code>aria-selected:bg-highlight</code>. O visual passa a depender do estado, e não o contrário.</li>
+      <li>As setas do teclado trocam a opção; com o <code>selectionMode="follow"</code>, a seleção acompanha o foco.</li>
+      <li>O <code>[(value)]</code> é uma lista, mesmo com uma opção só; o <code>filter</code> virou um <code>computed</code> que pega a primeira.</li>
+    </ul>
+    <p>
+      E o rodapé com a contagem ganhou <code>role="status"</code>: a cada busca, o leitor de tela anuncia "1 de 195 países" sem
+      tirar o foco do campo, como o <code>aria-live</code> dos simuladores deste livro.
+    </p>
+
+    <h3>O foco depois de trocar de página</h3>
+    <p>
+      Numa página comum, cada clique carrega uma página nova, e o leitor de tela começa a lê-la do topo. Numa
+      <vm-term name="spa">SPA</vm-term>, o Angular troca só o miolo, e o foco fica onde estava: no link do menu. A documentação
+      do Angular recomenda decidir para onde o foco vai depois de navegar, e o Passaporte o leva ao <code>h1</code> da página
+      nova:
+    </p>
+    <vm-code snippet="44/etapa/src/app/core/page-focus.ts" caption="page-focus.ts" />
+    <vm-code snippet="44/etapa/src/app/app.ts" caption="app.ts" />
+    <ul>
+      <li>O <code>NavigationEnd</code> avisa que a navegação terminou; o <code>afterNextRender</code> espera a tela nova ser desenhada.</li>
+      <li>O <code>tabindex="-1"</code> deixa o código focar o título, sem pôr o título na ordem do Tab.</li>
+      <li>
+        A primeira página não move o foco (o navegador já começa do topo), e as abas de um país também não: quem trocou de aba
+        quer continuar nas abas.
+      </li>
+    </ul>
+    <p>
+      O mesmo <code>focusPage()</code> serve ao primeiro elemento da página, o "Pular para o conteúdo": invisível até receber o
+      foco, ele poupa quem usa o teclado de atravessar o menu inteiro em cada página.
+    </p>
+    <vm-code snippet="44/etapa/src/app/app.html" caption="app.html" />
+
+    <h3>Contraste</h3>
+    <p>
+      Texto precisa de contraste de pelo menos <strong>4,5:1</strong> com o fundo (as WCAG, nível AA). A auditoria achou, no modo
+      escuro, botões com 1,06:1: o "Editar" do diário e o "Criar conta" usavam <code>text-primary</code>, um azul-marinho que,
+      no escuro, fica quase igual ao fundo. O Passaporte ganhou o token <code>--color-link</code>, conferido nos dois modos:
+    </p>
+    <vm-code snippet="44/etapa/src/styles.css" caption="styles.css" />
+
+    <vm-deep-dive title="Como auditar o seu app">
+      <p>
+        No Chrome, a aba <strong>Lighthouse</strong> das ferramentas do navegador (F12) tem uma auditoria de acessibilidade:
+        marque só a categoria de acessibilidade e rode a análise. Os achados deste capítulo vieram do axe-core, uma ferramenta de código
+        aberto de verificações automáticas, e de passar pelo app só com o teclado. A ferramenta acha contraste e títulos
+        faltando; ela não sabe se o foco foi para um lugar que faz sentido, nem se "Visitar" basta como nome. Para isso, use o
+        app com o teclado, e experimente um leitor de tela: o NVDA no Windows é gratuito, e o macOS e o Android já trazem um.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="Nunca apague o contorno do foco sem pôr outro">
+      <p>
+        O contorno que aparece em volta do elemento focado é o cursor de quem usa o teclado. Classes como
+        <code>outline-none</code>, usadas para "limpar" o visual, apagam esse cursor. O Passaporte usa o contorno padrão do
+        navegador, que já é visível em fundos claros e escuros. Se quiser um próprio, troque com <code>focus-visible:</code>, que
+        aparece só para quem navega pelo teclado, e confira o contraste dele também.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="code" title="As rampas no lugar">
+    <vm-steps label="Corrigir os achados da auditoria">
+      <ng-template vmStep="Títulos">
+        <p>
+          No <code>panel.html</code>, troque o <code>&lt;header&gt;</code> do título por um <code>&lt;h2&gt;</code>. Na tela de
+          países, ponha o <code>&lt;h1 class="sr-only"&gt;Países&lt;/h1&gt;</code>. Envolva os emojis dos títulos em
+          <code>&lt;span aria-hidden="true"&gt;</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Nomes">
+        <p>
+          No botão "Visitar" do cartão, acrescente o <code>&lt;span class="sr-only"&gt;</code> com o nome do país. No rodapé da
+          lista, ponha <code>role="status"</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O filtro">
+        <p>
+          Instale o <code>&#64;angular/aria</code>, importe o <code>Listbox</code> e o <code>Option</code> no
+          <code>CountryList</code>, troque os botões pelo <code>ngListbox</code> e crie o <code>selected</code>.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O foco">
+        <p>
+          Crie o <code>core/page-focus.ts</code>. No <code>App</code>, escute o <code>NavigationEnd</code> e crie o
+          <code>skipToContent()</code>; no <code>app.html</code>, o botão "Pular para o conteúdo" como primeiro elemento.
+        </p>
+      </ng-template>
+      <ng-template vmStep="Contraste">
+        <p>
+          Declare o <code>--color-link</code> nos dois modos e troque o <code>text-primary</code> dos botões-link ("Editar",
+          "Cancelar edição", "Criar conta") por <code>text-link</code>.
+        </p>
+        <p>
+          <strong>O que muda na tela:</strong> abra o app e aperte Tab: o "Pular para o conteúdo" aparece; Enter, e o foco vai
+          para o título. Use as setas no filtro. Navegue pelo menu com o teclado e veja o foco chegar ao título de cada página.
+          Ponha o sistema no modo escuro e entre no passaporte: o "Editar" agora se lê. E rode a auditoria do Lighthouse.
+        </p>
+      </ng-template>
+    </vm-steps>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="As escadas sem rampa">
+    <vm-pitfall title="A cor como única pista" where="O que o leitor de tela diz no filtro" message="(&quot;Todos, botão&quot;, &quot;Visitados, botão&quot;: nada diz qual está escolhido)">
+      <vm-code snippet="44/filtro-por-cor" caption="country-list.html (antes)" />
+      <p>
+        Quem enxerga vê o dourado; quem não enxerga, e quem não distingue bem as cores, não tem como saber. <strong>Como
+        sair:</strong> um estado na árvore de acessibilidade, como o <code>aria-selected</code> do <code>ngOption</code> (ou o
+        <code>aria-pressed</code> de um botão que liga e desliga, como o °C/°F da aba Clima), e o visual derivado dele.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="195 botões com o mesmo nome" where="O que o leitor de tela diz, de botão em botão" message="(&quot;Visitar, botão&quot;, &quot;Remover Afeganistão, botão&quot;, &quot;Visitar, botão&quot;…)">
+      <vm-code snippet="44/visitar-sem-pais" caption="country-card.html (antes)" />
+      <p>
+        Quem enxerga liga o botão ao cartão pela posição. Na árvore de acessibilidade, o botão é só "Visitar". Os leitores de tela
+        também listam todos os botões da página de uma vez, e a lista seria 195 vezes "Visitar". <strong>Como sair:</strong> o
+        nome do país no nome do botão, mantendo o texto visível no começo.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall
+      title="O contraste que some no modo escuro"
+      where="O que a auditoria diz, com o sistema no modo escuro"
+      message="Element has insufficient color contrast of 1.06 (foreground color: #0a1622, background color: #0f1c2b, font size: 10.5pt (14px), font weight: bold)."
+    >
+      <vm-code snippet="44/contraste-escuro" caption="auditoria (axe-core)" />
+      <p>
+        No modo claro, o <code>text-primary</code> é um azul-marinho sobre papel: ótimo. No escuro, o mesmo token fica quase da
+        cor do fundo. Um token de papel (<code>primary</code>) não garante contraste em qualquer combinação. <strong>Como
+        sair:</strong> um token para o uso (<code>link</code>), conferido nos dois modos.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O atalho que sai da página" where="O que acontece ao usar o atalho em /sobre" message="(a pessoa vai parar em /paises#conteudo)">
+      <vm-code snippet="44/pular-com-hash" caption="app.html" />
+      <vm-code snippet="44/pular-com-hash-resultado" caption="barra de endereço" />
+      <p>
+        O jeito clássico de fazer um "pular para o conteúdo" é um link para <code>#conteudo</code>. Mas o Angular põe um
+        <code>&lt;base href="/"&gt;</code> no <code>index.html</code>, e todo endereço relativo é resolvido a partir dele:
+        <code>#conteudo</code> vira <code>/#conteudo</code>, que o roteador manda para a lista de países. <strong>Como
+        sair:</strong> um botão que leva o foco pelo código, como o do Passaporte.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O foco esquecido no menu" where="O que o teclado mostra depois de navegar (antes do capítulo)" message="(a página muda, e o foco continua no link do menu)">
+      <vm-code snippet="44/foco-no-menu" caption="só com o teclado" />
+      <p>
+        Quem enxerga vê a página nova e clica nela. Quem usa leitor de tela não ouve nada, e o próximo Tab continua no menu.
+        <strong>Como sair:</strong> levar o foco ao título da página nova depois do <code>NavigationEnd</code>.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="44-acessibilidade" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte está testado, avisa quando quebra e serve a mais gente. A trilha Produção começa por
+      deixá-lo mais leve: no <vm-see-chapter [number]="45" />, partes da tela passam a ser carregadas só quando aparecem, com o
+      <code>&#64;defer</code>.
+    </p>
+  </vm-view>
+</vm-chapter-page>

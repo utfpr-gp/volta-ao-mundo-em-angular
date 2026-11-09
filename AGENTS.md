@@ -247,3 +247,10 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   `applyChanges`, `isSignal` e outros. O Angular DevTools (extensão) não roda no Chrome headless: o que o livro diz dele vem
   de angular.dev/tools/devtools (quatro abas, `$ng0`, Show Signal Graph, `debugName`). O `@boundary` aparece nos tipos da 22,
   mas não na documentação: não usar.
+- **Capítulo 44 (Acessibilidade), auditado no Chrome headless:** axe-core 4.14 (MPL-2.0, instalado só no rascunho; no
+  livro, recomendar o Lighthouse do Chrome) injetado pelo `Runtime.evaluate`; a árvore de acessibilidade pelo
+  `Accessibility.getFullAXTree` (papéis e nomes que o leitor de tela recebe). Teclado pelo `Input.dispatchKeyEvent`: para
+  ativar botões com Enter, mande `rawKeyDown` + `char` (`text: '\r'`) + `keyUp`; links ativam já no keydown. Achados reais:
+  `/paises` sem `h1`; `text-primary` com contraste 1,06:1 no escuro; 195 botões "Visitar"; filtro só pela cor; foco que
+  fica no menu depois de navegar; e `<a href="#conteudo">` com `<base href="/">` leva a `/paises#conteudo`. O `not-sr-only`
+  do Tailwind zera o padding (use `focus:px-4 focus:py-2`). Os botões °C/°F já tinham `aria-pressed`.

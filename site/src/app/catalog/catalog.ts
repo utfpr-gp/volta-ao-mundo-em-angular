@@ -606,6 +606,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Deixe o Passaporte usável por todo mundo: HTML semântico, teclado, foco visível, contraste, leitores de tela e o Angular Aria.',
     minutes: 40,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   // Produção
   {

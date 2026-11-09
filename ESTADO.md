@@ -2,18 +2,18 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-11-08 (capítulos 39 a 43 em revisão).
+> Última atualização: 2026-11-09 (capítulos 39 a 44 em revisão).
 
 ## Publicado
 
 - **Capítulos 1 a 38**, em sete trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários e o começo de Back-end. Todos com `verifiedWithAngular: '22.2'`.
 - **Último capítulo novo:** 38, Guards (PR #34). Antes dele, o 37, Login com Supabase (PR #33), e o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Em revisão (PRs empilhados, cada um sobre a branch do anterior):** capítulo 39, Interceptors (PR #35, `trilha-back-end-3`); capítulo 40, CRUD com Supabase (PR #36, `trilha-back-end-4`); capítulo 41, Resolvers (PR #38, `trilha-back-end-5`); capítulo 42, Testes com Vitest (PR #39, `trilha-qualidade-1`); capítulo 43, Erros e DevTools (`trilha-qualidade-2`). Fora da pilha, o PR #37 (`correcao-dica-do-termo`) corrige as páginas mais largas que 375 px. O merge automático pelo agente foi bloqueado pela permissão do modo automático: os merges ficam com o professor.
+- **Em revisão (PRs empilhados, cada um sobre a branch do anterior):** capítulo 39, Interceptors (PR #35, `trilha-back-end-3`); capítulo 40, CRUD com Supabase (PR #36, `trilha-back-end-4`); capítulo 41, Resolvers (PR #38, `trilha-back-end-5`); capítulo 42, Testes com Vitest (PR #39, `trilha-qualidade-1`); capítulo 43, Erros e DevTools (PR #40, `trilha-qualidade-2`); capítulo 44, Acessibilidade (`trilha-qualidade-3`). Fora da pilha, o PR #37 (`correcao-dica-do-termo`) corrige as páginas mais largas que 375 px. O merge automático pelo agente foi bloqueado pela permissão do modo automático: os merges ficam com o professor.
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
-## O Passaporte, na etapa 43
+## O Passaporte, na etapa 44
 
-`passaporte/etapas/43-erros-e-devtools/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
+`passaporte/etapas/44-acessibilidade/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
 
 - `/paises`: lista, destaque, progresso mundial, filtro; dados da API de países do livro (`site/public/api/paises.json`).
 - `/paises/:code`: rotas filhas com visão geral, anotações e o tempo (Open-Meteo).
@@ -28,12 +28,12 @@
 - **Desde o 41, a página do país abre pronta:** `features/country-detail/country-resolvers.ts` tem o `countryResolver` (espera `passport.whenCountriesLoaded()`, devolve o `Country`, `undefined` se a API falhou, ou `new RedirectCommand(router.parseUrl('/nao-encontrado'), { browserUrl: state.url })`) e o `countryTitleResolver` (o `title` da rota). Na rota, `resolve: { country: countryResolver }`; a `CountryPage` recebe `country = input<Country>()` e não tem mais "Carregando o país…". O `Passport` ganhou `whenCountriesLoaded()` (`toObservable(catalogRef.status)` + `firstValueFrom` + `filter`), que devolve `false` se a API falhou. As abas filhas continuam com o `code` da URL e lendo o `Passport` (o dado resolvido é uma foto).
 - **Desde o 42, o diário tem um resumo:** `features/passport/trip-stats.ts` (função pura `tripStats(trips)`: `count`, `days`, `countries`, `favorite` com empate dando `null`) e o `trip-stats.spec.ts`, escrito antes da função; a `PassportPage` mostra o resumo (`[data-stats]`) quando há viagens. A etapa tem o `@vitest/coverage-v8` fixado em `~5.0.5` (a versão do Vitest do workspace; sem versão, o npm sobe o Vitest de todos para 5.1). Cobertura: `npx ng test --watch=false --coverage`, relatório em `coverage/passaporte/index.html`. Os `.spec.ts` das etapas não viram trechos (o extrator os pula): o capítulo 42 tem cópias em `site/snippets/42-testes-com-vitest/`.
 - **Desde o 43, os erros sem dono têm um lugar:** `core/app-error-handler.ts` (`AppErrorHandler extends ErrorHandler`, chama `super.handleError` e o `ErrorReport.show()`), registrado com `{ provide: ErrorHandler, useClass: AppErrorHandler }`; `core/error-report.ts` (signal `visible`); faixa `role="alert"` no `app.html` (`bg-danger text-surface`, botões "Recarregar" e "Fechar"). O `effect` da cópia e o `computed` `saved` do `Passport` têm `debugName`.
+- **Desde o 44, acessível (auditado com axe-core e teclado, zero violações nos dois modos):** o `Panel` tem `h2` no título; a tela de países, `<h1 class="sr-only">Países</h1>`; emojis de títulos em `<span aria-hidden="true">`; o botão "Visitar" leva o país num `sr-only`; o rodapé da lista tem `role="status"`; o filtro usa o `ngListbox`/`ngOption` do `@angular/aria` (dependência da etapa desde o 44; `selected = signal<Filter[]>`, `filter` é `computed`); token `--color-link` (claro `#1f6fb2`, escuro `#7db8ee`) nos botões-link ("Editar", "Cancelar edição", "Criar conta"); `core/page-focus.ts` (`PageFocus.focusPage()` foca o `h1` do `main` com `tabindex=-1` via `afterNextRender`; `pageOf(url)` junta as abas do país) e, no `App`, o `NavigationEnd` (sem a primeira página) e o botão "Pular para o conteúdo" (`sr-only focus:not-sr-only focus:px-4 focus:py-2`).
 
 ## Próximos capítulos (catálogo)
 
 | Nº | Slug | Pergunta |
 | --- | --- | --- |
-| 44 | `44-acessibilidade` | Como deixar o app acessível? |
 | 45 | `45-defer` | Como carregar partes da tela sob demanda com `@defer`? |
 | 46 | `46-seo` | Como fazer o Google encontrar o seu app com SEO? |
 | 47 | `47-pwa` | Como transformar o app em um PWA instalável? |

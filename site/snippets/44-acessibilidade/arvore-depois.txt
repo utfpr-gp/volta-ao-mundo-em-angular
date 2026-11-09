@@ -1,0 +1,3 @@
+títulos: ["Países", "Japão", "Países"]
+listbox: ["Filtrar países"]   opções: ["Todos", "Visitados", "Desejados"]
+botões:  [… "Visitar Afeganistão", "Remover Afeganistão", "Visitar África do Sul", …]
