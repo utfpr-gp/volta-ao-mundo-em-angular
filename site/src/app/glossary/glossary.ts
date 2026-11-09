@@ -16,6 +16,12 @@ export const GLOSSARY = {
       'A ferramenta de terminal do Angular, usada pelo comando ng: cria projetos (ng new), liga o app (ng serve), roda testes (ng test) e gera a versão final (ng build).',
     chapter: 5,
   },
+  'angular-devtools': {
+    term: 'Angular DevTools',
+    definition:
+      'Uma extensão gratuita do Chrome e do Firefox que mostra um app Angular por dentro, rodando: a árvore de componentes, os inputs e signals de cada um, e onde o app gasta tempo.',
+    chapter: 43,
+  },
   angularjs: {
     term: 'AngularJS',
     definition:

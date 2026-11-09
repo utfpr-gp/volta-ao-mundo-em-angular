@@ -1,0 +1,2 @@
+ERROR RuntimeError: NG0203: The `Router` token injection failed. `inject()` function must be called from an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`. Find more at https://v22.angular.dev/errors/NG0203
+    at authGuard (http://localhost:4200/main.js:25:18)
