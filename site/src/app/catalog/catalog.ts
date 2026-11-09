@@ -617,8 +617,11 @@ const ENTRIES: ChapterEntry[] = [
     question: 'Como carregar partes da tela sob demanda com `@defer`?',
     shortTitle: '@defer',
     description:
-      'Carregue o mapa e os gráficos do Passaporte só quando aparecem na tela com @defer, e veja o primeiro carregamento ficar mais leve.',
+      'Carregue o gráfico das viagens do Passaporte só quando ele aparece na tela com @defer, e veja a página do passaporte ficar mais leve.',
     minutes: 25,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '46-seo',

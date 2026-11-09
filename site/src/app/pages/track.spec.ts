@@ -1,6 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { CHAPTERS, chaptersOfTrack, TRACKS } from '../catalog/catalog';
 import { Track } from './track';
+
+/** Uma trilha ainda sem capítulo publicado, e um capítulo ainda não publicado: somem quando o livro estiver completo. */
+const emptyTrack = TRACKS.find((track) => chaptersOfTrack(track.id).every((chapter) => !chapter.published));
+const unpublished = CHAPTERS.find((chapter) => !chapter.published);
 
 describe('Track page', () => {
   const render = async (id: string) => {
@@ -24,14 +29,15 @@ describe('Track page', () => {
     expect(items[0].querySelector('vm-stamp')).toBeTruthy();
   });
 
-  it('says the quick reference grows with each published chapter when none is published', async () => {
-    const element = await render('producao');
+  it.skipIf(!emptyTrack)('says the quick reference grows with each published chapter when none is published', async () => {
+    const element = await render(emptyTrack!.id);
     expect(element.textContent).toContain('A referência rápida desta trilha cresce a cada capítulo publicado.');
   });
 
-  it('marks unpublished chapters as "Em breve"', async () => {
-    const element = await render('producao');
-    expect(element.querySelector('[data-chapter-item]')?.textContent).toContain('Em breve');
+  it.skipIf(!unpublished)('marks unpublished chapters as "Em breve"', async () => {
+    const element = await render(unpublished!.track);
+    const item = [...element.querySelectorAll('[data-chapter-item]')].find((li) => li.textContent!.includes(unpublished!.shortTitle));
+    expect(item?.textContent).toContain('Em breve');
   });
 
   it('links to the previous and next tracks', async () => {

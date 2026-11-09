@@ -1,0 +1,2 @@
+Lazy chunk files    | Names          |  Raw size | Estimated transfer size
+chunk-BV_ZgE0g.js   | passport-page  | 167.46 kB |                51.14 kB
