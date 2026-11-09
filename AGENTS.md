@@ -229,3 +229,10 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   `browserUrl`, o `router.url` é o da página de destino, e o `Location.path()` é o pedido. `urlUpdateStrategy` padrão é
   `'deferred'`: a barra só muda no fim da navegação. Os `resources` de rota (`withRouterResources`, `nonBlocking`) são
   `@developerPreview 22.2`.
+- **Capítulo 42 (Testes com Vitest), verificado no Vitest 5.0.5 com `@angular/build:unit-test`:** sem
+  `provideHttpClientTesting()`, o `HttpClient` (provido por padrão na 22) vai à rede de verdade e o teste **passa** (369 ms);
+  `whenStable()` com requisição pendente dá `Error: Test timed out in 5000ms.`; conferir sem esperar a tela dá
+  `AssertionError: expected +0 to be 4 // Object.is equality`; `verify()` com requisição sem resposta dá
+  `Error: Expected no open requests, found 1: POST …`; `--coverage` sem pacote dá `Code coverage requires either
+  "@vitest/coverage-v8" or "@vitest/coverage-istanbul" to be installed.`. Para tirar a cor da saída do `ng test` ao copiar
+  mensagens: `sed 's/\x1b\[[0-9;]*m//g'`.

@@ -2,18 +2,18 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-11-08 (capítulos 39 a 41 em revisão).
+> Última atualização: 2026-11-08 (capítulos 39 a 42 em revisão).
 
 ## Publicado
 
 - **Capítulos 1 a 38**, em sete trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários e o começo de Back-end. Todos com `verifiedWithAngular: '22.2'`.
 - **Último capítulo novo:** 38, Guards (PR #34). Antes dele, o 37, Login com Supabase (PR #33), e o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Em revisão (PRs empilhados, cada um sobre a branch do anterior):** capítulo 39, Interceptors (PR #35, `trilha-back-end-3`); capítulo 40, CRUD com Supabase (PR #36, `trilha-back-end-4`); capítulo 41, Resolvers (`trilha-back-end-5`). Fora da pilha, o PR #37 (`correcao-dica-do-termo`) corrige as páginas mais largas que 375 px. O merge automático pelo agente foi bloqueado pela permissão do modo automático: os merges ficam com o professor.
+- **Em revisão (PRs empilhados, cada um sobre a branch do anterior):** capítulo 39, Interceptors (PR #35, `trilha-back-end-3`); capítulo 40, CRUD com Supabase (PR #36, `trilha-back-end-4`); capítulo 41, Resolvers (PR #38, `trilha-back-end-5`); capítulo 42, Testes com Vitest (`trilha-qualidade-1`). Fora da pilha, o PR #37 (`correcao-dica-do-termo`) corrige as páginas mais largas que 375 px. O merge automático pelo agente foi bloqueado pela permissão do modo automático: os merges ficam com o professor.
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
-## O Passaporte, na etapa 41
+## O Passaporte, na etapa 42
 
-`passaporte/etapas/41-resolvers/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
+`passaporte/etapas/42-testes-com-vitest/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
 
 - `/paises`: lista, destaque, progresso mundial, filtro; dados da API de países do livro (`site/public/api/paises.json`).
 - `/paises/:code`: rotas filhas com visão geral, anotações e o tempo (Open-Meteo).
@@ -26,12 +26,12 @@
 - **Desde o 39, há três interceptors** em `core/http/`, registrados no `app.config.ts` com `provideHttpClient(withInterceptors([loadingInterceptor, authInterceptor, errorInterceptor]))`. `core/api.ts` tem o `API_URL` (`http://localhost:3000`) e o `isApiRequest`. O `authInterceptor` espera `auth.whenReady()` (`from` + `switchMap`) e põe `Authorization: Bearer <token>` (do `Auth.accessToken`, um `computed`) só nas requisições para a API. O `loadingInterceptor` conta as requisições no service `Loading` (`busy`), com `finalize`; o `app.html` mostra uma barra (`role="progressbar"`, animação `animate-loading` no `@theme`, só com `motion-safe:`). O `errorInterceptor` liga o `ApiStatus.failed` (o aviso amarelo) e devolve o erro com `throwError`; o `Passport` perdeu o `putFailed`/`saveFailed`. Nos specs com os interceptors, o `authInterceptor` solta a requisição numa microtarefa: `await new Promise((r) => setTimeout(r))` antes do `expectOne`.
 - **Desde o 40, os dados ficam no Supabase, e o json-server saiu** (sem `db.json`, sem o script `api`). `supabase/passaporte.sql` cria `passports` (uma linha por conta: `user_id` PK `default auth.uid()`, `visited text[]`, `notes jsonb`) e `trips` (`id` identity, `user_id`, `country`, `arrival date`, `days`, `transport`, `companion`, com `check`), os `grant` para `authenticated`, o RLS e as políticas (`auth.uid() = user_id`). O `extract-snippets` lê também a pasta `supabase/` das etapas (chave `40/etapa/supabase/passaporte.sql`) e conhece SQL (`-- [!code highlight]`). O `API_URL` é `<supabaseUrl>/rest/v1`; o `authInterceptor` põe `apikey` e `Authorization`. No `Passport`: `savedRef` e `tripsRef` são `httpResource` que devolvem `undefined` sem login (idle) e usam `params` (`select`, `order`); `parse` tira a linha da lista; upsert com `Prefer: resolution=merge-duplicates`; `addTrip`/`updateTrip`/`deleteTrip` são `async` com `firstValueFrom`, `Prefer: return=representation` e filtro `id=eq.<id>` (o id nunca vai no corpo). A cópia no `localStorage` é por conta (`copyKey(userId)` = `passaporte:<id>`), e sem login não há cópia nem requisição: as marcações ficam só na visita. `Trip` ganhou `id?`. O formulário edita (`edit(trip)` chamado pelo diário via `viewChild`, `reset({...trip})`, foco no país, "Cancelar edição", `saveFailed` com `aria-live`), e o diário tem "Editar" e "Apagar" com `aria-label`. Testes: `startPassport(countries, saved, trips)` faz `overrideProvider(SUPABASE, …)` com a Ana logada (chame antes de qualquer `inject`) e responde aos três GET; `passportsGet`, `passportsUpsert`, `tripsRequest(method)` e `paramsOf` ajudam nos `expectOne`.
 - **Desde o 41, a página do país abre pronta:** `features/country-detail/country-resolvers.ts` tem o `countryResolver` (espera `passport.whenCountriesLoaded()`, devolve o `Country`, `undefined` se a API falhou, ou `new RedirectCommand(router.parseUrl('/nao-encontrado'), { browserUrl: state.url })`) e o `countryTitleResolver` (o `title` da rota). Na rota, `resolve: { country: countryResolver }`; a `CountryPage` recebe `country = input<Country>()` e não tem mais "Carregando o país…". O `Passport` ganhou `whenCountriesLoaded()` (`toObservable(catalogRef.status)` + `firstValueFrom` + `filter`), que devolve `false` se a API falhou. As abas filhas continuam com o `code` da URL e lendo o `Passport` (o dado resolvido é uma foto).
+- **Desde o 42, o diário tem um resumo:** `features/passport/trip-stats.ts` (função pura `tripStats(trips)`: `count`, `days`, `countries`, `favorite` com empate dando `null`) e o `trip-stats.spec.ts`, escrito antes da função; a `PassportPage` mostra o resumo (`[data-stats]`) quando há viagens. A etapa tem o `@vitest/coverage-v8` fixado em `~5.0.5` (a versão do Vitest do workspace; sem versão, o npm sobe o Vitest de todos para 5.1). Cobertura: `npx ng test --watch=false --coverage`, relatório em `coverage/passaporte/index.html`. Os `.spec.ts` das etapas não viram trechos (o extrator os pula): o capítulo 42 tem cópias em `site/snippets/42-testes-com-vitest/`.
 
 ## Próximos capítulos (catálogo)
 
 | Nº | Slug | Pergunta |
 | --- | --- | --- |
-| 42 | `42-testes-com-vitest` | Como testar componentes e services com Vitest? |
 | 43 | `43-erros-e-devtools` | Como ler os erros do Angular e usar o Angular DevTools? |
 | 44 | `44-acessibilidade` | Como deixar o app acessível? |
 | 45 | `45-defer` | Como carregar partes da tela sob demanda com `@defer`? |
