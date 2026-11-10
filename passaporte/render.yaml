@@ -13,10 +13,10 @@ services:
         destination: /paises/index.html
       - type: rewrite
         source: /paises/:code
-        destination: /paises/:code/index.html
+        destination: /paises/:code/
       - type: rewrite
         source: /paises/:code/visao-geral
-        destination: /paises/:code/visao-geral/index.html
+        destination: /paises/:code/visao-geral/
       - type: rewrite
         source: /sobre
         destination: /sobre/index.html

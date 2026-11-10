@@ -1,7 +1,7 @@
-# Passaporte · etapa do capítulo 47
+# Passaporte · etapa do capítulo 48
 
-O Passaporte do jeito que ele fica ao fim do capítulo 47, **PWA**: como transformar o app em um PWA instalável?
-Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/47-pwa
+O Passaporte do jeito que ele fica ao fim do capítulo 48, **Deploy no Render**: como gerar o build e publicar o app no Render?
+Faz parte do livro **Volta ao Mundo em Angular**: https://utfpr-gp.github.io/volta-ao-mundo-em-angular/capitulos/48-deploy-no-render
 
 Antes de rodar:
 
@@ -31,6 +31,17 @@ npx http-server -p 8080 -c-1 dist/passaporte/browser   # abra http://localhost:8
 
 O que ele guarda está em `ngsw-config.json`. Nunca ponha a API do Supabase num `dataGroup`: o cache guarda pela URL, e a
 pessoa seguinte que entrar no mesmo navegador veria os dados da anterior.
+
+Desde o capítulo 48, o Passaporte vai ao ar no [Render](https://render.com), como site estático ligado ao seu
+repositório no GitHub. O `render.yaml` descreve o site: o comando de build, a pasta publicada (`dist/passaporte/browser`)
+e as regras de rewrite, que entregam o casco do app (`index.csr.html`) aos endereços sem arquivo, como `/passaporte`.
+Você pode criar o site pelo painel (*New → Static Site*) ou pelo arquivo (*New → Blueprint*). Depois de publicar:
+
+1. troque o `SITE_URL` de `src/app/core/site.ts` pelo endereço que o Render deu;
+2. no Supabase, em *Authentication → URL Configuration*, troque o **Site URL** pelo endereço do Render: é para ele que o
+   link do e-mail de confirmação leva.
+
+Cada `git push` na branch publicada faz o Render gerar e publicar o app de novo.
 
 Desde o capítulo 40, os dados do passaporte ficam no Supabase: o json-server não é mais usado.
 
