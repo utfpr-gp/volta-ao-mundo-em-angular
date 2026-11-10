@@ -5,7 +5,7 @@ services:
     runtime: static
     name: passaporte-volta-ao-mundo
     rootDir: passaporte/etapas/48-deploy-no-render
-    buildCommand: npm ci && npm run build && cp dist/passaporte/browser/sobre/index.html dist/passaporte/browser/sobre.html
+    buildCommand: npm ci && npm run build && cd dist/passaporte/browser && cp sobre/index.html teste.html && mkdir teste2 && cp sobre/index.html teste2/index.html
     staticPublishPath: dist/passaporte/browser
     routes:
       - type: rewrite
