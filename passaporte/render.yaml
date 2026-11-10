@@ -9,5 +9,17 @@ services:
     staticPublishPath: dist/passaporte/browser
     routes:
       - type: rewrite
+        source: /paises
+        destination: /paises/index.html
+      - type: rewrite
+        source: /paises/:code
+        destination: /paises/:code/index.html
+      - type: rewrite
+        source: /paises/:code/visao-geral
+        destination: /paises/:code/visao-geral/index.html
+      - type: rewrite
+        source: /sobre
+        destination: /sobre/index.html
+      - type: rewrite
         source: /*
-        destination: /index.html
+        destination: /index.csr.html
