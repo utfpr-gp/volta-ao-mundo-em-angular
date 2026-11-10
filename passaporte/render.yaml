@@ -5,9 +5,21 @@ services:
     runtime: static
     name: passaporte-volta-ao-mundo
     rootDir: passaporte/etapas/48-deploy-no-render
-    buildCommand: npm ci && npm run build && cd dist/passaporte/browser && cp sobre/index.html teste.html && mkdir teste2 && cp sobre/index.html teste2/index.html
+    buildCommand: npm ci && npm run build && cp dist/passaporte/browser/index.csr.html dist/passaporte/browser/404.html
     staticPublishPath: dist/passaporte/browser
     routes:
       - type: rewrite
-        source: /*
+        source: /_sem-uso-1
+        destination: /index.csr.html
+      - type: rewrite
+        source: /_sem-uso-2
+        destination: /index.csr.html
+      - type: rewrite
+        source: /_sem-uso-3
+        destination: /index.csr.html
+      - type: rewrite
+        source: /_sem-uso-4
+        destination: /index.csr.html
+      - type: rewrite
+        source: /_sem-uso-5
         destination: /index.csr.html
