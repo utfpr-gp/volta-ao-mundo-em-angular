@@ -1,0 +1,9 @@
+# A demonstração do Passaporte publicada pelo livro (capítulo 48). Quem lê usa o render.yaml da etapa, na raiz do próprio
+# repositório; aqui a etapa mora numa subpasta do livro, por isso o rootDir.
+services:
+  - type: web
+    runtime: static
+    name: passaporte-volta-ao-mundo
+    rootDir: passaporte/etapas/48-deploy-no-render
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist/passaporte/browser

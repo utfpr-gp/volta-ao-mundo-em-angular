@@ -1,0 +1,12 @@
+# O Passaporte no Render, escrito num arquivo (um Blueprint). Faz o mesmo que preencher o formulário do painel.
+services:
+  - type: web
+    runtime: static # um site estático: o Render só entrega arquivos
+    name: passaporte
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist/passaporte/browser
+    routes:
+      # Endereço sem arquivo (/passaporte, /entrar…) recebe o casco do app, e o roteador do Angular faz o resto.
+      - type: rewrite # [!code highlight]
+        source: /* # [!code highlight]
+        destination: /index.csr.html # [!code highlight]
