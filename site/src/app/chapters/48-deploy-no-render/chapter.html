@@ -1,0 +1,305 @@
+<vm-chapter-page slug="48-deploy-no-render">
+  <vm-view kind="mission" title="O Passaporte no ar">
+    <p class="lead">
+      Até aqui, o Passaporte só existia no seu computador. Agora ele ganha um endereço na internet, com HTTPS, que qualquer
+      pessoa abre no celular. E a cada <code>git push</code>, a versão nova vai ao ar sozinha.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-48/no-ar.png"
+      width="1150"
+      height="720"
+      alt="Uma janela de navegador com o endereço https://passaporte-livro-k64a.onrender.com/paises/JP/visao-geral. A página mostra o Passaporte com o Japão: capital Tóquio, população, código JP e o botão Marcar como visitado."
+    />
+    <p>
+      Esse é o Passaporte que o livro publicou no Render, a partir da etapa deste capítulo. Ao final, você vai saber publicar o
+      seu: gerar o build, ligar o repositório do GitHub ao Render, entender por que um endereço como <code>/passaporte</code>
+      pode dar erro 404 e escrever as regras que resolvem isso.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A portaria do prédio">
+    <vm-analogy emoji="🏢" title="O porteiro que só conhece salas">
+      <p>
+        Num prédio comercial, o porteiro tem a lista das salas. Pergunte pela sala 302, e ele leva você até lá. Pergunte por
+        "a reunião de vendas", e ele não acha nada na lista: "não existe". A reunião existe, mas acontece dentro de uma sala, e
+        só quem está lá dentro sabe dela.
+      </p>
+      <p>
+        O servidor de um site estático é esse porteiro: só conhece arquivos. <code>/passaporte</code> não é um arquivo, é uma
+        tela que o Angular monta dentro do app. A solução é deixar um recado na portaria: "quem perguntar pelo passaporte, mande
+        para a recepção". A recepção é o casco do app, e lá dentro o roteador do Angular leva a pessoa à tela certa.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Um site feito de arquivos">
+    <h3>O que vai ao ar: a pasta do build</h3>
+    <p>
+      O <code>npm run build</code> transforma o projeto numa pasta de arquivos prontos: HTML, CSS, JavaScript e imagens. Não há
+      Angular CLI, TypeScript nem Node.js nela. É um <vm-term name="site-estatico">site estático</vm-term>: o servidor recebe um
+      endereço, acha o arquivo e o entrega. Fazer o <vm-term name="deploy">deploy</vm-term> é entregar essa pasta a um serviço
+      que a coloque na internet.
+    </p>
+    <vm-code snippet="48/pasta-build" caption="dist/passaporte/browser" />
+    <p>
+      Repare em três arquivos HTML na raiz. Desde a pré-renderização (<vm-see-chapter [number]="46" />), o
+      <code>index.html</code> é a página da rota vazia, que só redireciona para <code>/paises</code>. O app sem nenhuma tela
+      desenhada, o casco, é o <code>index.csr.html</code>. E o <code>404.html</code>, uma cópia do casco, é a novidade deste
+      capítulo.
+    </p>
+    <p>
+      O <a href="https://render.com" rel="noopener">Render</a> publica sites estáticos de graça, numa
+      <vm-term name="cdn">CDN</vm-term>: cópias da pasta em servidores pelo mundo, cada pessoa servida pelo mais perto. Ele se liga
+      ao seu repositório no GitHub e, a cada push, roda o build e publica a pasta.
+    </p>
+
+    <h3>Por que /passaporte não tem arquivo</h3>
+    <p>
+      Quando você clica em "Meu passaporte", o roteador do Angular troca o endereço na barra e desenha a tela, sem pedir nada ao
+      servidor. Mas digitar <code>/passaporte</code> na barra, recarregar a página ou abrir um link recebido por mensagem é um
+      pedido novo ao servidor. E, para o servidor, <code>/passaporte</code> só existiria se houvesse um arquivo ou uma pasta com
+      esse nome.
+    </p>
+    <p>
+      As páginas pré-renderizadas têm pasta: <code>paises/JP/visao-geral/index.html</code> responde por
+      <code>/paises/JP/visao-geral</code>. As telas montadas no navegador (<code>RenderMode.Client</code>), não: o
+      <code>/passaporte</code>, o <code>/entrar</code> e as abas de clima e de anotações. Para elas, o Render precisa de uma
+      <vm-term name="rewrite">regra de rewrite</vm-term>: "a quem pedir <code>/passaporte</code>, entregue o
+      <code>/index.csr.html</code>". O endereço na barra continua <code>/passaporte</code>, e o roteador desenha a tela.
+    </p>
+
+    <h3>A ordem das perguntas</h3>
+    <p>Num site estático do Render, um pedido passa por estas perguntas, nesta ordem (conferido num site de verdade):</p>
+    <ol>
+      <li>Existe um arquivo com esse nome exato? Ele é entregue.</li>
+      <li>Alguma regra vale para esse endereço? A regra decide.</li>
+      <li>Existe uma pasta com esse nome e um <code>index.html</code> dentro? Ele é entregue.</li>
+      <li>Existe um <code>404.html</code>? Ele é entregue, com o status 404.</li>
+      <li>Nada disso? Chega o texto <code>Not Found</code>.</li>
+    </ol>
+    <p>
+      O detalhe que pega muita gente está entre a segunda e a terceira pergunta: a regra vem antes da pasta. Uma regra que vale
+      para todos os endereços (<code>/*</code>) passa por cima das páginas pré-renderizadas. Por isso o Passaporte tem regras só
+      para as telas do navegador, e um <code>404.html</code> para o resto.
+    </p>
+
+    <vm-host-sim />
+  </vm-view>
+
+  <vm-view kind="code" title="Publicando o Passaporte">
+    <vm-steps label="Publicar o Passaporte no Render">
+      <ng-template vmStep="O 404.html">
+        <p>Crie um script que copia o casco para <code>404.html</code> depois do build:</p>
+        <vm-code snippet="48/etapa/scripts/not-found.mjs" caption="scripts/not-found.mjs" />
+        <p>E ponha o script no fim do <code>build</code>, no <code>package.json</code>:</p>
+        <vm-code snippet="48/etapa/package.json" caption="package.json" />
+        <p>
+          Rode <code>npm run build</code> e confira a pasta <code>dist/passaporte/browser</code>: o <code>404.html</code> está
+          lá, ao lado do <code>index.csr.html</code>. Um script em Node, e não um <code>cp</code>, funciona igual no Windows, no
+          macOS e no Linux.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O código no GitHub">
+        <p>
+          O Render publica a partir de um repositório. O <code>ng new</code> já criou o repositório Git do projeto; falta
+          criar um no GitHub e enviar o código:
+        </p>
+        <vm-code snippet="48/github" caption="terminal" />
+        <p>
+          O <code>package-lock.json</code> tem de ir junto: é ele que faz o Render instalar exatamente as versões que você
+          testou.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O site no Render">
+        <p>
+          Crie uma conta no Render. No painel, clique em <strong>New</strong> →
+          <strong>Static Site</strong>, autorize o acesso ao GitHub e escolha o repositório. Preencha:
+        </p>
+        <vm-code snippet="48/formulario" caption="New Static Site" />
+        <ul>
+          <li>
+            <code>npm ci</code> instala as dependências a partir do <code>package-lock.json</code>, sem mudar nenhuma versão.
+          </li>
+          <li>
+            A <strong>Publish Directory</strong> é a pasta que vai ao ar: a <code>browser</code>, e não a
+            <code>dist/passaporte</code> inteira.
+          </li>
+        </ul>
+        <p>
+          Confirme a criação do site e acompanhe o log do deploy. No Passaporte do livro, ele foi assim (o
+          <code>…</code> marca o que ficou de fora):
+        </p>
+        <vm-code snippet="48/log-do-build" caption="log do deploy no Render" />
+      </ng-template>
+      <ng-template vmStep="As regras">
+        <p>
+          No menu do site, abra <strong>Redirects/Rewrites</strong> e crie uma regra para cada tela montada no navegador. O
+          <code>:code</code> vale para qualquer código de país:
+        </p>
+        <vm-code snippet="48/regras" caption="Redirects/Rewrites" />
+        <p>
+          As regras valem na hora, sem build novo. Se o app ganhar outra rota com <code>RenderMode.Client</code>, ela ganha uma
+          regra também.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O endereço do app">
+        <p>
+          O Render dá ao site um endereço como <code>https://passaporte-xxxx.onrender.com</code>. Ele entra em dois lugares:
+        </p>
+        <ul>
+          <li>
+            no <code>SITE_URL</code> de <code>src/app/core/site.ts</code>, que vai para as tags de compartilhamento e para o
+            <code>sitemap.xml</code>;
+          </li>
+          <li>
+            no Supabase, em <strong>Authentication → URL Configuration</strong>, no campo <strong>Site URL</strong>: é para lá
+            que o link do e-mail de confirmação leva quem cria uma conta (<vm-see-chapter [number]="37" />).
+          </li>
+        </ul>
+        <p>Faça o commit e o push. O Render percebe o push e publica a versão nova sozinho.</p>
+      </ng-template>
+      <ng-template vmStep="A prova">
+        <vm-code snippet="48/prova" caption="terminal" />
+        <p>
+          <strong>O que muda na tela:</strong> abra o endereço do Render no celular. Navegue até a página de um país e
+          recarregue: ela continua lá. Digite <code>/passaporte</code> na barra: a tela de entrar aparece, porque o guard pede
+          login. Digite um país que não existe, como <code>/paises/ZZ</code>: aparece "Esta página não existe", do próprio
+          app. Nesse caso, o console mostra
+          <code>Failed to load resource: the server responded with a status of 404 ()</code>, e é isso mesmo: o status 404
+          avisa navegadores e robôs de que a página não existe.
+        </p>
+        <p>
+          Com o HTTPS, o PWA do <vm-see-chapter [number]="47" /> funciona fora do <code>localhost</code>: o navegador oferece
+          instalar o Passaporte.
+        </p>
+      </ng-template>
+    </vm-steps>
+
+    <vm-deep-dive title="O mesmo site, escrito num arquivo">
+      <p>
+        Em vez de preencher o formulário, você pode descrever o site num <code>render.yaml</code>, na raiz do repositório, e
+        criar tudo pelo <strong>New</strong> → <strong>Blueprint</strong>. As regras ficam no Git, junto com o código:
+      </p>
+      <vm-code snippet="48/etapa/render.yaml" caption="render.yaml" />
+      <p>
+        Um cuidado, visto ao testar o livro: tirar uma regra do arquivo não a tira do site. O Blueprint acrescenta e muda
+        regras, mas não apaga; para apagar, use a página Redirects/Rewrites.
+      </p>
+    </vm-deep-dive>
+
+    <vm-deep-dive title="A versão do Node.js e o cache">
+      <p>
+        O Angular 22 pede o Node.js <code>^22.22.3 || ^24.15.0 || &gt;=26.0.0</code>. Num serviço novo, o Render usa por padrão o
+        Node.js 24.22.1, que serve. Para fixar outra, a documentação do Render indica a variável <code>NODE_VERSION</code> ou
+        um arquivo <code>.node-version</code> na raiz do repositório, com a versão numa linha.
+      </p>
+      <p>
+        Nos testes do livro, o Render mandou todos os arquivos com <code>cache-control: public, max-age=0, s-maxage=300</code>:
+        o navegador confere a cada visita se o arquivo mudou, e a CDN guarda uma cópia por até 5 minutos. Um build novo limpa o
+        cache da CDN. Uma regra nova, não: logo depois de mudar as regras, um endereço já pedido pode responder do jeito antigo
+        por alguns minutos.
+      </p>
+    </vm-deep-dive>
+
+    <h3>E fora do Render?</h3>
+    <p>
+      Todo serviço de site estático tem o seu jeito de escrever a regra. Nos exemplos da documentação de cada um, o destino é o
+      <code>index.html</code>; no Passaporte, com a pré-renderização, troque pelo <code>index.csr.html</code>, como manda o guia
+      de deploy do Angular. O livro testou só o Render: em outro serviço, confira como ele trata as pastas das páginas prontas.
+    </p>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Serviço</th>
+            <th>Onde fica a regra</th>
+            <th>O exemplo da documentação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Netlify</td>
+            <td>arquivo <code>_redirects</code></td>
+            <td><code>/*  /index.html  200</code></td>
+          </tr>
+          <tr>
+            <td>Vercel</td>
+            <td><code>vercel.json</code></td>
+            <td><code>"rewrites": [&#123; "source": "/(.*)", "destination": "/index.html" &#125;]</code></td>
+          </tr>
+          <tr>
+            <td>Firebase Hosting</td>
+            <td><code>firebase.json</code></td>
+            <td><code>"source": "**", "destination": "/index.html"</code></td>
+          </tr>
+          <tr>
+            <td>GitHub Pages</td>
+            <td>não tem regras</td>
+            <td>um <code>404.html</code> com o casco do app (é assim que este livro é publicado)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Netlify, Vercel e Firebase entregam o arquivo que existe antes de aplicar a regra. O Angular também tem o
+      <code>ng deploy</code>, que publica direto em alguns desses serviços depois de instalar o pacote de cada um.
+    </p>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Quando o porteiro se perde">
+    <vm-pitfall title="Recarregar dá Not Found" where="O que o navegador mostra em /passaporte, sem regra nem 404.html" message="Not Found">
+      <vm-code snippet="48/sem-regra" caption="terminal" />
+      <p>
+        Navegando pelo app, tudo funciona. Basta recarregar <code>/passaporte</code>, ou abrir esse endereço num link, para
+        aparecer só o texto "Not Found", sem o app. O servidor procurou um arquivo, uma regra, uma pasta e um
+        <code>404.html</code>, e não achou nada. <strong>Como sair:</strong> uma regra de rewrite para cada tela montada no
+        navegador, e o <code>404.html</code> para o resto.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="A regra de todo tutorial" where="O que o Render entrega em /entrar, com /* → /index.html" message="Redirecting to /paises">
+      <vm-code snippet="48/regra-index" caption="terminal" />
+      <p>
+        A regra <code>/*</code> → <code>/index.html</code> é a resposta clássica para uma SPA, e é a que aparece nos tutoriais.
+        No Passaporte, ela dá um laço: o <code>index.html</code> só redireciona para <code>/paises</code>, e em
+        <code>/paises</code> a mesma regra entrega o mesmo arquivo. A página fica recarregando; num teste com um servidor que
+        segue a ordem do Render, foram 1817 pedidos em 8 segundos. <strong>Como sair:</strong> com pré-renderização, o casco é
+        o <code>index.csr.html</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="A regra certa no lugar errado" where="O que o Render entrega, com /* → /index.csr.html, numa pasta pré-renderizada" message="&lt;app-root&gt;&lt;/app-root&gt;">
+      <p>
+        Trocar o destino para <code>/index.csr.html</code> e manter o <code>/*</code> parece resolver: todas as telas abrem.
+        Mas a regra vem antes da pasta. No teste do livro, uma pasta com o <code>index.html</code> da página Sobre, pedida sem a
+        barra no fim, respondeu o casco, com o <code>&lt;app-root&gt;</code> vazio. O app funciona, porque o Angular desenha a
+        tela no navegador, mas quem lê o HTML, como o robô do Google, perde tudo o que a pré-renderização
+        (<vm-see-chapter [number]="46" />) fez. <strong>Como sair:</strong> regras só para as telas do navegador. Confira com
+        <code>curl</code>: <code>/paises/JP/visao-geral</code> tem de trazer o título "Japão · Passaporte".
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="Os primeiros minutos" where="O que o navegador mostra logo depois do primeiro deploy" message="Failed to load resource: the server responded with a status of 404 ()">
+      <p>
+        O log diz "Your site is live", você abre o endereço, e a tela fica em branco: o console acusa 404 no
+        <code>main-….js</code>. Aconteceu duas vezes nos testes do livro, logo depois do primeiro deploy de um site novo: arquivos
+        que estavam na pasta publicada, páginas e scripts, respondiam "Not Found", e outros não. Minutos depois, tudo
+        respondia. <strong>Como sair:</strong> espere um ou dois minutos e recarregue antes de procurar o erro no código.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="48-deploy-no-render" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte está no ar, mas nada impede um push com um teste quebrado de chegar lá. No
+      <vm-see-chapter [number]="49" />, o GitHub Actions roda os testes e o build a cada push, e o app só é publicado quando
+      tudo passa.
+    </p>
+  </vm-view>
+</vm-chapter-page>

@@ -1,0 +1,14 @@
+dist/passaporte/browser/
+├── index.html              ← só redireciona para /paises (a rota '' do app)
+├── index.csr.html          ← o casco: o app sem nenhuma tela desenhada
+├── 404.html                ← cópia do casco (novo neste capítulo)
+├── paises/
+│   ├── index.html          ← a lista de países, pronta
+│   └── JP/
+│       ├── index.html      ← só redireciona para /paises/JP/visao-geral
+│       └── visao-geral/
+│           └── index.html  ← a página do Japão, pronta
+├── sobre/index.html
+├── main-EKWIJECY.js, chunk-….js, styles-N7ZLPWPH.css
+├── ngsw-worker.js, ngsw.json, manifest.webmanifest, icons/
+└── sitemap.xml, robots.txt

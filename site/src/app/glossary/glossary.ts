@@ -490,6 +490,30 @@ export const GLOSSARY = {
       'Uma função que confere o valor de um campo e devolve null, se ele está certo, ou um objeto que diz qual regra falhou, como { required: true }.',
     chapter: 35,
   },
+  deploy: {
+    term: 'Deploy (publicação)',
+    definition:
+      'Levar o app da sua máquina para um servidor na internet, onde qualquer pessoa o abre por um endereço. Num site estático, é gerar o build e entregar a pasta dele ao serviço de hospedagem.',
+    chapter: 48,
+  },
+  'site-estatico': {
+    term: 'Site estático',
+    definition:
+      'Um site feito só de arquivos prontos (HTML, CSS, JavaScript, imagens). O servidor não roda código do app: recebe um endereço, acha o arquivo e o entrega. Um app Angular depois do build é um site estático.',
+    chapter: 48,
+  },
+  cdn: {
+    term: 'CDN (rede de distribuição de conteúdo)',
+    definition:
+      'Uma rede de servidores espalhados pelo mundo que guardam cópias dos arquivos de um site e entregam cada pedido a partir do mais próximo de quem pediu.',
+    chapter: 48,
+  },
+  rewrite: {
+    term: 'Rewrite (reescrita)',
+    definition:
+      'Uma regra do servidor que responde a um endereço com o conteúdo de outro arquivo, sem mudar o endereço na barra do navegador. Numa SPA, faz /passaporte receber o casco do app.',
+    chapter: 48,
+  },
 } as const satisfies Record<string, GlossaryEntry>;
 
 export type TermName = keyof typeof GLOSSARY;
