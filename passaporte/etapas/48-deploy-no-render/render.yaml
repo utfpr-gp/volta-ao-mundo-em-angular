@@ -5,8 +5,18 @@ services:
     name: passaporte
     buildCommand: npm ci && npm run build
     staticPublishPath: dist/passaporte/browser
+    # As telas montadas no navegador (RenderMode.Client) não têm arquivo: recebem o casco do app, e o roteador do Angular
+    # desenha a tela certa. As páginas pré-renderizadas não precisam de regra, e o resto cai no 404.html.
     routes:
-      # Endereço sem arquivo (/passaporte, /entrar…) recebe o casco do app, e o roteador do Angular faz o resto.
-      - type: rewrite # [!code highlight]
-        source: /* # [!code highlight]
-        destination: /index.csr.html # [!code highlight]
+      - type: rewrite
+        source: /passaporte
+        destination: /index.csr.html
+      - type: rewrite
+        source: /entrar
+        destination: /index.csr.html
+      - type: rewrite
+        source: /paises/:code/clima
+        destination: /index.csr.html
+      - type: rewrite
+        source: /paises/:code/anotacoes
+        destination: /index.csr.html
