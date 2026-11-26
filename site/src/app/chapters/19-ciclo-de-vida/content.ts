@@ -38,6 +38,6 @@ export const CHAPTER_19: ChapterContent = {
   links: [
     { label: 'Ciclo de vida de componentes', url: 'https://angular.dev/guide/components/lifecycle' },
     { label: 'DestroyRef', url: 'https://angular.dev/api/core/DestroyRef' },
-    { label: 'Intl.DateTimeFormat (MDN)', url: 'https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat' },
+    { label: 'Intl.DateTimeFormat (MDN, em inglês)', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat' },
   ],
 };

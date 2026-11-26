@@ -48,6 +48,6 @@ export const CHAPTER_08: ChapterContent = {
     { label: 'Adicionando event listeners', url: 'https://angular.dev/guide/templates/event-listeners' },
     { label: 'Variáveis no template (#referência)', url: 'https://angular.dev/guide/templates/variables' },
     { label: 'Aviso NG8111', url: 'https://angular.dev/extended-diagnostics/NG8111' },
-    { label: 'Referência de eventos do navegador (MDN)', url: 'https://developer.mozilla.org/pt-BR/docs/Web/Events' },
+    { label: 'Referência de eventos do navegador (MDN, em inglês)', url: 'https://developer.mozilla.org/en-US/docs/Web/Events' },
   ],
 };
