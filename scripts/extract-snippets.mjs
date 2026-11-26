@@ -70,7 +70,8 @@ export async function extractAll(root) {
 /**
  * Os arquivos de cada etapa do Passaporte (passaporte/etapas/NN-slug), com a chave
  * NN/etapa/<caminho>: o package.json, a pasta src e, quando houver, as pastas supabase (o SQL do banco) e scripts, o
- * ngsw-config.json (o service worker), o render.yaml (a publicação no Render) e o manifesto do PWA em public/.
+ * ngsw-config.json (o service worker), o render.yaml (a publicação no Render), os workflows do GitHub Actions
+ * (.github/workflows) e o manifesto do PWA em public/.
  * Assim o capítulo mostra o código que de fato compila na etapa.
  */
 export async function extractStages(root) {
@@ -81,6 +82,10 @@ export async function extractStages(root) {
     if (!/^\d{2}-/.test(stage) || !statSync(base).isDirectory()) continue;
     const files = [];
     for (const name of ['package.json', 'ngsw-config.json', 'render.yaml']) if (existsSync(join(base, name))) files.push(join(base, name));
+    const workflows = join(base, '.github', 'workflows');
+    if (existsSync(workflows)) {
+      for (const name of readdirSync(workflows).sort()) if (/\.ya?ml$/.test(name)) files.push(join(workflows, name));
+    }
     if (existsSync(join(base, 'public'))) {
       for (const name of readdirSync(join(base, 'public')).sort()) if (name.endsWith('.webmanifest')) files.push(join(base, 'public', name));
     }

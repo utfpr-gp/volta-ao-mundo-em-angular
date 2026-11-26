@@ -1,0 +1,190 @@
+<vm-chapter-page slug="49-github-actions">
+  <vm-view kind="mission" title="Só vai ao ar o que passou">
+    <p class="lead">
+      Até aqui, um push com um teste quebrado ia direto para o ar. Agora, a cada push, o GitHub baixa o Passaporte numa máquina
+      limpa, roda os testes e o build, e marca o commit com ✓ ou ✗. O Render só publica os commits com ✓.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-49/checks.png"
+      width="1150"
+      height="470"
+      alt="A lista de commits de um repositório no GitHub. O commit mais novo, fix: cada país conta uma vez no resumo, tem um sinal de visto verde com 1/1. O anterior, feat: resumo do diário mais simples, tem um X vermelho com 0/1."
+    />
+    <p>
+      Esses dois commits são do repositório deste livro. O de baixo quebrou um teste e nunca chegou ao Render; o de cima
+      corrigiu e foi publicado sozinho. Ao final, você vai saber escrever um workflow do GitHub Actions, ler o que ele diz quando
+      algo falha e fazer o Render esperar por ele.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A revisão antes da decolagem">
+    <vm-analogy emoji="✈️" title="O avião só sai do chão revisado">
+      <p>
+        Antes de cada voo, o avião passa pela mesma revisão: combustível, pneus, instrumentos. Ninguém pula etapas porque "ontem
+        estava tudo bem". E, se um item falha, o avião fica no chão; os passageiros esperam o voo seguinte, mas ninguém decola
+        com um problema conhecido.
+      </p>
+      <p>
+        O GitHub Actions é essa revisão, feita a cada push, sempre do mesmo jeito. O Render é a torre de controle: só libera a
+        decolagem quando a revisão termina sem nenhum item vermelho. Se algo falhou, a versão que já está no ar continua voando.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Um workflow por dentro">
+    <h3>Integração contínua</h3>
+    <p>
+      Rodar os testes antes de cada push depende de lembrar. A <vm-term name="integracao-continua">integração contínua</vm-term>
+      (CI) tira a memória da conta: uma máquina confere cada mudança assim que ela chega ao repositório. No GitHub, quem faz isso
+      é o GitHub Actions, gratuito nos repositórios públicos.
+    </p>
+    <p>
+      O que fazer, e quando, fica num <vm-term name="workflow">workflow</vm-term>: um arquivo YAML na pasta
+      <code>.github/workflows</code> do repositório. O do Passaporte:
+    </p>
+    <vm-code snippet="49/etapa/.github/workflows/ci.yml" caption=".github/workflows/ci.yml" />
+    <ul>
+      <li>
+        <code>on</code> diz quando rodar: a cada push na <code>main</code> e a cada pull request. No YAML, a indentação é a
+        estrutura: <code>branches</code> está dentro de <code>push</code>, que está dentro de <code>on</code>.
+      </li>
+      <li>
+        <code>jobs</code> lista os trabalhos. O Passaporte tem um, o <code>test-and-build</code>, com o nome "Testes e build",
+        que é o nome do check que aparece no GitHub.
+      </li>
+      <li>
+        <code>runs-on: ubuntu-latest</code> escolhe o <vm-term name="runner">runner</vm-term>: uma máquina Linux nova, emprestada
+        pelo GitHub para essa execução e descartada no fim. Ela não tem nada da sua máquina: nem o <code>node_modules</code>,
+        nem arquivos que você esqueceu de commitar.
+      </li>
+      <li>
+        <code>steps</code> são os passos, em ordem. Os que têm <code>uses</code> rodam uma action pronta:
+        <code>actions/checkout</code> baixa o repositório, e <code>actions/setup-node</code> instala o Node.js 24 (e, como o
+        <code>package.json</code> tem <code>"packageManager": "npm@…"</code>, guarda o cache do npm sozinho). Os que têm
+        <code>run</code> rodam um comando, como no seu terminal.
+      </li>
+    </ul>
+    <p>
+      Se um passo falha, o job para ali: os passos seguintes nem rodam, e o check fica vermelho. O <code>npm test</code> não fica
+      esperando mudanças como na sua máquina: o GitHub Actions define a variável <code>CI</code>, e o Angular roda os testes uma
+      vez só.
+    </p>
+
+    <h3>O Render espera o CI</h3>
+    <p>
+      No Render, o <strong>Auto-Deploy</strong> tem três opções: <strong>On Commit</strong> (o padrão), que publica assim que
+      recebe o push; <strong>After CI Checks Pass</strong>, que espera todos os checks do commit; e <strong>Off</strong>. Com a
+      segunda, o CI vira o porteiro do deploy. No <code>render.yaml</code>, é uma linha:
+    </p>
+    <vm-code snippet="49/etapa/render.yaml" caption="render.yaml" />
+
+    <vm-ci-sim />
+  </vm-view>
+
+  <vm-view kind="code" title="Ligando o CI">
+    <vm-steps label="Ligar o GitHub Actions ao Passaporte">
+      <ng-template vmStep="O workflow">
+        <p>
+          Crie a pasta <code>.github/workflows</code> na raiz do projeto (o ponto no começo do nome faz parte dele) e, dentro
+          dela, o <code>ci.yml</code> da seção anterior. Faça o commit e o push.
+        </p>
+        <p>
+          No GitHub, abra a aba <strong>Actions</strong> do repositório: a execução aparece com o nome do commit. Clique nela e
+          no job "Testes e build" para ver cada passo. No Passaporte do livro, a execução inteira levou menos de 30 segundos:
+        </p>
+        <vm-code snippet="49/log-verde" caption="Actions, job Testes e build (trechos)" />
+      </ng-template>
+      <ng-template vmStep="O Render espera">
+        <p>
+          No Render, abra o site, vá a <strong>Settings</strong> e, em <strong>Auto-Deploy</strong>, escolha
+          <strong>After CI Checks Pass</strong>. Se você criou o site pelo Blueprint, ponha o
+          <code>autoDeployTrigger: checksPass</code> no <code>render.yaml</code>.
+        </p>
+        <p>
+          O Render precisa enxergar os checks do GitHub: ele tem de estar ligado ao repositório pelo app do Render no GitHub,
+          como acontece quando você escolhe o repositório pelo painel.
+        </p>
+      </ng-template>
+      <ng-template vmStep="A prova do vermelho">
+        <p>
+          Simule um descuido. Numa branch nova, "simplifique" o resumo do diário, contando os países pelo número de viagens:
+        </p>
+        <vm-code snippet="49/defeito" caption="src/app/features/passport/trip-stats.ts (com defeito)" />
+        <vm-code snippet="49/branch" caption="terminal" />
+        <p>
+          <strong>O que muda na tela:</strong> no pull request, o check "Testes e build" fica vermelho. Clique em
+          <strong>Details</strong>: o log mostra o teste que pegou o defeito, igual ao que o <code>npm test</code> mostraria na
+          sua máquina (<vm-see-chapter [number]="42" />):
+        </p>
+        <vm-code snippet="49/log-vermelho" caption="Actions, passo npm test" />
+        <p>
+          Desfaça a mudança e faça outro push na mesma branch: o check fica verde. Faça o merge, e o Render publica a main
+          sozinho, logo depois que o CI da main termina.
+        </p>
+      </ng-template>
+    </vm-steps>
+
+    <vm-deep-dive title="Barrar o merge, e não só o deploy">
+      <p>
+        O "After CI Checks Pass" protege o site, mas a <code>main</code> ainda aceita um merge com o check vermelho. Para barrar
+        isso também, o GitHub tem as regras de proteção de branch, com a opção
+        <strong>Require status checks to pass before merging</strong>: com ela, o botão de merge só libera depois que o check
+        escolhido ("Testes e build") passar.
+      </p>
+      <p>
+        Outro caminho para publicar é o <strong>Deploy Hook</strong> do Render: uma URL secreta (Settings → Deploy Hook) que
+        dispara um deploy quando recebe um pedido. O workflow guarda a URL como secret do repositório e a chama num último passo,
+        depois dos testes. O livro ficou com o "After CI Checks Pass" porque não tem segredo nenhum para guardar.
+      </p>
+    </vm-deep-dive>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Quando a revisão reprova">
+    <vm-pitfall title="Na minha máquina funciona" where="O que o passo npm ci mostra no GitHub Actions" message="`npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync.">
+      <vm-code snippet="49/npm-ci" caption="Actions, passo npm ci" />
+      <p>
+        Você instalou um pacote, o app rodou, e o commit levou só o <code>package.json</code>. Na sua máquina, o
+        <code>node_modules</code> já tinha tudo; o runner começa do zero, e o <code>npm ci</code> se recusa a instalar com um
+        lock que não bate. O job para no segundo passo, e os testes nem rodam. <strong>Como sair:</strong> rode
+        <code>npm install</code> e mande o <code>package-lock.json</code> no mesmo commit do <code>package.json</code>.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O YAML torto" where="O que o GitHub mostra na execução, em Annotations" message="Invalid workflow file: .github/workflows/ci.yml#L1">
+      <vm-code snippet="49/yaml-invalido" caption=".github/workflows/ci.yml (errado)" />
+      <vm-code snippet="49/yaml-erro" caption="Actions, Annotations" />
+      <p>
+        O <code>node-version</code> ficou na mesma coluna do <code>with</code>, e não dentro dele. Para o YAML, o
+        <code>with</code> ficou vazio e o <code>node-version</code> virou uma chave solta do passo. O GitHub nem chega a criar
+        o job: a execução falha na hora, com a linha e a coluna de cada problema. <strong>Como sair:</strong> conte os
+        espaços; o que fica dentro de uma chave vai dois espaços mais à direita, e a anotação diz a linha onde olhar.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O commit que nunca vai ao ar" where="O que o Render mostra depois de um push sem checks" message="(nenhum deploy, nenhum evento)">
+      <p>
+        Com "After CI Checks Pass", o Render só publica um commit que tem checks, e todos verdes. Nos testes do livro, um commit
+        com <code>[skip ci]</code> na mensagem (que faz o GitHub não rodar o workflow) ficou sem nenhum check, e o Render não
+        fez nada: nem deploy, nem evento. O mesmo acontece se o workflow não roda para aquela branch (um <code>on</code> só com
+        <code>pull_request</code>, por exemplo), ou se o Render não está ligado ao repositório pelo app do GitHub: no livro, antes
+        de o app ter acesso ao repositório, nenhum push chegava ao Render. <strong>Como sair:</strong> confira na lista de
+        commits se o último tem ✓; sem marca nenhuma, o Render não vai publicar. O workflow precisa rodar no
+        <code>push</code> da branch que o Render publica.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="49-github-actions" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> O Passaporte é publicado sozinho, e só quando os testes passam. Falta uma parada: no
+      <vm-see-chapter [number]="50" />, o PWABuilder transforma o Passaporte publicado num pacote para as lojas de aplicativos,
+      e você instala o app no seu celular Android.
+    </p>
+  </vm-view>
+</vm-chapter-page>

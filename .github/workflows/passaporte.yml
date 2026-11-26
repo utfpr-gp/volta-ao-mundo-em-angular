@@ -1,0 +1,28 @@
+name: Passaporte
+
+# O CI da demonstração do Passaporte (capítulo 49): o mesmo ci.yml da etapa, rodando dentro da pasta dela.
+# O Render (passaporte/render.yaml) só publica a demonstração depois que este workflow passa.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: passaporte/etapas/49-github-actions
+
+jobs:
+  test-and-build:
+    name: Testes e build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

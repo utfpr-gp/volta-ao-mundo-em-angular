@@ -514,6 +514,24 @@ export const GLOSSARY = {
       'Uma regra do servidor que responde a um endereço com o conteúdo de outro arquivo, sem mudar o endereço na barra do navegador. Numa SPA, faz /passaporte receber o casco do app.',
     chapter: 48,
   },
+  'integracao-continua': {
+    term: 'Integração contínua (CI)',
+    definition:
+      'O hábito de conferir cada mudança assim que ela chega ao repositório: uma máquina baixa o código, instala tudo, roda os testes e o build, e avisa se algo quebrou. Em inglês, continuous integration.',
+    chapter: 49,
+  },
+  workflow: {
+    term: 'Workflow (GitHub Actions)',
+    definition:
+      'Um arquivo YAML em .github/workflows que diz ao GitHub o que fazer e quando: por exemplo, a cada push na main, rodar npm ci, npm test e npm run build.',
+    chapter: 49,
+  },
+  runner: {
+    term: 'Runner',
+    definition:
+      'A máquina que executa um workflow do GitHub Actions. Com runs-on: ubuntu-latest, o GitHub empresta uma máquina Linux nova para cada execução e a descarta no fim.',
+    chapter: 49,
+  },
 } as const satisfies Record<string, GlossaryEntry>;
 
 export type TermName = keyof typeof GLOSSARY;

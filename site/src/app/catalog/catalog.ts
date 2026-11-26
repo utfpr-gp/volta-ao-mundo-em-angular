@@ -667,6 +667,9 @@ const ENTRIES: ChapterEntry[] = [
     description:
       'Faça o GitHub rodar os testes e o build a cada push e publicar o app sozinho quando tudo passar, com um workflow do GitHub Actions.',
     minutes: 30,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '50-pwabuilder',
