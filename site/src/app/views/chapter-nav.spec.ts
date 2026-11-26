@@ -12,7 +12,20 @@ describe('ChapterNav', () => {
     return fixture.nativeElement as HTMLElement;
   };
 
-  it('links to the previous and next chapters and marks unpublished ones as "em breve"', async () => {
+  const firstUnpublished = CHAPTERS.find((chapter) => !chapter.published);
+
+  it('links to the previous and next chapters', async () => {
+    const element = await render(CHAPTERS[1].slug);
+    const links = [...element.querySelectorAll('a')];
+    expect(links.map((link) => link.getAttribute('href'))).toEqual([`/capitulos/${CHAPTERS[0].slug}`, `/capitulos/${CHAPTERS[2].slug}`]);
+  });
+
+  it('the last chapter has only the previous link', async () => {
+    const element = await render(CHAPTERS.at(-1)!.slug);
+    expect([...element.querySelectorAll('a')].map((link) => link.getAttribute('href'))).toEqual([`/capitulos/${CHAPTERS.at(-2)!.slug}`]);
+  });
+
+  it.skipIf(!firstUnpublished)('marks unpublished chapters as "em breve"', async () => {
     const firstUnpublished = CHAPTERS.find((chapter) => !chapter.published)!;
     const current = CHAPTERS[firstUnpublished.number - 2];
     const previous = CHAPTERS[firstUnpublished.number - 3];

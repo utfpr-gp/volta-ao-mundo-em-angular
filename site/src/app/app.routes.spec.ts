@@ -1,8 +1,10 @@
 import { Route } from '@angular/router';
 import { routes } from './app.routes';
+import { CHAPTERS } from './catalog/catalog';
 import { ComingSoon } from './chapters/coming-soon';
 
 const find = (path: string) => routes.find((route) => route.path === path) as Route;
+const unpublished = CHAPTERS.find((chapter) => !chapter.published);
 
 describe('routes', () => {
   it('creates one route per chapter at capitulos/<slug>', () => {
@@ -21,8 +23,8 @@ describe('routes', () => {
     expect(data['description']).toMatch(/signals/);
   });
 
-  it('unpublished chapter routes load ComingSoon and have kind coming-soon', async () => {
-    const route = find('capitulos/50-pwabuilder');
+  it.skipIf(!unpublished)('unpublished chapter routes load ComingSoon and have kind coming-soon', async () => {
+    const route = find(`capitulos/${unpublished!.slug}`);
     expect(route.data!['kind']).toBe('coming-soon');
     expect(await route.loadComponent!()).toBe(ComingSoon);
   });

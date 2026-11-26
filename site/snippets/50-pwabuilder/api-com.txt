@@ -1,0 +1,18 @@
+$ curl "https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://passaporte-livro-k64a.onrender.com&relation=delegate_permission/common.handle_all_urls"
+{
+  "statements": [
+    {
+      "source": { "web": { "site": "https://passaporte-livro-k64a.onrender.com." } },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.onrender.passaporte_livro_k64a.twa",
+          "certificate": {
+            "sha256Fingerprint": "F9:5E:B8:A2:BA:0E:E5:42:F8:F8:6A:07:F5:4D:FF:7D:4F:0A:76:5C:67:77:D7:75:2D:B3:94:D1:B6:FD:A5:E6"
+          }
+        }
+      }
+    }
+  ],
+  …
+}

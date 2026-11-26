@@ -308,3 +308,17 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   sincronização manual do Blueprint). O CI da demonstração fica em `.github/workflows/passaporte.yml` (raiz do livro, com
   `working-directory` na etapa). Capturas de páginas públicas do GitHub (lista de commits, execução) funcionam no Chrome
   headless sem login; os logs pedem login (use `gh run view --log`).
+- **Capítulo 50 (PWABuilder), verificado no pwabuilder.com (2026-11-26) com a demonstração no Render:** a documentação do
+  PWABuilder é montada por JavaScript; leia os `.md` em `github.com/pwa-builder/PWABuilder/tree/main/docs/builder`. O site
+  usa web components (`wa-button`, shadow DOM): para dirigir no Chrome headless, procure os elementos atravessando os
+  `shadowRoot` e libere downloads com `Browser.setDownloadBehavior`. A tela de pacotes oferece Microsoft Store, Google Play e
+  App Store ("Experimental"); o Meta Quest não aparece. A raiz `/` do Passaporte (página de redirecionamento da
+  pré-renderização, sem `<link rel="manifest">`) dá "Missing Name" e `We did not find a manifest on your site before our
+  tests timed out so we have created a manifest for you!`; com `/paises`, 0 erros. A análise às vezes estoura o tempo
+  mesmo com `/paises` (rodar de novo). O relatório fica guardado por endereço: depois de mudar o manifesto, use
+  `/paises?v=2`. O zip do Google Play traz `.aab`, `.apk`, `assetlinks.json`, `signing.keystore`, `signing-key-info.txt` e
+  `Readme.html`; o Package ID sugerido é `com.onrender.passaporte_livro_k64a.twa`. O `ng build` copia
+  `public/.well-known/`. A API `digitalassetlinks.googleapis.com/v1/statements:list` dá `ERROR_CODE_FETCH_ERROR` (404) sem o
+  arquivo e lista o `androidApp` com ele. Custos conferidos: Google Play US$ 25 uma vez (conta pessoal nova: teste fechado
+  com 12 testadores por 14 dias), Apple US$ 99/ano, Microsoft Store gratuita pelo fluxo novo. Não foi testada a instalação
+  num celular.

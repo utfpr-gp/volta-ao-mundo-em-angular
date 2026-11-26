@@ -1,0 +1,7 @@
+$ curl "https://digitalassetlinks.googleapis.com/v1/statements:list?source.web.site=https://passaporte-livro-k64a.onrender.com&relation=delegate_permission/common.handle_all_urls"
+{
+  "debugString": "********************* ERRORS *********************\n* Error: unavailable: Error fetching statements from https://passaporte-livro-k64a.onrender.com./.well-known/assetlinks.json (which is equivalent to 'https://passaporte-livro-k64a.onrender.com/.well-known/assetlinks.json'): 404 Not Found [0] while fetching Web statements from …",
+  "errorCode": [
+    "ERROR_CODE_FETCH_ERROR"
+  ]
+}

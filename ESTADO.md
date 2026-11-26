@@ -2,20 +2,20 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-11-26 (capítulo 48 na main; 49 em revisão).
+> Última atualização: 2026-11-26 (capítulo 48 na main; 49 e 50 em revisão: o livro está completo nos PRs).
 
 ## Publicado
 
 - **Capítulos 1 a 48**, em nove trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários, Back-end, Qualidade e o começo de Produção. Todos com `verifiedWithAngular: '22.2'`.
 - **Último capítulo novo:** 48, Deploy no Render (PR #46). Antes, o 47, PWA (PR #45), o 38, Guards (PR #34), o 37, Login com Supabase (PR #33), e o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
 - **Na `main`:** os capítulos 39 a 46 entraram pelos PRs #35 e #44, o 47 (PWA) pelo #45 e o 48 (Deploy no Render) pelo #46, este com merge autorizado pelo professor na conversa (2026-11-26). Todo PR aponta para a `main`.
-- **Em revisão:** capítulo 49, GitHub Actions (`trilha-producao-5`, PR para a `main`) e a correção de três links do MDN (`links-mdn`, PR #47; a checagem semanal "Links externos" falhava desde outubro).
-- **Demonstração no Render:** <https://passaporte-livro-k64a.onrender.com>, criada pelo Blueprint `passaporte/render.yaml` (id `exs-dbpndu8m7kps73821lu0`, workspace "My Workspace" do professor, autorizado em 2026-11-10 a "criar e manter"). Desde o 49, ela publica a etapa 49 com `autoDeployTrigger: checksPass`, esperando o workflow `.github/workflows/passaporte.yml` do livro. O app do Render no GitHub ganhou acesso ao repositório em 2026-11-26 (antes, nenhum push disparava deploy). Hoje o Blueprint lê a branch `ci-49`, dos experimentos; **depois do merge do 49, apontar para a `main`** (`update_blueprint` com `branch: main`) e apagar a `ci-49`. Ficaram dois serviços de teste para o professor apagar no painel: `passaporte-volta-ao-mundo-k64a` e `passaporte-teste-404`.
+- **Em revisão:** capítulo 49, GitHub Actions (`trilha-producao-5`, PR #48), capítulo 50, PWABuilder (`trilha-producao-6`, PR #49, criada a partir da `trilha-producao-5`: até o #48 entrar, o diff do #49 mostra também o 49) e a correção de três links do MDN (`links-mdn`, PR #47; a checagem semanal "Links externos" falhava desde outubro). Com o #49, **todos os 50 capítulos ficam publicados**; os testes que procuravam um capítulo "em breve" passaram a pular quando não há nenhum.
+- **Demonstração no Render:** <https://passaporte-livro-k64a.onrender.com>, criada pelo Blueprint `passaporte/render.yaml` (id `exs-dbpndu8m7kps73821lu0`, workspace "My Workspace" do professor, autorizado em 2026-11-10 a "criar e manter"). Desde o 50, ela publica a etapa 50 com `autoDeployTrigger: checksPass` (e serve o `/.well-known/assetlinks.json` do pacote Android `com.onrender.passaporte_livro_k64a.twa`), esperando o workflow `.github/workflows/passaporte.yml` do livro. O app do Render no GitHub ganhou acesso ao repositório em 2026-11-26 (antes, nenhum push disparava deploy). Hoje o Blueprint lê a branch `trilha-producao-6`; **depois do merge do #48 e do #49, apontar para a `main`** (`update_blueprint` com `branch: main`) e apagar a branch `ci-49`, dos experimentos do 49. A chave de assinatura do pacote Android da demonstração (`signing.keystore`) ficou só na pasta de rascunho da sessão e não foi para o Git: um pacote novo exigiria gerar outra chave e trocar o `assetlinks.json`. Ficaram dois serviços de teste para o professor apagar no painel: `passaporte-volta-ao-mundo-k64a` e `passaporte-teste-404`.
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
-## O Passaporte, na etapa 49
+## O Passaporte, na etapa 50
 
-`passaporte/etapas/49-github-actions/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
+`passaporte/etapas/50-pwabuilder/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
 
 - `/paises`: lista, destaque, progresso mundial, filtro; dados da API de países do livro (`site/public/api/paises.json`).
 - `/paises/:code`: rotas filhas com visão geral, anotações e o tempo (Open-Meteo).
@@ -36,14 +36,11 @@
 - **Desde o 47, PWA:** `@angular/service-worker` (instalado à mão: o `ng add @angular/pwa` falha no `npm install` dele por causa do `allow-scripts` do npm local; o `@angular/pwa` tem `save: false` e não fica no `package.json`). `angular.json` com `serviceWorker: "ngsw-config.json"` na produção e orçamento inicial com aviso em 650 kB (o pacote foi de 599,91 para 606,89 kB). `ngsw-config.json`: grupos `app` (prefetch) e `assets` (lazy), e `dataGroups` `paises` (`performance`, 7d) e `tempo` (Open-Meteo, `freshness`, 5s, 1h). **Nunca a API do Supabase:** reproduzido, o Bruno viu as viagens da Ana. `public/manifest.webmanifest` em português, ícones novos em `public/icons/` (o globo dourado), `theme-color` e `apple-touch-icon` no `index.html`. `provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode(), registrationStrategy: 'registerWhenStable:30000' })`. `core/app-updates.ts` (`AppUpdates`, `ready` com o `VERSION_READY`, `reload()`); faixa `role="status"` no `app.html`. Specs do `App` com `provideServiceWorker('ngsw-worker.js', { enabled: false })`. Para testar: `npm run build` e `npx http-server -p 8080 -c-1 dist/passaporte/browser` (sem fallback: `/passaporte` direto dá 404 antes do service worker). O extrator de trechos lê também o `ngsw-config.json` e o `public/*.webmanifest` das etapas.
 - **Desde o 48, publicado no Render:** `render.yaml` na raiz da etapa (site estático, `npm ci && npm run build`, `dist/passaporte/browser`) com regras de rewrite só para as rotas `RenderMode.Client` (`/passaporte`, `/entrar`, `/paises/:code/clima`, `/paises/:code/anotacoes` → `/index.csr.html`); `scripts/not-found.mjs` copia o `index.csr.html` para `404.html` no fim do `npm run build`. Rota nova com `RenderMode.Client` precisa de regra nova. O README explica o `SITE_URL` e o **Site URL** do Supabase. O extrator de trechos lê também o `render.yaml` das etapas (linguagem `yaml`, marca `# [!code highlight]`).
 - **Desde o 49, CI no GitHub Actions:** `.github/workflows/ci.yml` na etapa (push na `main` e pull requests; `actions/checkout@v7`, `actions/setup-node@v7` com `node-version: 24`, cache automático pelo `packageManager`; `npm ci`, `npm test`, `npm run build`). O `render.yaml` ganhou `autoDeployTrigger: checksPass`. O extrator de trechos lê também os `.github/workflows/*.yml` das etapas.
+- **Desde o 50, pronto para as lojas:** o manifesto ganhou `id: "/"`, `categories: ["travel"]` e `screenshots` (`public/screenshots/paises-larga.png` 1280×720 `wide`, `japao-estreita.png` 412×915 `narrow`); `public/.well-known/assetlinks.json` com o vínculo do pacote Android da demonstração (quem lê troca pelo seu); o `.gitignore` ignora `*.keystore` e `signing-key-info.txt`. Esta é a última etapa do livro.
 
 ## Próximos capítulos (catálogo)
 
-| Nº | Slug | Pergunta |
-| --- | --- | --- |
-| 50 | `50-pwabuilder` | Como levar o PWA para as lojas de aplicativos com o PWABuilder? |
-
-As perguntas e descrições completas estão em `site/src/app/catalog/catalog.ts`.
+Os 50 capítulos do catálogo estão escritos. O que vier depois (a trilha "Para ir além" do projeto: SSR com servidor Node, animações, IA no desenvolvimento Angular) ainda não está no catálogo.
 
 **Supabase local para conferir (2026-11-08):** `npx supabase@3.0.0 init` numa pasta de rascunho, portas trocadas para 553xx no `config.toml` (outro projeto já usava as 543xx), `supabase start -x vector,logflare,imgproxy,edge-runtime,realtime,storage-api,studio,postgres-meta`; o SQL da etapa roda com `docker exec -i supabase_db_<project_id> psql -U postgres`.
 

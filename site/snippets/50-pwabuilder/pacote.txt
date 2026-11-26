@@ -1,0 +1,7 @@
+Passaporte - Google Play package.zip
+├── Passaporte.aab          ← o pacote para enviar ao Google Play
+├── Passaporte.apk          ← o mesmo app, para instalar direto num celular de teste
+├── assetlinks.json         ← o vínculo entre o app e o site
+├── signing.keystore        ← a chave que assina o app (fora do Git!)
+├── signing-key-info.txt    ← as senhas da chave (fora do Git!)
+└── Readme.html             ← leva às instruções do PWABuilder

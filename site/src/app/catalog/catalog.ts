@@ -677,8 +677,11 @@ const ENTRIES: ChapterEntry[] = [
     question: 'Como levar o PWA para as lojas de aplicativos com o PWABuilder?',
     shortTitle: 'PWABuilder',
     description:
-      'Empacote o Passaporte com o PWABuilder para Google Play, Microsoft Store e outras lojas, e instale o pacote Android no seu celular.',
+      'Empacote o Passaporte com o PWABuilder para o Google Play, a Microsoft Store e a App Store, e prove ao Android que o app e o site são do mesmo dono.',
     minutes: 40,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
 ];
 
