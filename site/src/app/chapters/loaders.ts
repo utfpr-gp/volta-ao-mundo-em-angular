@@ -53,4 +53,5 @@ export const LOADERS: Partial<Record<string, () => Promise<Type<unknown>>>> = {
   '46-seo': () => import('./46-seo/chapter').then((m) => m.Chapter46),
   '47-pwa': () => import('./47-pwa/chapter').then((m) => m.Chapter47),
   '48-deploy-no-render': () => import('./48-deploy-no-render/chapter').then((m) => m.Chapter48),
+  '49-github-actions': () => import('./49-github-actions/chapter').then((m) => m.Chapter49),
 };

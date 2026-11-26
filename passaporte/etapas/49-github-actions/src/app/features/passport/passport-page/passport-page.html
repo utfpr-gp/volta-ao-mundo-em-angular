@@ -1,0 +1,55 @@
+<h1 class="mb-4 text-2xl font-extrabold text-ink">Meu passaporte</h1>
+
+<div class="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+  <app-trip-form />
+
+  <section class="rounded-card border border-line bg-card p-5 text-ink shadow-sm">
+    <h2 class="mb-3 text-xl font-extrabold"><span aria-hidden="true">📓</span> Diário de viagens</h2>
+    @if (stats(); as stats) {
+      @if (stats.count) {
+        <p data-stats class="mb-3 text-sm text-ink-muted">
+          {{ stats.count }} {{ stats.count === 1 ? 'viagem' : 'viagens' }} · {{ stats.days }} dias fora ·
+          {{ stats.countries }} {{ stats.countries === 1 ? 'país' : 'países' }}@if (stats.favorite; as favorite) { · transporte favorito: {{ transportLabels[favorite] }}}
+        </p>
+      }
+    }
+    <ol class="flex flex-col gap-2">
+      @for (entry of diary(); track entry.trip.id) {
+        <li class="rounded-lg bg-surface px-3 py-2">
+          <strong>{{ entry.trip.country | flag }} {{ entry.name }}</strong>
+          <span class="block text-sm text-ink-muted">
+            Chegada em {{ entry.trip.arrival | date: 'dd/MM/yyyy' }} · {{ entry.trip.days }} dias · {{ transportLabels[entry.trip.transport] }}{{ entry.trip.companion ? ' · com ' + entry.trip.companion : '' }}
+          </span>
+          <span class="mt-1 flex gap-4 text-sm font-bold">
+            <button type="button" class="text-link underline" [attr.aria-label]="'Editar a viagem: ' + entry.name" (click)="edit(entry.trip)">
+              Editar
+            </button>
+            <button type="button" class="text-danger underline" [attr.aria-label]="'Apagar a viagem: ' + entry.name" (click)="remove(entry.trip)">
+              Apagar
+            </button>
+          </span>
+        </li>
+      } @empty {
+        <li class="text-ink-muted">Nenhuma viagem registrada ainda.</li>
+      }
+    </ol>
+  </section>
+</div>
+
+<app-stamp-book class="mt-6 block" [countries]="passport.countries()" />
+
+<!-- O gráfico (e o Chart.js, que pesa mais que o resto da página) só é baixado quando o espaço dele aparece na tela. -->
+@defer (on viewport) {
+  <app-trip-chart class="mt-6 block" [trips]="passport.trips()" />
+} @placeholder {
+  <!-- O placeholder ocupa o lugar do gráfico: é ele que o on viewport observa, e a página não pula quando o gráfico chega. -->
+  <div class="mt-6 h-[22rem] rounded-card border border-dashed border-line bg-card"></div>
+} @loading (minimum 300ms) {
+  <p class="mt-6 flex h-[22rem] items-center justify-center rounded-card border border-line bg-card text-ink-muted" role="status">
+    Carregando o gráfico…
+  </p>
+} @error {
+  <p class="mt-6 rounded-card border border-dashed border-danger bg-card p-5 text-ink" role="alert">
+    Não foi possível carregar o gráfico. Confira a conexão e recarregue a página.
+  </p>
+}

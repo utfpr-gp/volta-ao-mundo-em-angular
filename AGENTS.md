@@ -295,3 +295,16 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   `.nvmrc` da raiz do livro (Node 24.22.2). Demonstração: `passaporte/render.yaml` (Blueprint
   `exs-dbpndu8m7kps73821lu0`, serviço `passaporte-livro-k64a`, https://passaporte-livro-k64a.onrender.com), com `rootDir`
   na etapa; o `npm ci` dentro da pasta da etapa instala pela raiz do workspace.
+- **Capítulo 49 (GitHub Actions), verificado no GitHub Actions e no Render (2026-11-26):** `actions/checkout` e
+  `actions/setup-node` estão na v7 (v7.0.1 e v7.1.0); o `setup-node` liga o cache do npm sozinho quando o `package.json`
+  tem `packageManager`. O `ng test` com `CI=true` roda uma vez (documentado em angular.dev/guide/testing). Passo que falha
+  interrompe o job (os seguintes aparecem como não rodados). `package.json` com dependência nova sem o lock:
+  `` `npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. ``
+  e `Missing: canvas-confetti@1.9.4 from lock file`. YAML com `with:` vazio: `Invalid workflow file:
+  .github/workflows/ci.yml#L1` / `(Line: 14, Col: 14): Unexpected value '', (Line: 15, Col: 9): Unexpected value
+  'node-version'` (o job nem é criado). No Render com `checksPass`: commit vermelho é pulado sem evento; commit verde é
+  publicado segundos depois do CI (gatilho `new_commit`); commit com `[skip ci]` (zero checks) não é publicado, sem evento.
+  **Sem o app do Render instalado no GitHub para o repositório, nenhum push dispara deploy** (no 48, tudo entrou por
+  sincronização manual do Blueprint). O CI da demonstração fica em `.github/workflows/passaporte.yml` (raiz do livro, com
+  `working-directory` na etapa). Capturas de páginas públicas do GitHub (lista de commits, execução) funcionam no Chrome
+  headless sem login; os logs pedem login (use `gh run view --log`).

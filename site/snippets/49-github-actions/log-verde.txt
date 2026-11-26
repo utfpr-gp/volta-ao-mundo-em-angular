@@ -1,0 +1,15 @@
+Run actions/checkout@v7
+Run actions/setup-node@v7
+  node-version: 24
+Found in cache @ /opt/hostedtoolcache/node/24.22.3/x64
+Run npm ci
+added 326 packages, and audited 328 packages in 7s
+Run npm test
+ Test Files  28 passed (28)
+      Tests  149 passed (149)
+Run npm run build
+> ng build && node scripts/sitemap.mjs && node scripts/not-found.mjs
+                    | Initial total  | 606.89 kB |               155.79 kB
+Prerendered 393 static routes.
+sitemap.xml com 197 páginas, e robots.txt.
+404.html, a partir do index.csr.html.

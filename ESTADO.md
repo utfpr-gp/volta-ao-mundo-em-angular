@@ -2,20 +2,20 @@
 
 > Onde a construção do livro parou e o que vem a seguir. **Leia antes de começar; atualize ao publicar um capítulo.**
 > As regras permanentes (escrita, anatomia do capítulo, regras técnicas) estão no [AGENTS.md](AGENTS.md); aqui fica só o que muda.
-> Última atualização: 2026-11-10 (capítulo 48 em revisão).
+> Última atualização: 2026-11-26 (capítulo 48 na main; 49 em revisão).
 
 ## Publicado
 
-- **Capítulos 1 a 47**, em nove trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários, Back-end, Qualidade e o começo de Produção. Todos com `verifiedWithAngular: '22.2'`.
-- **Último capítulo novo:** 47, PWA (PR #45). Antes, o 38, Guards (PR #34), o 37, Login com Supabase (PR #33), e o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
-- **Na `main`:** os capítulos 39 a 46 entraram pelos PRs #35 e #44, e o 47 (PWA) pelo PR #45. Todo PR aponta para a `main`.
-- **Em revisão:** capítulo 48, Deploy no Render (`trilha-producao-4`, PR para a `main`). O merge fica com o professor.
-- **Demonstração no Render:** <https://passaporte-livro-k64a.onrender.com>, criada pelo Blueprint `passaporte/render.yaml` (id `exs-dbpndu8m7kps73821lu0`, workspace "My Workspace" do professor, autorizado em 2026-11-10 a "criar e manter"). Hoje o Blueprint lê a branch `render-48`; **depois do merge do 48, apontar para a `main`** (`update_blueprint` com `branch: main`) e apagar a `render-48`. Ficaram dois serviços de teste para o professor apagar no painel: `passaporte-volta-ao-mundo-k64a` (com uma regra `/*` que o Blueprint não remove) e `passaporte-teste-404`.
+- **Capítulos 1 a 48**, em nove trilhas: Embarque, Fundamentos, Componentes, Navegação, Dados, Formulários, Back-end, Qualidade e o começo de Produção. Todos com `verifiedWithAngular: '22.2'`.
+- **Último capítulo novo:** 48, Deploy no Render (PR #46). Antes, o 47, PWA (PR #45), o 38, Guards (PR #34), o 37, Login com Supabase (PR #33), e o 36, Signal Forms (PR #31). Antes dele, o 35, Validação (PR #30, que também corrigiu os READMEs de todas as etapas, que diziam "capítulo 5"). **Última correção:** capítulo 20, a tabela "O mesmo nome, escalas diferentes" (`xl:`, `max-w-xl`, `text-xl`, `rounded-xl`) e a conta de `max-w-6xl` em px (PR #29).
+- **Na `main`:** os capítulos 39 a 46 entraram pelos PRs #35 e #44, o 47 (PWA) pelo #45 e o 48 (Deploy no Render) pelo #46, este com merge autorizado pelo professor na conversa (2026-11-26). Todo PR aponta para a `main`.
+- **Em revisão:** capítulo 49, GitHub Actions (`trilha-producao-5`, PR para a `main`) e a correção de três links do MDN (`links-mdn`, PR #47; a checagem semanal "Links externos" falhava desde outubro).
+- **Demonstração no Render:** <https://passaporte-livro-k64a.onrender.com>, criada pelo Blueprint `passaporte/render.yaml` (id `exs-dbpndu8m7kps73821lu0`, workspace "My Workspace" do professor, autorizado em 2026-11-10 a "criar e manter"). Desde o 49, ela publica a etapa 49 com `autoDeployTrigger: checksPass`, esperando o workflow `.github/workflows/passaporte.yml` do livro. O app do Render no GitHub ganhou acesso ao repositório em 2026-11-26 (antes, nenhum push disparava deploy). Hoje o Blueprint lê a branch `ci-49`, dos experimentos; **depois do merge do 49, apontar para a `main`** (`update_blueprint` com `branch: main`) e apagar a `ci-49`. Ficaram dois serviços de teste para o professor apagar no painel: `passaporte-volta-ao-mundo-k64a` e `passaporte-teste-404`.
 - Site: <https://utfpr-gp.github.io/volta-ao-mundo-em-angular/>
 
-## O Passaporte, na etapa 48
+## O Passaporte, na etapa 49
 
-`passaporte/etapas/48-deploy-no-render/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
+`passaporte/etapas/49-github-actions/`. Organização por funcionalidades (`core/`, `features/`, `shared/`), rotas com `loadComponent`/`loadChildren`:
 
 - `/paises`: lista, destaque, progresso mundial, filtro; dados da API de países do livro (`site/public/api/paises.json`).
 - `/paises/:code`: rotas filhas com visão geral, anotações e o tempo (Open-Meteo).
@@ -35,12 +35,12 @@
 - **Desde o 46, pré-renderizado (SSG):** `@angular/ssr` e `@angular/platform-server`; `angular.json` com `server: src/main.server.ts` e `outputMode: "static"`; `app.routes.server.ts` com `Prerender` em `''`, `paises`, `paises/:code` (redirecionamento) e `paises/:code/visao-geral` (os dois com `getPrerenderParams` buscando a API de países no build), `sobre`, e `Client` no resto (`/passaporte`, `/entrar`, abas `clima`/`anotacoes`); `provideClientHydration(withEventReplay())`. O build gera 393 rotas, `index.csr.html` (o casco das rotas Client) e páginas de redirecionamento. `core/site.ts` (`SITE_URL` de exemplo, `DEFAULT_DESCRIPTION`); `core/seo-title-strategy.ts` (`SeoTitleStrategy extends TitleStrategy`: `<title>`, `description`, `og:title`, `og:description`, `og:url`, `og:image`); `data.description` nas rotas e o `countryDescriptionResolver`; tags fixas no `index.html`; `public/og.png` (1200×630). `npm run build` = `ng build && node scripts/sitemap.mjs` (gera `sitemap.xml` com 197 páginas e `robots.txt`). Lighthouse SEO: 100. O extrator de trechos lê também a pasta `scripts/` das etapas.
 - **Desde o 47, PWA:** `@angular/service-worker` (instalado à mão: o `ng add @angular/pwa` falha no `npm install` dele por causa do `allow-scripts` do npm local; o `@angular/pwa` tem `save: false` e não fica no `package.json`). `angular.json` com `serviceWorker: "ngsw-config.json"` na produção e orçamento inicial com aviso em 650 kB (o pacote foi de 599,91 para 606,89 kB). `ngsw-config.json`: grupos `app` (prefetch) e `assets` (lazy), e `dataGroups` `paises` (`performance`, 7d) e `tempo` (Open-Meteo, `freshness`, 5s, 1h). **Nunca a API do Supabase:** reproduzido, o Bruno viu as viagens da Ana. `public/manifest.webmanifest` em português, ícones novos em `public/icons/` (o globo dourado), `theme-color` e `apple-touch-icon` no `index.html`. `provideServiceWorker('ngsw-worker.js', { enabled: !isDevMode(), registrationStrategy: 'registerWhenStable:30000' })`. `core/app-updates.ts` (`AppUpdates`, `ready` com o `VERSION_READY`, `reload()`); faixa `role="status"` no `app.html`. Specs do `App` com `provideServiceWorker('ngsw-worker.js', { enabled: false })`. Para testar: `npm run build` e `npx http-server -p 8080 -c-1 dist/passaporte/browser` (sem fallback: `/passaporte` direto dá 404 antes do service worker). O extrator de trechos lê também o `ngsw-config.json` e o `public/*.webmanifest` das etapas.
 - **Desde o 48, publicado no Render:** `render.yaml` na raiz da etapa (site estático, `npm ci && npm run build`, `dist/passaporte/browser`) com regras de rewrite só para as rotas `RenderMode.Client` (`/passaporte`, `/entrar`, `/paises/:code/clima`, `/paises/:code/anotacoes` → `/index.csr.html`); `scripts/not-found.mjs` copia o `index.csr.html` para `404.html` no fim do `npm run build`. Rota nova com `RenderMode.Client` precisa de regra nova. O README explica o `SITE_URL` e o **Site URL** do Supabase. O extrator de trechos lê também o `render.yaml` das etapas (linguagem `yaml`, marca `# [!code highlight]`).
+- **Desde o 49, CI no GitHub Actions:** `.github/workflows/ci.yml` na etapa (push na `main` e pull requests; `actions/checkout@v7`, `actions/setup-node@v7` com `node-version: 24`, cache automático pelo `packageManager`; `npm ci`, `npm test`, `npm run build`). O `render.yaml` ganhou `autoDeployTrigger: checksPass`. O extrator de trechos lê também os `.github/workflows/*.yml` das etapas.
 
 ## Próximos capítulos (catálogo)
 
 | Nº | Slug | Pergunta |
 | --- | --- | --- |
-| 49 | `49-github-actions` | Como automatizar testes e publicação com GitHub Actions? |
 | 50 | `50-pwabuilder` | Como levar o PWA para as lojas de aplicativos com o PWABuilder? |
 
 As perguntas e descrições completas estão em `site/src/app/catalog/catalog.ts`.

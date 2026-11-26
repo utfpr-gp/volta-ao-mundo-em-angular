@@ -1,0 +1,17 @@
+@if (stamped()) {
+  <span
+    role="img"
+    [attr.aria-label]="'Carimbo de ' + code()"
+    class="flex size-16 -rotate-8 items-center justify-center rounded-full border-2 border-dashed border-stamp font-stamp text-sm font-bold text-stamp"
+  >
+    {{ code() }}
+  </span>
+} @else {
+  <span
+    role="img"
+    aria-label="Ainda sem carimbo"
+    class="flex size-16 items-center justify-center rounded-full border-2 border-dashed border-line font-stamp text-sm font-bold text-ink-muted"
+  >
+    ?
+  </span>
+}

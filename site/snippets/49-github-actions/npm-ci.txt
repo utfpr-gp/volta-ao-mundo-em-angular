@@ -1,0 +1,6 @@
+Run npm ci
+npm error code EUSAGE
+npm error
+npm error `npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with `npm install` before continuing.
+npm error
+npm error Missing: canvas-confetti@1.9.4 from lock file

@@ -1,0 +1,20 @@
+ FAIL   passaporte  src/app/features/passport/trip-stats.spec.ts > tripStats > counts a country visited twice only once
+AssertionError: expected 3 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 3
+
+ ❯ src/app/features/passport/trip-stats.spec.ts:30:29
+     28|     const stats = tripStats([trip('JP', 3, 'aviao'), trip('JP', 4, 'na…
+     29|     expect(stats.count).toBe(3);
+     30|     expect(stats.countries).toBe(2);
+       |                             ^
+     31|   });
+…
+ Test Files  2 failed | 26 passed (28)
+      Tests  2 failed | 147 passed (149)
+…
+Process completed with exit code 1.
