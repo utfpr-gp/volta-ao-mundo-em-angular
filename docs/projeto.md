@@ -108,7 +108,7 @@ A prática é o mesmo cartão de país do Passaporte feito em cada biblioteca, c
 
 No Passaporte, cada país ganha uma página com título e descrição próprios.
 
-**O capítulo 48** publica o Passaporte no Render, como site estático conectado ao GitHub. Ele ensina a regra que manda qualquer endereço para o `index.html`: sem ela, recarregar `/paises/BR` dá erro 404, e entender esse erro é entender como uma SPA funciona. O capítulo termina com uma tabela de alternativas (Vercel, Netlify, GitHub Pages, Firebase Hosting).
+**O capítulo 48** publica o Passaporte no Render, como site estático conectado ao GitHub. Ele ensina as regras de rewrite: sem elas, recarregar `/passaporte` dá erro 404, e entender esse erro é entender como uma SPA funciona. Como o Passaporte é pré-renderizado desde o 46, a regra clássica `/* → /index.html` não serve (o `index.html` só redireciona, e a regra passa por cima das pastas das páginas prontas): as regras vão só para as telas montadas no navegador, com destino `/index.csr.html`, e um `404.html` cuida do resto. O capítulo termina com uma tabela de alternativas (Vercel, Netlify, GitHub Pages, Firebase Hosting).
 
 **O capítulo 50** leva o Passaporte publicado às lojas com o PWABuilder:
 - o relatório de qualidade do PWA;

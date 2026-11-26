@@ -654,7 +654,10 @@ const ENTRIES: ChapterEntry[] = [
     shortTitle: 'Deploy no Render',
     description:
       'Gere o build de produção e publique o Passaporte no Render, entendendo por que recarregar uma rota pode dar erro 404 e como resolver.',
-    minutes: 30,
+    minutes: 35,
+
+    published: true,
+    verifiedWithAngular: '22.2',
   },
   {
     slug: '49-github-actions',

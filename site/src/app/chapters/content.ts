@@ -45,6 +45,7 @@ import { CHAPTER_44 } from './44-acessibilidade/content';
 import { CHAPTER_45 } from './45-defer/content';
 import { CHAPTER_46 } from './46-seo/content';
 import { CHAPTER_47 } from './47-pwa/content';
+import { CHAPTER_48 } from './48-deploy-no-render/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -96,4 +97,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '45-defer': CHAPTER_45,
   '46-seo': CHAPTER_46,
   '47-pwa': CHAPTER_47,
+  '48-deploy-no-render': CHAPTER_48,
 };

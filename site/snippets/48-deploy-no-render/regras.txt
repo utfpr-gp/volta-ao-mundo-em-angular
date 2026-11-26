@@ -1,0 +1,5 @@
+Source Path               Destination Path    Action
+/passaporte               /index.csr.html     Rewrite
+/entrar                   /index.csr.html     Rewrite
+/paises/:code/clima       /index.csr.html     Rewrite
+/paises/:code/anotacoes   /index.csr.html     Rewrite

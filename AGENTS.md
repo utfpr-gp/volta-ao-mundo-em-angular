@@ -281,3 +281,17 @@ Vindas das revisões do capítulo 1 (professor, estudante e especialista):
   `provideServiceWorker` nos specs: `NG0201: No provider found for \`SwUpdate\`. Source: DynamicTestModule. Path:
   _AppUpdates -> SwUpdate.`. O pacote inicial passou de 599,91 para 606,89 kB (aviso do orçamento de 600 kB). A pasta de
   rascunho pode ser limpa entre sessões: guarde capturas que vão para o livro direto em `site/public/imagens/`.
+- **Capítulo 48 (Deploy no Render), verificado num site estático de verdade no Render (2026-11-10):** a ordem das respostas
+  é arquivo com o nome exato → regra → pasta com `index.html` → `404.html` (status 404) → `Not Found` (texto, 404). Uma
+  regra `/*` passa por cima das pastas pré-renderizadas pedidas sem barra no fim (`/paises`, `/sobre`); com destino
+  `/index.html`, o Passaporte entra em laço (`Redirecting to /paises`; 1817 pedidos em 8 s num servidor local que imita a
+  ordem). Rewrite para um arquivo que não existe (`/paises/:code` → `/paises/:code/index.html`, com `ZZ`) dá `200` com corpo
+  vazio. Arquivos `.html` planos (`sobre.html`) não respondem por `/sobre`. Solução adotada: regras só para as rotas
+  `RenderMode.Client` (`/passaporte`, `/entrar`, `/paises/:code/clima`, `/paises/:code/anotacoes`) e `404.html` = cópia do
+  `index.csr.html` (`scripts/not-found.mjs`). Cabeçalhos: `cache-control: public, max-age=0, s-maxage=300` em tudo; mudar só
+  as regras não limpa o cache da CDN (5 min). Logo depois do primeiro deploy de um site novo, alguns arquivos (até o
+  `main-*.js`) deram `Not Found` por um ou dois minutos. O Blueprint acrescenta e muda regras pelo `source`, mas não apaga;
+  renomear o serviço no `render.yaml` cria outro. O Render roda um `npm install` próprio antes do Build Command e leu o
+  `.nvmrc` da raiz do livro (Node 24.22.2). Demonstração: `passaporte/render.yaml` (Blueprint
+  `exs-dbpndu8m7kps73821lu0`, serviço `passaporte-livro-k64a`, https://passaporte-livro-k64a.onrender.com), com `rootDir`
+  na etapa; o `npm ci` dentro da pasta da etapa instala pela raiz do workspace.

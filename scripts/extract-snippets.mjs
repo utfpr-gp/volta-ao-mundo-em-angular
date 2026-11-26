@@ -23,9 +23,11 @@ const LANGUAGES = {
   webmanifest: 'json',
   sh: 'bash',
   sql: 'sql',
+  yaml: 'yaml',
+  yml: 'yaml',
 };
 
-const NOTATION = /[ \t]*(?:\/\/|<!--|\/\*|--)[ \t]*\[!code [^\]]+\][ \t]*(?:-->|\*\/)?[ \t]*$/gm;
+const NOTATION = /[ \t]*(?:\/\/|<!--|\/\*|--|#)[ \t]*\[!code [^\]]+\][ \t]*(?:-->|\*\/)?[ \t]*$/gm;
 
 export function langFor(extension) {
   return LANGUAGES[extension] ?? 'text';
@@ -68,7 +70,7 @@ export async function extractAll(root) {
 /**
  * Os arquivos de cada etapa do Passaporte (passaporte/etapas/NN-slug), com a chave
  * NN/etapa/<caminho>: o package.json, a pasta src e, quando houver, as pastas supabase (o SQL do banco) e scripts, o
- * ngsw-config.json (o service worker) e o manifesto do PWA em public/.
+ * ngsw-config.json (o service worker), o render.yaml (a publicação no Render) e o manifesto do PWA em public/.
  * Assim o capítulo mostra o código que de fato compila na etapa.
  */
 export async function extractStages(root) {
@@ -78,7 +80,7 @@ export async function extractStages(root) {
     const base = join(root, stage);
     if (!/^\d{2}-/.test(stage) || !statSync(base).isDirectory()) continue;
     const files = [];
-    for (const name of ['package.json', 'ngsw-config.json']) if (existsSync(join(base, name))) files.push(join(base, name));
+    for (const name of ['package.json', 'ngsw-config.json', 'render.yaml']) if (existsSync(join(base, name))) files.push(join(base, name));
     if (existsSync(join(base, 'public'))) {
       for (const name of readdirSync(join(base, 'public')).sort()) if (name.endsWith('.webmanifest')) files.push(join(base, 'public', name));
     }

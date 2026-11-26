@@ -1,0 +1,5 @@
+Name               passaporte
+Branch             main
+Root Directory     (vazio: o projeto está na raiz do repositório)
+Build Command      npm ci && npm run build
+Publish Directory  dist/passaporte/browser

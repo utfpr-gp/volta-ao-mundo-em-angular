@@ -1,0 +1,6 @@
+$ curl -s -o /dev/null -w '%{http_code}\n' https://SEU-PASSAPORTE.onrender.com/paises/JP/visao-geral
+200    ← o arquivo pronto, do build
+$ curl -s -o /dev/null -w '%{http_code}\n' https://SEU-PASSAPORTE.onrender.com/passaporte
+200    ← a regra entrega o casco
+$ curl -s -o /dev/null -w '%{http_code}\n' https://SEU-PASSAPORTE.onrender.com/paises/ZZ
+404    ← o 404.html: o casco, e o app mostra "Esta página não existe"
