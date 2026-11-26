@@ -1,6 +1,6 @@
 name: Passaporte
 
-# O CI da demonstração do Passaporte (capítulo 49): o mesmo ci.yml da etapa, rodando dentro da pasta dela.
+# O CI da demonstração do Passaporte (capítulos 49 e 50): o mesmo ci.yml da etapa, rodando dentro da pasta dela.
 # O Render (passaporte/render.yaml) só publica a demonstração depois que este workflow passa.
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
 
 defaults:
   run:
-    working-directory: passaporte/etapas/49-github-actions
+    working-directory: passaporte/etapas/50-pwabuilder
 
 jobs:
   test-and-build:
