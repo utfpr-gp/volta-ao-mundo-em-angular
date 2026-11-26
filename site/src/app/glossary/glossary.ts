@@ -532,6 +532,18 @@ export const GLOSSARY = {
       'A máquina que executa um workflow do GitHub Actions. Com runs-on: ubuntu-latest, o GitHub empresta uma máquina Linux nova para cada execução e a descarta no fim.',
     chapter: 49,
   },
+  twa: {
+    term: 'Trusted Web Activity (TWA)',
+    definition:
+      'Um app Android que abre um site no Chrome, em tela cheia e sem a barra de endereço. O código continua no site; o app é a janela. É o pacote Android que o PWABuilder gera.',
+    chapter: 50,
+  },
+  'digital-asset-links': {
+    term: 'Digital Asset Links',
+    definition:
+      'O jeito de um site dizer ao Android que confia num app: o arquivo /.well-known/assetlinks.json, com o nome do pacote e a impressão digital da chave que assinou o app.',
+    chapter: 50,
+  },
 } as const satisfies Record<string, GlossaryEntry>;
 
 export type TermName = keyof typeof GLOSSARY;

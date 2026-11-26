@@ -47,6 +47,7 @@ import { CHAPTER_46 } from './46-seo/content';
 import { CHAPTER_47 } from './47-pwa/content';
 import { CHAPTER_48 } from './48-deploy-no-render/content';
 import { CHAPTER_49 } from './49-github-actions/content';
+import { CHAPTER_50 } from './50-pwabuilder/content';
 import type { ChapterContent } from './types';
 
 /** Resumo, trechos essenciais, desafio e links de cada capítulo publicado. A chave é o slug. */
@@ -100,4 +101,5 @@ export const CONTENT: Partial<Record<string, ChapterContent>> = {
   '47-pwa': CHAPTER_47,
   '48-deploy-no-render': CHAPTER_48,
   '49-github-actions': CHAPTER_49,
+  '50-pwabuilder': CHAPTER_50,
 };

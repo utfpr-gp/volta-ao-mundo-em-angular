@@ -42,3 +42,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Pacotes do PWABuilder: a chave e as senhas do app nunca vão para o Git
+*.keystore
+signing-key-info.txt

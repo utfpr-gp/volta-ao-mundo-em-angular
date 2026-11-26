@@ -1,0 +1,221 @@
+<vm-chapter-page slug="50-pwabuilder">
+  <vm-view kind="mission" title="O Passaporte nas lojas">
+    <p class="lead">
+      O Passaporte já se instala pelo navegador. Agora ele ganha um pacote de verdade para as lojas: o Google Play, a Microsoft
+      Store e, em fase experimental, a App Store. E um arquivo no site prova ao Android que o app e o site são do mesmo dono.
+    </p>
+    <img
+      class="not-prose my-6 w-full rounded-2xl border border-line shadow-sm"
+      src="imagens/capitulo-50/relatorio.png"
+      width="1260"
+      height="658"
+      alt="O relatório do PWABuilder para o Passaporte: o ícone do globo dourado, o nome e a descrição. Em Action Items, 0 erros, 1 aviso (orientação da tela) e 6 sugestões. O manifesto tem nota 26 de 46 e o botão Package For Stores está pronto."
+    />
+    <p>
+      Esse é o relatório do <a href="https://www.pwabuilder.com" rel="noopener">PWABuilder</a> para a demonstração do livro:
+      nenhum erro, e o botão "Package For Stores" liberado. Ao final, você vai saber ler esse relatório, gerar o pacote Android,
+      publicar o arquivo de vínculo e saber o que cada loja pede.
+    </p>
+  </vm-view>
+
+  <vm-view kind="idea" title="A lista de franquias">
+    <vm-analogy emoji="🏪" title="A loja com a marca na fachada">
+      <p>
+        Uma loja na rua pode pendurar a placa de uma marca famosa. Para saber se ela é uma franquia de verdade, você confere no
+        site da marca a lista de franqueados autorizados. Se a loja não está lá, ela pode até vender o produto, mas não como a
+        marca.
+      </p>
+      <p>
+        O app Android do Passaporte é a loja, e o site é a marca. Ao abrir o app, o Android confere no site uma lista, o
+        <code>assetlinks.json</code>, com o nome e a assinatura dos apps autorizados. Se o app está na lista, ele abre como app,
+        em tela cheia. Se não está, abre com a barra de endereço do navegador no topo, como uma visita ao site.
+      </p>
+    </vm-analogy>
+  </vm-view>
+
+  <vm-view kind="inside" title="Do PWA ao pacote">
+    <h3>O PWABuilder</h3>
+    <p>
+      O PWABuilder é uma ferramenta gratuita e de código aberto, criada pela Microsoft e mantida com a comunidade. Você dá o
+      endereço do PWA publicado; ele lê o manifesto e o service worker (<vm-see-chapter [number]="47" />), dá um relatório com
+      o que falta e gera os pacotes. A tela de pacotes oferece três lojas: Microsoft Store, Google Play e App Store, esta marcada
+      como "Experimental".
+    </p>
+    <p>
+      O relatório separa erros (que impedem o pacote), avisos e sugestões. No Passaporte, os avisos pediam três campos no
+      manifesto: <code>screenshots</code> (as imagens que as lojas mostram), <code>id</code> (a identidade do app, mesmo que o
+      endereço mude) e <code>orientation</code>. Os dois primeiros entraram, com <code>categories</code>; a orientação ficou
+      livre de propósito, porque o Passaporte funciona em pé e deitado:
+    </p>
+    <vm-code snippet="50/etapa/public/manifest.webmanifest" caption="public/manifest.webmanifest" />
+
+    <h3>O app Android é uma janela para o site</h3>
+    <p>
+      O pacote Android do PWABuilder é uma <vm-term name="twa">Trusted Web Activity</vm-term> (TWA): um app pequeno que abre o
+      seu endereço no Chrome do celular, em tela cheia e sem a barra de endereço. O código Angular não vai dentro do app; ele
+      continua no Render. Por isso, uma correção publicada no site aparece no app sem pacote novo. Um pacote novo só é preciso
+      para mudar o próprio app: o nome, o ícone, a versão.
+    </p>
+    <p>O PWABuilder entrega um zip. O da demonstração do livro veio assim:</p>
+    <vm-code snippet="50/pacote" caption="o zip do pacote Android" />
+
+    <h3>A prova de que o site é seu</h3>
+    <p>
+      Qualquer pessoa pode gerar um pacote com o endereço do seu site. Para o app abrir sem a barra de endereço, o site precisa
+      dizer que confia nele. Esse é o papel do <vm-term name="digital-asset-links">Digital Asset Links</vm-term>: um arquivo
+      <code>assetlinks.json</code>, servido em <code>/.well-known/assetlinks.json</code> na raiz do domínio, com o nome do
+      pacote e a impressão digital (SHA-256) da chave que assinou o app:
+    </p>
+    <vm-code snippet="50/assetlinks" caption="public/.well-known/assetlinks.json" />
+
+    <vm-link-sim />
+  </vm-view>
+
+  <vm-view kind="code" title="Empacotando o Passaporte">
+    <vm-steps label="Levar o Passaporte ao pacote Android">
+      <ng-template vmStep="O relatório">
+        <p>
+          No manifesto, acrescente o <code>id</code>, as <code>categories</code> e as <code>screenshots</code>, com as imagens
+          em <code>public/screenshots/</code>, e publique. Abra o <a href="https://www.pwabuilder.com" rel="noopener">PWABuilder</a>
+          e digite o endereço de uma página completa do Passaporte, como <code>https://SEU-PASSAPORTE.onrender.com/paises</code>
+          (a raiz não serve; veja as armadilhas). Leia os erros, avisos e sugestões, e só siga com 0 erros.
+        </p>
+      </ng-template>
+      <ng-template vmStep="O pacote">
+        <p>
+          Clique em <strong>Package For Stores</strong> e, no Google Play, em <strong>Generate Package</strong>. As opções já vêm
+          do manifesto; o <strong>Package ID</strong> sugerido é o endereço ao contrário, com <code>.twa</code> no fim:
+        </p>
+        <img
+          class="not-prose my-4 w-full max-w-md rounded-2xl border border-line shadow-sm"
+          src="imagens/capitulo-50/opcoes-android.png"
+          width="682"
+          height="850"
+          alt="A janela Google Play Store Package Options do PWABuilder, com Package ID com.onrender.passaporte_livro_k64a.twa, App name Passaporte, Short name Passaporte, o link All Settings e o botão Download Package."
+        />
+        <p>
+          Em <strong>All Settings</strong> ficam a versão, as cores e a chave de assinatura (o padrão é uma chave nova). Clique
+          em <strong>Download Package</strong>. Guarde o <code>signing.keystore</code> e o
+          <code>signing-key-info.txt</code> num lugar seguro, fora do repositório: sem eles, você não publica versões novas do
+          mesmo app. Se o zip for aberto dentro do projeto, o <code>.gitignore</code> protege:
+        </p>
+        <vm-code snippet="50/gitignore" caption=".gitignore (trecho)" />
+      </ng-template>
+      <ng-template vmStep="O vínculo">
+        <p>
+          Copie o <code>assetlinks.json</code> do zip para <code>public/.well-known/</code>. O <code>ng build</code> copia
+          essa pasta, mesmo com o ponto no nome, e o Render a entrega como arquivo. Faça o commit e o push; o CI passa, e o
+          Render publica (<vm-see-chapter [number]="49" />).
+        </p>
+        <p>Confira com a API do próprio Google, que diz o que o Android vai enxergar:</p>
+        <vm-code snippet="50/api-com" caption="terminal" />
+      </ng-template>
+      <ng-template vmStep="No celular e na loja">
+        <p>
+          O <code>.apk</code> é para testar: a documentação do PWABuilder pede um celular Android (7.0 ou mais novo) ou um
+          emulador. Instale o arquivo no aparelho. Com o vínculo certo, o
+          Passaporte abre em tela cheia, sem a barra de endereço. O livro conferiu o pacote e o vínculo pela API do Google, mas
+          não num celular: se a barra aparecer, o arquivo de vínculo é a primeira suspeita.
+        </p>
+        <p>
+          Para a loja, o arquivo é o <code>.aab</code>. Depois de enviado, o Google Play assina o app de novo com a chave dele.
+          Copie a impressão digital SHA-256 dessa chave (no Play Console, Setup → App integrity) e acrescente-a à lista
+          <code>sha256_cert_fingerprints</code> do <code>assetlinks.json</code>; sem isso, quem instalar pela loja vê a barra
+          de endereço.
+        </p>
+      </ng-template>
+    </vm-steps>
+
+    <vm-deep-dive title="Conferir a chave com o keytool">
+      <p>
+        A impressão digital do <code>assetlinks.json</code> tem de ser a da chave que assinou o <code>.apk</code>. Com o Java
+        instalado, o <code>keytool</code> mostra a da chave do zip; no pacote do livro, as duas batiam:
+      </p>
+      <vm-code snippet="50/keytool" caption="terminal" />
+    </vm-deep-dive>
+
+    <h3>O que cada loja pede</h3>
+    <p>
+      Os valores abaixo foram conferidos nas páginas oficiais em novembro de 2026; confira de novo antes de pagar. A prática
+      deste capítulo não exige conta nenhuma.
+    </p>
+    <div class="overflow-x-auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Loja</th>
+            <th>Conta de desenvolvedor</th>
+            <th>O que mais pede</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Google Play</td>
+            <td>US$ 25, uma vez</td>
+            <td>
+              Conta pessoal criada depois de 13/11/2023: um teste fechado com pelo menos 12 testadores por 14 dias seguidos antes
+              da produção. Pessoa com 18 anos ou mais.
+            </td>
+          </tr>
+          <tr>
+            <td>Microsoft Store</td>
+            <td>Gratuita, pelo fluxo novo de cadastro</td>
+            <td>Reservar o nome do app no Partner Center antes de gerar o pacote, que vem em <code>.msixbundle</code> (e em <code>.classic.appxbundle</code>, para versões antigas do Windows).</td>
+          </tr>
+          <tr>
+            <td>App Store (experimental)</td>
+            <td>US$ 99 por ano</td>
+            <td>Um Mac com o Xcode para compilar o projeto Swift que o PWABuilder gera; a aprovação depende da Apple.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </vm-view>
+
+  <vm-view kind="pitfalls" title="Quando a loja não reconhece o app">
+    <vm-pitfall title="A raiz sem manifesto" where="O que o PWABuilder diz para https://passaporte-livro-k64a.onrender.com" message="We did not find a manifest on your site before our tests timed out so we have created a manifest for you!">
+      <vm-code snippet="50/sem-manifesto" caption="terminal" />
+      <p>
+        O relatório mostra "Missing Name", sem ícone, com o erro "Create a web app manifest." O Passaporte tem manifesto, mas a
+        raiz do site é a página que só redireciona para <code>/paises</code>, criada pela pré-renderização
+        (<vm-see-chapter [number]="46" />), e ela não tem o <code>&lt;link rel="manifest"&gt;</code>. <strong>Como sair:</strong>
+        dê ao PWABuilder o endereço de uma página completa, como <code>/paises</code>. Nos testes do livro, a análise às vezes
+        estourou o tempo mesmo com <code>/paises</code>, com a mesma mensagem; rodar de novo resolveu.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O relatório que não muda" where="O que o PWABuilder mostrou depois de publicar o manifesto novo" message="Add screenshots to showcase your app.">
+      <p>
+        Você acrescentou as <code>screenshots</code> e o <code>id</code>, publicou, conferiu que o manifesto novo está no ar, e o
+        relatório continua pedindo os dois, com a mesma nota (18 de 46). Nos testes do livro, o PWABuilder repetiu o resultado
+        guardado para aquele endereço. <strong>Como sair:</strong> acrescente um parâmetro qualquer ao endereço, como
+        <code>/paises?v=2</code>. Com ele, o relatório do livro passou a 0 erros, 1 aviso e nota 26 de 46.
+      </p>
+    </vm-pitfall>
+
+    <vm-pitfall title="O vínculo que falta" where="O que a API do Google responde sem o assetlinks.json" message="ERROR_CODE_FETCH_ERROR">
+      <vm-code snippet="50/api-sem" caption="terminal" />
+      <p>
+        Sem o arquivo, o site responde 404 em <code>/.well-known/assetlinks.json</code>, e o Android não tem como confirmar o
+        vínculo. Segundo a documentação do PWABuilder, o app abre com a barra de endereço do navegador, ou até fecha ao abrir.
+        O mesmo acontece com o arquivo fora da raiz do domínio, com outro <code>package_name</code> ou sem a impressão digital
+        da chave que assinou o app instalado. <strong>Como sair:</strong> publique o arquivo do zip em
+        <code>public/.well-known/</code> e confira pela API antes de testar no celular.
+      </p>
+    </vm-pitfall>
+  </vm-view>
+
+  <vm-view kind="challenge" title="Vale um carimbo">
+    <vm-challenge slug="50-pwabuilder" [questions]="content.questions" />
+  </vm-view>
+
+  <vm-view kind="further" title="Para ir além">
+    <vm-further-links [links]="content.links" />
+    <p>
+      <strong>E agora?</strong> A volta ao mundo terminou: o Passaporte saiu de um <code>ng new</code> e chegou às lojas, com
+      login, banco de dados, testes, acessibilidade, SEO, PWA e publicação automática. Confira os carimbos que você juntou no
+      <a routerLink="/passaporte">seu passaporte</a>. Daqui em diante, a melhor viagem é a sua: pense num app que você queria
+      que existisse e comece pelo capítulo 5, desta vez sem o livro aberto.
+    </p>
+  </vm-view>
+</vm-chapter-page>

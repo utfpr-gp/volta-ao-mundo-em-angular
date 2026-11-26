@@ -112,11 +112,11 @@ No Passaporte, cada país ganha uma página com título e descrição próprios.
 
 **O capítulo 50** leva o Passaporte publicado às lojas com o PWABuilder:
 - o relatório de qualidade do PWA;
-- o empacotamento para Google Play, Microsoft Store, App Store (experimental) e Meta Quest;
+- o empacotamento para Google Play, Microsoft Store e App Store (experimental); o Meta Quest, previsto no começo, já não aparecia no PWABuilder em novembro de 2026;
 - o arquivo que prova ao Android que o app e o site são do mesmo dono, para o app abrir sem a barra do navegador;
 - o custo da conta de desenvolvedor de cada loja, com os valores conferidos na época em que o capítulo for escrito.
 
-A prática não exige conta paga: o pacote Android pode ser instalado direto no celular para teste.
+A prática não exige conta paga: o pacote Android pode ser instalado direto no celular para teste. O livro conferiu o pacote e o vínculo (pela API do Digital Asset Links), mas não a instalação num celular.
 
 **Capítulos acrescentados a partir do material da disciplina no Moodle:**
 - **3. JavaScript moderno:** arrow functions, desestruturação, espalhamento, módulos, Promise e async/await, no nível que o Angular exige.
